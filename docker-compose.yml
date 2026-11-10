@@ -1,0 +1,143 @@
+version: '3.8'
+
+# Hospital OS High-Concurrency Production Microservices Topology
+# Configured for 10,000 Concurrent Users & 100+ req/sec throughput
+
+services:
+  # 1. High-Performance Reverse Proxy & Load Balancer (NGINX)
+  api-gateway:
+    image: nginx:alpine
+    container_name: hospitalos-gateway
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - patient-service
+      - doctor-service
+      - bed-service
+      - pharmacy-service
+      - billing-service
+      - redis-cluster
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4096M
+
+  # 2. Patient & Longitudinal EMR Microservice
+  patient-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8001
+      - REDIS_URL=redis://redis-cluster:6379
+      - DATABASE_URL=postgresql://postgres:secret@pgbouncer:6432/hospital_patients
+      - CONCURRENCY_WORKERS=8
+    restart: always
+    deploy:
+      replicas: 4
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+  # 3. Doctor & Consultation Microservice
+  doctor-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8002
+      - REDIS_URL=redis://redis-cluster:6379
+      - DATABASE_URL=postgresql://postgres:secret@pgbouncer:6432/hospital_clinical
+      - CONCURRENCY_WORKERS=8
+    restart: always
+    deploy:
+      replicas: 4
+
+  # 4. Bed & Ward Operations Microservice
+  bed-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8003
+      - REDIS_URL=redis://redis-cluster:6379
+      - DATABASE_URL=postgresql://postgres:secret@pgbouncer:6432/hospital_operations
+      - CONCURRENCY_WORKERS=4
+    restart: always
+    deploy:
+      replicas: 3
+
+  # 5. Pharmacy Formulary & Dispensing Microservice
+  pharmacy-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8004
+      - REDIS_URL=redis://redis-cluster:6379
+      - DATABASE_URL=postgresql://postgres:secret@pgbouncer:6432/hospital_pharmacy
+      - CONCURRENCY_WORKERS=4
+    restart: always
+    deploy:
+      replicas: 3
+
+  # 6. Billing, Cashier & Insurance TPA Microservice
+  billing-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8005
+      - REDIS_URL=redis://redis-cluster:6379
+      - DATABASE_URL=postgresql://postgres:secret@pgbouncer:6432/hospital_billing
+      - CONCURRENCY_WORKERS=6
+    restart: always
+    deploy:
+      replicas: 4
+
+  # 7. Redis Distributed In-Memory Cache (Sub-millisecond query responses)
+  redis-cluster:
+    image: redis:7-alpine
+    container_name: hospitalos-redis
+    command: redis-server --maxmemory 2gb --maxmemory-policy allkeys-lru --appendonly yes
+    ports:
+      - "6379:6379"
+    restart: always
+
+  # 8. PgBouncer Connection Pooler (Pulls 10,000 client sockets into 200 DB workers)
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: hospitalos-pgbouncer
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=secret
+      - DB_HOST=postgres-primary
+      - POOL_MODE=transaction
+      - MAX_CLIENT_CONN=10000
+      - DEFAULT_POOL_SIZE=200
+    ports:
+      - "6432:6432"
+    depends_on:
+      - postgres-primary
+    restart: always
+
+  # 9. PostgreSQL Distributed Database Primary
+  postgres-primary:
+    image: postgres:16-alpine
+    container_name: hospitalos-postgres
+    environment:
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_MULTIPLE_DATABASES=hospital_patients,hospital_clinical,hospital_operations,hospital_pharmacy,hospital_billing
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
+

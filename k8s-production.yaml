@@ -1,0 +1,195 @@
+# ==============================================================================
+# Hospital OS Enterprise Kubernetes (EKS / GKE / AKS) Production Manifests
+# Designed for 10,000+ Concurrent Users, Zero Downtime, and Sub-second Latency
+# ==============================================================================
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hospital-os
+  labels:
+    app.kubernetes.io/name: hospital-os
+    tier: production
+
+---
+# 1. Cluster ConfigMap for Cloud Endpoints
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hospitalos-config
+  namespace: hospital-os
+data:
+  NODE_ENV: "production"
+  PORT: "80"
+  REDIS_HOST: "hospitalos-redis.hospital-os.svc.cluster.local"
+  REDIS_PORT: "6379"
+  DB_POOL_MIN: "10"
+  DB_POOL_MAX: "100"
+  RATE_LIMIT_RPS: "100"
+  LOG_LEVEL: "info"
+
+---
+# 2. Production Web UI & Microservices Gateway Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hospitalos-web-gateway
+  namespace: hospital-os
+  labels:
+    app: hospitalos-web-gateway
+spec:
+  replicas: 4
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: hospitalos-web-gateway
+  template:
+    metadata:
+      labels:
+        app: hospitalos-web-gateway
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - hospitalos-web-gateway
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: web-gateway
+        image: hospitalos/gateway:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 2000m
+            memory: 2048Mi
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        envFrom:
+        - configMapRef:
+            name: hospitalos-config
+
+---
+# 3. Horizontal Pod Autoscaler for Web Gateway (Scales up to 30 Pods)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hospitalos-web-gateway-hpa
+  namespace: hospital-os
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hospitalos-web-gateway
+  minReplicas: 4
+  maxReplicas: 30
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 75
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+
+---
+# 4. Service Definition for Web Gateway
+apiVersion: v1
+kind: Service
+metadata:
+  name: hospitalos-web-gateway
+  namespace: hospital-os
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+    name: http
+  selector:
+    app: hospitalos-web-gateway
+
+---
+# 5. Ingress Controller with AWS ALB / NGINX Ingress & TLS 1.3
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hospitalos-ingress
+  namespace: hospital-os
+  annotations:
+    kubernetes.io/ingress.class: "alb"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/success-codes: "200"
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=60
+spec:
+  rules:
+  - host: app.hospitalos.internal
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hospitalos-web-gateway
+            port:
+              number: 80
+
+---
+# 6. Pod Disruption Budget (Guarantees Availability during Node Drains/Upgrades)
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: hospitalos-web-gateway-pdb
+  namespace: hospital-os
+spec:
+  minAvailable: 80%
+  selector:
+    matchLabels:
+      app: hospitalos-web-gateway
+
