@@ -17,19 +17,22 @@ import {
   AlertCircle,
   FileText,
   Clock,
-  ShieldAlert
+  ShieldAlert,
+  CheckCircle2
 } from 'lucide-react';
 import { useHospitalOS } from '../../context/HospitalOSContext';
 import { Patient } from '../../types';
 
 export const PatientManagement: React.FC = () => {
-  const { patients, addPatient, removePatient, staff, beds, currentRole, currentUser } = useHospitalOS();
+  const { patients, addPatient, updatePatient, dischargePatient, removePatient, staff, beds, currentRole, currentUser } = useHospitalOS();
 
   const [search, setSearch] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [careFilter, setCareFilter] = useState<'ALL' | 'MY'>('ALL');
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [selectedDossierPatient, setSelectedDossierPatient] = useState<Patient | null>(null);
+  const [dischargeModalPatient, setDischargeModalPatient] = useState<Patient | null>(null);
+  const [dischargeSummaryText, setDischargeSummaryText] = useState('');
 
   // Doctors list from staff
   const doctorList = staff.filter(s => s.role === 'doctor');
@@ -239,7 +242,7 @@ export const PatientManagement: React.FC = () => {
 
         {/* Status Filter Chips */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-          {['ALL', 'Outpatient', 'Admitted', 'In Emergency', 'Consulting'].map((status) => (
+          {['ALL', 'Admitted', 'Outpatient', 'In Emergency', 'Discharged'].map((status) => (
             <button
               key={status}
               onClick={() => setSelectedStatus(status)}
@@ -291,6 +294,7 @@ export const PatientManagement: React.FC = () => {
               pt.status === 'In Emergency' ? 'bg-rose-100 text-rose-800 border-rose-200' :
               pt.status === 'Admitted' ? 'bg-indigo-100 text-indigo-800 border-indigo-200' :
               pt.status === 'Consulting' ? 'bg-amber-100 text-amber-800 border-amber-200' :
+              pt.status === 'Discharged' ? 'bg-slate-100 text-slate-700 border-slate-300' :
               'bg-emerald-100 text-emerald-800 border-emerald-200';
 
             return (
@@ -383,7 +387,7 @@ export const PatientManagement: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 4. Actions: View Dossier & Remove */}
+                {/* 4. Actions: View Dossier & Discharge / Re-Admit */}
                 <div className="flex items-center gap-2 flex-shrink-0 pt-2 xl:pt-0 border-t xl:border-t-0 border-slate-100">
                   <button
                     onClick={() => setSelectedDossierPatient(pt)}
@@ -394,16 +398,44 @@ export const PatientManagement: React.FC = () => {
                     <span>Clinical Dossier</span>
                   </button>
 
+                  {/* If Inpatient / Admitted -> Provide 1-click Discharge button (frees bed, preserves records) */}
+                  {(pt.status === 'Admitted' || pt.status === 'In Emergency') && (
+                    <button
+                      onClick={() => {
+                        setDischargeModalPatient(pt);
+                        setDischargeSummaryText(`Patient ${pt.name} clinically recovered and stable. Discharged on ${new Date().toISOString().slice(0, 10)}. Inpatient records archived.`);
+                      }}
+                      className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1 transition active:scale-95 border border-emerald-200"
+                      title="Discharge patient: bed released, full medical records permanently preserved"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Discharge</span>
+                    </button>
+                  )}
+
+                  {/* If Discharged -> Provide Re-Admit option */}
+                  {pt.status === 'Discharged' && (
+                    <button
+                      onClick={() => {
+                        updatePatient(pt.id, { status: 'Admitted' });
+                      }}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition"
+                      title="Re-Admit patient for clinical follow-up"
+                    >
+                      <span>Re-Admit</span>
+                    </button>
+                  )}
+
                   <button
                     onClick={() => {
-                      if (window.confirm(`Discharge / remove patient record for ${pt.name}?`)) {
+                      if (window.confirm(`Permanently purge test record for ${pt.name}? Note: For discharged patients, use "Discharge" to keep full history.`)) {
                         removePatient(pt.id);
                       }
                     }}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition border border-transparent hover:border-rose-200"
-                    title="Discharge / Remove Patient Record"
+                    className="p-1.5 rounded-lg text-slate-300 hover:text-rose-600 hover:bg-rose-50 transition border border-transparent hover:border-rose-200"
+                    title="Purge Test Record"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -514,6 +546,24 @@ export const PatientManagement: React.FC = () => {
               </div>
             </div>
 
+            {/* If Discharged -> Display Discharge Summary Protocol */}
+            {selectedDossierPatient.status === 'Discharged' && (
+              <div className="p-4 rounded-xl bg-slate-100 border border-slate-300 text-xs space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold text-slate-700 tracking-wider flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Discharge Protocol & Medical Summary</span>
+                  </span>
+                  <span className="text-[11px] font-mono font-semibold text-slate-600">
+                    Discharged: {selectedDossierPatient.dischargeDate || 'Recorded'}
+                  </span>
+                </div>
+                <p className="text-slate-800 leading-relaxed font-medium mt-1">
+                  {selectedDossierPatient.dischargeSummary || 'Patient clinically stable. Discharged with home medication advice and 7-day OPD follow-up.'}
+                </p>
+              </div>
+            )}
+
             <div className="pt-2 flex justify-end">
               <button
                 type="button"
@@ -521,6 +571,64 @@ export const PatientManagement: React.FC = () => {
                 className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition"
               >
                 Close Dossier
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Discharge Patient Modal */}
+      {dischargeModalPatient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in">
+          <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <CheckCircle2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-sm">Discharge Inpatient</h3>
+                  <p className="text-[11px] text-slate-500">{dischargeModalPatient.name} ({dischargeModalPatient.id})</p>
+                </div>
+              </div>
+              <button onClick={() => setDischargeModalPatient(null)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
+              <p>✓ Patient's bed ({dischargeModalPatient.assignedBed || 'Ward'}) will be released and marked for sanitization.</p>
+              <p>✓ All medical records, bedside vitals, diagnoses, and invoices will be <strong>permanently stored &amp; archived</strong>.</p>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Clinical Discharge Summary &amp; Advice</label>
+              <textarea
+                rows={3}
+                value={dischargeSummaryText}
+                onChange={(e) => setDischargeSummaryText(e.target.value)}
+                className="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
+                placeholder="Enter clinical notes, home prescription advice, follow-up schedule..."
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setDischargeModalPatient(null)}
+                className="px-4 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  dischargePatient(dischargeModalPatient.id, dischargeSummaryText);
+                  setDischargeModalPatient(null);
+                }}
+                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition"
+              >
+                Confirm Discharge &amp; Retain Records
               </button>
             </div>
           </div>

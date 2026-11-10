@@ -83,6 +83,8 @@ export interface Patient {
   insurancePolicyNo?: string;
   totalBilled: number;
   pendingBalance: number;
+  dischargeDate?: string;
+  dischargeSummary?: string;
 }
 
 export interface Doctor {

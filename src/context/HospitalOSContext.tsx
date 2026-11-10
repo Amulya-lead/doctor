@@ -122,6 +122,7 @@ interface HospitalOSContextType {
   // Actions
   addPatient: (patient: Partial<Patient>) => void;
   updatePatient: (patientId: string, updates: Partial<Patient>) => void;
+  dischargePatient: (patientId: string, summary?: string) => void;
   removePatient: (patientId: string) => void;
   updateLabStatus: (labId: string, status: LabTestStatus) => void;
   addLabTest: (test: Partial<LabTestOrder>) => void;
@@ -819,6 +820,29 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   const updateBedStatus = (bedId: string, status: Bed['status'], patientId?: string, patientName?: string) => {
+    // If bed is released/discharged, retain the patient record by marking them Discharged!
+    if (status === 'Cleaning' || status === 'Available') {
+      const existingBed = beds.find(b => b.id === bedId);
+      if (existingBed && (existingBed.patientId || existingBed.patientName)) {
+        setPatients(prev => prev.map(p => {
+          if ((existingBed.patientId && p.id === existingBed.patientId) || 
+              (existingBed.patientName && p.name.toLowerCase() === existingBed.patientName.toLowerCase())) {
+            const discharged: Patient = {
+              ...p,
+              status: 'Discharged',
+              assignedBed: undefined,
+              ward: undefined,
+              dischargeDate: p.dischargeDate || new Date().toISOString().replace('T', ' ').slice(0, 16),
+              dischargeSummary: p.dischargeSummary || 'Patient discharged from bed. Inpatient stay completed with stable vitals.'
+            };
+            upsertPatientInDb(discharged, currentTenantId);
+            return discharged;
+          }
+          return p;
+        }));
+      }
+    }
+
     setBeds(prev => prev.map(bed => {
       if (bed.id === bedId) {
         const updated = {
@@ -930,6 +954,38 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     });
   };
 
+  const dischargePatient = (patientId: string, summary?: string) => {
+    let patientName = '';
+    setPatients(prev => prev.map(p => {
+      if (p.id === patientId) {
+        patientName = p.name;
+        // Release bed if assigned
+        if (p.assignedBed) {
+          updateBedStatus(p.assignedBed, 'Cleaning');
+        }
+        const dischargedPt: Patient = {
+          ...p,
+          status: 'Discharged',
+          assignedBed: undefined,
+          ward: undefined,
+          dischargeDate: new Date().toISOString().replace('T', ' ').slice(0, 16),
+          dischargeSummary: summary || 'Patient clinically stable. Discharged with home medication advice and 7-day follow-up.'
+        };
+        upsertPatientInDb(dischargedPt, currentTenantId);
+        return dischargedPt;
+      }
+      return p;
+    }));
+
+    addSystemEvent({
+      module: 'PATIENT',
+      title: `Patient Discharged: ${patientName || patientId}`,
+      description: `Discharged from inpatient care. All clinical records, vitals, and billing history archived safely.`,
+      severity: 'success',
+      actor: 'Clinical Desk'
+    });
+  };
+
   const removePatient = (patientId: string) => {
     const pt = patients.find(p => p.id === patientId);
     if (pt?.assignedBed) {
@@ -940,9 +996,9 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     if (pt) {
       addSystemEvent({
         module: 'PATIENT',
-        title: `Patient Discharged / Removed: ${pt.name}`,
-        description: `Discharged patient record ${pt.id}.`,
-        severity: 'info',
+        title: `Patient Record Purged: ${pt.name}`,
+        description: `Permanently deleted test record ${pt.id}.`,
+        severity: 'warning',
         actor: 'Clinical Desk'
       });
     }
@@ -1478,6 +1534,7 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         metrics,
         addPatient,
         updatePatient,
+        dischargePatient,
         removePatient,
         updateLabStatus,
         addLabTest,

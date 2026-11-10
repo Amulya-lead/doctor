@@ -291,7 +291,9 @@ export const fetchPatientsFromDb = async (tenantId?: string): Promise<Patient[] 
       insuranceProvider: row.insurance_provider || '',
       insurancePolicyNo: row.insurance_policy_no || '',
       totalBilled: Number(row.total_billed) || 0,
-      pendingBalance: Number(row.pending_balance) || 0
+      pendingBalance: Number(row.pending_balance) || 0,
+      dischargeDate: row.discharge_date || '',
+      dischargeSummary: row.discharge_summary || ''
     }));
   });
 };
