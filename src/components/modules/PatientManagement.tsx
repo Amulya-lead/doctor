@@ -168,29 +168,29 @@ export const PatientManagement: React.FC = () => {
       <div className="workspace-banner workspace-banner-patients p-6 sm:p-7 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-1.5">
-            <span className="px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white/15 backdrop-blur-md border border-lavender-300/30 text-lavender-100">
+            <span className="px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white/15 backdrop-blur-md border border-hospital-300/30 text-hospital-100">
               Clinical Patients Directory &amp; Vitals
             </span>
             {currentRole === 'doctor' && (
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white/10 text-slate-100 border border-white/15">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white/10 text-hospital-50 border border-white/15">
                 Logged in as {currentUser.name}
               </span>
             )}
           </div>
           <h2 className="font-display text-2xl font-extrabold text-white flex items-center gap-2.5 tracking-tight">
-            <Users className="w-6 h-6 text-lavender-300" />
+            <Users className="w-6 h-6 text-hospital-300" />
             <span>Hospital Patients &amp; Bedside Care</span>
           </h2>
-          <p className="text-xs sm:text-sm text-slate-100 mt-0.5 max-w-2xl">
+          <p className="text-xs sm:text-sm text-hospital-50 mt-0.5 max-w-2xl">
             Complete clinical directory showing bedside vitals, assigned clinicians, ward beds, and diagnostic records in one unified display.
           </p>
         </div>
 
         <button
           onClick={() => setIsRegisterModalOpen(true)}
-          className="px-4 py-2.5 rounded-xl bg-white hover:bg-lavender-50 text-[#1C103B] font-bold text-xs flex items-center gap-2 shadow-lg transition active:scale-[0.98] flex-shrink-0"
+          className="px-4 py-2.5 rounded-xl bg-white hover:bg-hospital-50 text-[#10221F] font-bold text-xs flex items-center gap-2 shadow-lg transition active:scale-[0.98] flex-shrink-0"
         >
-          <UserPlus className="w-4 h-4 text-[#4C1D95]" />
+          <UserPlus className="w-4 h-4 text-[#39786B]" />
           <span>Register New Patient</span>
         </button>
       </div>
@@ -198,35 +198,35 @@ export const PatientManagement: React.FC = () => {
       {/* Colorful KPI Tiles */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
         <div className="relative overflow-hidden lavish-card lavish-card-hover p-4">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#2D1B69] to-[#6D28D9]" />
-          <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Total Patients</span>
-          <p className="font-display text-2xl font-extrabold text-slate-950 mt-1">{totalPatients}</p>
-          <span className="text-[11px] font-medium text-slate-600">Registered in hospital</span>
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#1D4840] to-[#39786B]" />
+          <span className="text-[11px] font-bold text-hospital-900 uppercase tracking-wide">Total Patients</span>
+          <p className="font-display text-2xl font-extrabold text-hospital-950 mt-1">{totalPatients}</p>
+          <span className="text-[11px] font-medium text-hospital-800">Registered in hospital</span>
         </div>
 
         <div className="relative overflow-hidden lavish-card lavish-card-hover p-4">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
-          <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wide">Active Outpatients</span>
-          <p className="font-display text-2xl font-extrabold text-emerald-700 mt-1">{outpatientCount}</p>
-          <span className="text-[11px] font-medium text-slate-600">OPD consultations</span>
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-hospital-500 to-hospital-500" />
+          <span className="text-[11px] font-bold text-hospital-800 uppercase tracking-wide">Active Outpatients</span>
+          <p className="font-display text-2xl font-extrabold text-hospital-700 mt-1">{outpatientCount}</p>
+          <span className="text-[11px] font-medium text-hospital-800">OPD consultations</span>
         </div>
 
         <div className="relative overflow-hidden lavish-card lavish-card-hover p-4">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-indigo-500 to-violet-500" />
-          <span className="text-[11px] font-bold text-indigo-800 uppercase tracking-wide">Inpatient Admissions</span>
-          <p className="font-display text-2xl font-extrabold text-indigo-700 mt-1">{admittedCount}</p>
-          <span className="text-[11px] font-medium text-slate-600">IPD &amp; Emergency beds</span>
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-hospital-500 to-hospital-500" />
+          <span className="text-[11px] font-bold text-hospital-800 uppercase tracking-wide">Inpatient Admissions</span>
+          <p className="font-display text-2xl font-extrabold text-hospital-700 mt-1">{admittedCount}</p>
+          <span className="text-[11px] font-medium text-hospital-800">IPD &amp; Emergency beds</span>
         </div>
 
         <div className="relative overflow-hidden lavish-card lavish-card-hover p-4">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#4C1D95] to-[#0D9488]" />
-          <span className="text-[11px] font-bold text-[#4C1D95] uppercase tracking-wide">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#39786B] to-[#39786B]" />
+          <span className="text-[11px] font-bold text-[#39786B] uppercase tracking-wide">
             {currentRole === 'doctor' ? 'My Care Queue' : 'Assigned to Doctors'}
           </span>
-          <p className="font-display text-2xl font-extrabold text-[#4C1D95] mt-1">
+          <p className="font-display text-2xl font-extrabold text-[#39786B] mt-1">
             {currentRole === 'doctor' ? myPatientsCount : totalPatients}
           </p>
-          <span className="text-[11px] font-medium text-slate-600">Active medical coverage</span>
+          <span className="text-[11px] font-medium text-hospital-800">Active medical coverage</span>
         </div>
       </div>
 
@@ -234,19 +234,19 @@ export const PatientManagement: React.FC = () => {
       <div className="lavish-card p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 flex-1 max-w-xl">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-hospital-700 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search by patient name, ID, phone, or doctor..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-50/90 border border-slate-200 rounded-xl pl-10 pr-9 py-2.5 text-xs font-medium text-slate-900 placeholder-slate-500 focus:outline-none focus:border-[#5B21B6] focus:ring-4 focus:ring-[#5B21B6]/10 focus:bg-white transition"
+              className="w-full bg-hospital-50/90 border border-hospital-300 rounded-xl pl-10 pr-9 py-2.5 text-xs font-medium text-hospital-950 placeholder-hospital-500 focus:outline-none focus:border-[#39786B] focus:ring-4 focus:ring-[#39786B]/10 focus:bg-white transition"
             />
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-hospital-700 hover:text-hospital-900 hover:bg-hospital-300/70 transition"
                 title="Clear search"
               >
                 <X className="w-3.5 h-3.5" />
@@ -255,11 +255,11 @@ export const PatientManagement: React.FC = () => {
           </div>
 
           {currentRole === 'doctor' && (
-            <div className="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold border border-slate-200/80">
+            <div className="flex items-center bg-hospital-50 p-1 rounded-xl text-xs font-bold border border-hospital-300/80">
               <button
                 onClick={() => setCareFilter('ALL')}
                 className={`px-3 py-1.5 rounded-lg transition ${
-                  careFilter === 'ALL' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                  careFilter === 'ALL' ? 'bg-white text-hospital-950 shadow-sm' : 'text-hospital-800 hover:text-hospital-950'
                 }`}
               >
                 All ({totalPatients})
@@ -267,7 +267,7 @@ export const PatientManagement: React.FC = () => {
               <button
                 onClick={() => setCareFilter('MY')}
                 className={`px-3 py-1.5 rounded-lg transition ${
-                  careFilter === 'MY' ? 'bg-white text-[#4C1D95] shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                  careFilter === 'MY' ? 'bg-white text-[#39786B] shadow-sm' : 'text-hospital-800 hover:text-hospital-950'
                 }`}
               >
                 My Care ({myPatientsCount})
@@ -285,7 +285,7 @@ export const PatientManagement: React.FC = () => {
               className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${
                 selectedStatus === status
                   ? 'btn-zoho-primary text-white shadow-sm'
-                  : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200'
+                  : 'bg-hospital-50 hover:bg-hospital-50 text-hospital-900 border border-hospital-300'
               }`}
             >
               {status === 'ALL' ? 'All Status' : status}
@@ -297,11 +297,11 @@ export const PatientManagement: React.FC = () => {
       {/* ALL IN ONE UNIFIED PATIENTS DISPLAY */}
       {filteredPatients.length === 0 ? (
         <div className="lavish-card p-12 rounded-2xl text-center space-y-3">
-          <div className="w-14 h-14 rounded-2xl bg-lavender-50 text-[#5B21B6] border border-lavender-200 flex items-center justify-center mx-auto">
+          <div className="w-14 h-14 rounded-2xl bg-hospital-50 text-[#39786B] border border-hospital-200 flex items-center justify-center mx-auto">
             <Users className="w-7 h-7" />
           </div>
-          <h3 className="font-extrabold font-display text-slate-900 text-lg">No Patients Matching Query</h3>
-          <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
+          <h3 className="font-extrabold font-display text-hospital-950 text-lg">No Patients Matching Query</h3>
+          <p className="text-xs text-hospital-800 max-w-sm mx-auto leading-relaxed">
             {search || selectedStatus !== 'ALL'
               ? 'Try resetting the search filters or status selection above.'
               : 'Click "+ Register New Patient" to admit or register a patient.'}
@@ -310,7 +310,7 @@ export const PatientManagement: React.FC = () => {
             {(search || selectedStatus !== 'ALL' || careFilter !== 'ALL') && (
               <button
                 onClick={() => { setSearch(''); setSelectedStatus('ALL'); setCareFilter('ALL'); }}
-                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition"
+                className="px-4 py-2 rounded-xl bg-hospital-50 hover:bg-hospital-300 text-hospital-900 font-bold text-xs transition"
               >
                 Reset Filters
               </button>
@@ -321,11 +321,11 @@ export const PatientManagement: React.FC = () => {
         <div className="space-y-3.5">
           {visiblePatients.map((pt) => {
             const statusColor = 
-              pt.status === 'In Emergency' ? 'bg-rose-50 text-rose-700 border-rose-200' :
-              pt.status === 'Admitted' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
-              pt.status === 'Consulting' ? 'bg-amber-50 text-amber-800 border-amber-200' :
-              pt.status === 'Discharged' ? 'bg-slate-100 text-slate-700 border-slate-300' :
-              'bg-emerald-50 text-emerald-700 border-emerald-200';
+              pt.status === 'In Emergency' ? 'bg-hospital-50 text-hospital-700 border-hospital-200' :
+              pt.status === 'Admitted' ? 'bg-hospital-50 text-hospital-700 border-hospital-200' :
+              pt.status === 'Consulting' ? 'bg-hospital-50 text-hospital-800 border-hospital-200' :
+              pt.status === 'Discharged' ? 'bg-hospital-50 text-hospital-900 border-hospital-300' :
+              'bg-hospital-50 text-hospital-700 border-hospital-200';
 
             const initials = pt.name
               .split(/\s+/)
@@ -343,28 +343,28 @@ export const PatientManagement: React.FC = () => {
               >
                 {/* 1. Patient Demographics & Identification */}
                 <div className="flex items-start sm:items-center gap-3.5 min-w-[270px]">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white flex items-center justify-center font-display font-extrabold text-sm shadow-sm flex-shrink-0">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1D4840] to-[#39786B] text-white flex items-center justify-center font-display font-extrabold text-sm shadow-sm flex-shrink-0">
                     {initials}
                   </div>
 
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="font-extrabold font-display text-base text-slate-900 capitalize">{pt.name}</h4>
+                      <h4 className="font-extrabold font-display text-base text-hospital-950 capitalize">{pt.name}</h4>
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${statusColor}`}>
                         {pt.status}
                       </span>
-                      <span className="text-[10px] font-mono font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/80">
+                      <span className="text-[10px] font-mono font-semibold text-hospital-800 bg-hospital-50 px-2 py-0.5 rounded-md border border-hospital-300/80">
                         {pt.id}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-slate-600 mt-1 flex-wrap font-medium">
+                    <div className="flex items-center gap-2 text-xs text-hospital-800 mt-1 flex-wrap font-medium">
                       <span>{pt.gender}, {pt.age} yrs</span>
-                      <span className="text-slate-300">•</span>
-                      <span>Blood: <strong className="text-rose-700 font-bold">{pt.bloodGroup}</strong></span>
-                      <span className="text-slate-300">•</span>
-                      <span className="flex items-center gap-1 font-mono text-slate-700">
-                        <Phone className="w-3 h-3 text-[#5B21B6]" />
+                      <span className="text-hospital-200">•</span>
+                      <span>Blood: <strong className="text-hospital-700 font-bold">{pt.bloodGroup}</strong></span>
+                      <span className="text-hospital-200">•</span>
+                      <span className="flex items-center gap-1 font-mono text-hospital-900">
+                        <Phone className="w-3 h-3 text-[#39786B]" />
                         {pt.phone}
                       </span>
                     </div>
@@ -372,64 +372,64 @@ export const PatientManagement: React.FC = () => {
                 </div>
 
                 {/* 2. All-in-One Recorded Bedside Vitals Strip */}
-                <div className="bg-gradient-to-br from-slate-50 to-sky-50/40 p-2.5 rounded-2xl border border-slate-200/80 grid grid-cols-2 sm:grid-cols-4 gap-2 flex-1 max-w-xl">
-                  <div className="px-2.5 py-2 rounded-xl bg-white border border-slate-200/70 flex items-center gap-2 shadow-sm">
-                    <Thermometer className="w-3.5 h-3.5 text-rose-500 flex-shrink-0" />
+                <div className="bg-gradient-to-br from-hospital-50 to-hospital-50/40 p-2.5 rounded-2xl border border-hospital-300/80 grid grid-cols-2 sm:grid-cols-4 gap-2 flex-1 max-w-xl">
+                  <div className="px-2.5 py-2 rounded-xl bg-white border border-hospital-300/70 flex items-center gap-2 shadow-sm">
+                    <Thermometer className="w-3.5 h-3.5 text-hospital-500 flex-shrink-0" />
                     <div>
-                      <span className="text-[9px] uppercase tracking-wider text-slate-500 block font-bold">Temp</span>
-                      <span className="text-xs font-extrabold text-slate-900 font-mono">{pt.vitals.temperature}</span>
+                      <span className="text-[9px] uppercase tracking-wider text-hospital-700 block font-bold">Temp</span>
+                      <span className="text-xs font-extrabold text-hospital-950 font-mono">{pt.vitals.temperature}</span>
                     </div>
                   </div>
 
-                  <div className="px-2.5 py-2 rounded-xl bg-white border border-slate-200/70 flex items-center gap-2 shadow-sm">
-                    <Heart className="w-3.5 h-3.5 text-rose-500 flex-shrink-0" />
+                  <div className="px-2.5 py-2 rounded-xl bg-white border border-hospital-300/70 flex items-center gap-2 shadow-sm">
+                    <Heart className="w-3.5 h-3.5 text-hospital-500 flex-shrink-0" />
                     <div>
-                      <span className="text-[9px] uppercase tracking-wider text-slate-500 block font-bold">BP</span>
-                      <span className="text-xs font-extrabold text-slate-900 font-mono">{pt.vitals.bloodPressure}</span>
+                      <span className="text-[9px] uppercase tracking-wider text-hospital-700 block font-bold">BP</span>
+                      <span className="text-xs font-extrabold text-hospital-950 font-mono">{pt.vitals.bloodPressure}</span>
                     </div>
                   </div>
 
-                  <div className="px-2.5 py-2 rounded-xl bg-white border border-slate-200/70 flex items-center gap-2 shadow-sm">
-                    <Activity className="w-3.5 h-3.5 text-[#5B21B6] flex-shrink-0" />
+                  <div className="px-2.5 py-2 rounded-xl bg-white border border-hospital-300/70 flex items-center gap-2 shadow-sm">
+                    <Activity className="w-3.5 h-3.5 text-[#39786B] flex-shrink-0" />
                     <div>
-                      <span className="text-[9px] uppercase tracking-wider text-slate-500 block font-bold">Pulse</span>
-                      <span className="text-xs font-extrabold text-slate-900 font-mono">{pt.vitals.pulseRate} bpm</span>
+                      <span className="text-[9px] uppercase tracking-wider text-hospital-700 block font-bold">Pulse</span>
+                      <span className="text-xs font-extrabold text-hospital-950 font-mono">{pt.vitals.pulseRate} bpm</span>
                     </div>
                   </div>
 
                   <div className={`px-2.5 py-2 rounded-xl border flex items-center gap-2 shadow-sm ${
-                    lowOxygen ? 'bg-rose-50 border-rose-300' : 'bg-white border-slate-200/70'
+                    lowOxygen ? 'bg-hospital-50 border-hospital-300' : 'bg-white border-hospital-300/70'
                   }`}>
-                    <Wind className={`w-3.5 h-3.5 flex-shrink-0 ${lowOxygen ? 'text-rose-600' : 'text-emerald-600'}`} />
+                    <Wind className={`w-3.5 h-3.5 flex-shrink-0 ${lowOxygen ? 'text-hospital-600' : 'text-hospital-600'}`} />
                     <div>
-                      <span className="text-[9px] uppercase tracking-wider text-slate-500 block font-bold">SpO2</span>
-                      <span className={`text-xs font-extrabold font-mono ${lowOxygen ? 'text-rose-700' : 'text-slate-900'}`}>{pt.vitals.spO2}%</span>
+                      <span className="text-[9px] uppercase tracking-wider text-hospital-700 block font-bold">SpO2</span>
+                      <span className={`text-xs font-extrabold font-mono ${lowOxygen ? 'text-hospital-700' : 'text-hospital-950'}`}>{pt.vitals.spO2}%</span>
                     </div>
                   </div>
                 </div>
 
                 {/* 3. Clinical Assignment: Doctor & Ward Bed */}
                 <div className="flex flex-col sm:flex-row xl:flex-col justify-center text-xs space-y-1 min-w-[190px]">
-                  <div className="flex items-center gap-1.5 text-slate-700">
-                    <Stethoscope className="w-3.5 h-3.5 text-[#5B21B6] flex-shrink-0" />
-                    <span className="text-slate-600">Doctor:</span>
-                    <strong className="text-slate-900 truncate">{pt.assignedDoctorName}</strong>
+                  <div className="flex items-center gap-1.5 text-hospital-900">
+                    <Stethoscope className="w-3.5 h-3.5 text-[#39786B] flex-shrink-0" />
+                    <span className="text-hospital-800">Doctor:</span>
+                    <strong className="text-hospital-950 truncate">{pt.assignedDoctorName}</strong>
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-slate-700">
-                    <BedDouble className="w-3.5 h-3.5 text-indigo-600 flex-shrink-0" />
-                    <span className="text-slate-600">Bed:</span>
-                    <span className="font-bold text-indigo-700">{pt.assignedBed || 'None (Outpatient)'}</span>
+                  <div className="flex items-center gap-1.5 text-hospital-900">
+                    <BedDouble className="w-3.5 h-3.5 text-hospital-600 flex-shrink-0" />
+                    <span className="text-hospital-800">Bed:</span>
+                    <span className="font-bold text-hospital-700">{pt.assignedBed || 'None (Outpatient)'}</span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-[11px] text-slate-600 font-mono">
-                    <Clock className="w-3 h-3 text-slate-500 flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 text-[11px] text-hospital-800 font-mono">
+                    <Clock className="w-3 h-3 text-hospital-700 flex-shrink-0" />
                     <span>{pt.registrationDate}</span>
                   </div>
                 </div>
 
                 {/* 4. Actions: View Dossier & Discharge / Re-Admit */}
-                <div className="flex items-center gap-2 flex-shrink-0 pt-2 xl:pt-0 border-t xl:border-t-0 border-slate-100">
+                <div className="flex items-center gap-2 flex-shrink-0 pt-2 xl:pt-0 border-t xl:border-t-0 border-hospital-50">
                   <button
                     onClick={() => setSelectedDossierPatient(pt)}
                     className="btn-zoho-primary px-3.5 py-2 rounded-xl text-white text-xs font-bold flex items-center gap-1.5 shadow-sm"
@@ -446,10 +446,10 @@ export const PatientManagement: React.FC = () => {
                         setDischargeModalPatient(pt);
                         setDischargeSummaryText(`Patient ${pt.name} clinically recovered and stable. Discharged on ${new Date().toISOString().slice(0, 10)}. Inpatient records archived.`);
                       }}
-                      className="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1 transition active:scale-95 border border-emerald-200"
+                      className="px-3 py-2 rounded-xl bg-hospital-50 hover:bg-hospital-100 text-hospital-800 text-xs font-bold flex items-center gap-1 transition active:scale-95 border border-hospital-200"
                       title="Discharge patient: bed released, full medical records permanently preserved"
                     >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-hospital-600" />
                       <span>Discharge</span>
                     </button>
                   )}
@@ -460,7 +460,7 @@ export const PatientManagement: React.FC = () => {
                       onClick={() => {
                         updatePatient(pt.id, { status: 'Admitted' });
                       }}
-                      className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition border border-slate-200"
+                      className="px-3 py-2 rounded-xl bg-hospital-50 hover:bg-hospital-300 text-hospital-900 text-xs font-bold transition border border-hospital-300"
                       title="Re-Admit patient for clinical follow-up"
                     >
                       <span>Re-Admit</span>
@@ -473,7 +473,7 @@ export const PatientManagement: React.FC = () => {
                         removePatient(pt.id);
                       }
                     }}
-                    className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition border border-transparent hover:border-rose-200"
+                    className="p-2 rounded-xl text-hospital-700 hover:text-hospital-600 hover:bg-hospital-50 transition border border-transparent hover:border-hospital-200"
                     title="Purge Test Record"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -487,7 +487,7 @@ export const PatientManagement: React.FC = () => {
             <div className="flex justify-center pt-2">
               <button
                 onClick={() => setVisibleLimit(v => v + 25)}
-                className="px-6 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 shadow-sm transition active:scale-95"
+                className="px-6 py-2.5 rounded-xl bg-white hover:bg-hospital-50 border border-hospital-300 text-xs font-bold text-hospital-900 shadow-sm transition active:scale-95"
               >
                 Show More Patients ({filteredPatients.length - visiblePatients.length} remaining)
               </button>
@@ -498,30 +498,30 @@ export const PatientManagement: React.FC = () => {
 
       {/* Patient Detailed Clinical Dossier Modal */}
       {selectedDossierPatient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 backdrop-blur-md p-4">
-          <div className="w-full max-w-2xl rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden glide-enter max-h-[90vh] flex flex-col">
-            <div className="h-1.5 bg-gradient-to-r from-[#2D1B69] via-[#6D28D9] to-[#0D9488]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-hospital-950/55 backdrop-blur-md p-4">
+          <div className="w-full max-w-2xl rounded-2xl bg-white border border-hospital-300 shadow-2xl overflow-hidden glide-enter max-h-[90vh] flex flex-col">
+            <div className="h-1.5 bg-gradient-to-r from-[#1D4840] via-[#39786B] to-[#39786B]" />
             <div className="p-6 space-y-4 overflow-y-auto">
-              <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3.5 border-b border-hospital-50">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white flex items-center justify-center font-display font-extrabold text-sm shadow-sm">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#1D4840] to-[#39786B] text-white flex items-center justify-center font-display font-extrabold text-sm shadow-sm">
                     {selectedDossierPatient.name.split(/\s+/).filter(Boolean).slice(0, 2).map(p => p[0]?.toUpperCase() || '').join('') || 'PT'}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-extrabold font-display text-slate-900 text-lg">{selectedDossierPatient.name}</h3>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-lavender-50 text-[#4C1D95] border border-lavender-200">
+                      <h3 className="font-extrabold font-display text-hospital-950 text-lg">{selectedDossierPatient.name}</h3>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-hospital-50 text-[#39786B] border border-hospital-200">
                         {selectedDossierPatient.status}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-600 mt-0.5 font-medium">
-                      ID: <span className="font-mono font-bold text-slate-800">{selectedDossierPatient.id}</span> • {selectedDossierPatient.gender}, {selectedDossierPatient.age} yrs • Blood: <strong className="text-rose-700">{selectedDossierPatient.bloodGroup}</strong>
+                    <p className="text-xs text-hospital-800 mt-0.5 font-medium">
+                      ID: <span className="font-mono font-bold text-hospital-900">{selectedDossierPatient.id}</span> • {selectedDossierPatient.gender}, {selectedDossierPatient.age} yrs • Blood: <strong className="text-hospital-700">{selectedDossierPatient.bloodGroup}</strong>
                     </p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setSelectedDossierPatient(null)} 
-                  className="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl hover:bg-slate-100 transition"
+                  className="text-hospital-700 hover:text-hospital-900 p-1.5 rounded-xl hover:bg-hospital-50 transition"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -529,60 +529,60 @@ export const PatientManagement: React.FC = () => {
 
               {/* Bedside Vitals */}
               <div>
-                <span className="text-xs font-extrabold font-display text-slate-800 uppercase tracking-wider block mb-2.5">
+                <span className="text-xs font-extrabold font-display text-hospital-900 uppercase tracking-wider block mb-2.5">
                   Recorded Bedside Vitals
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                    <span className="text-[10px] text-slate-600 flex items-center gap-1 font-bold uppercase">
-                      <Thermometer className="w-3.5 h-3.5 text-rose-500" /> Temperature
+                  <div className="p-3.5 rounded-xl bg-hospital-50 border border-hospital-300">
+                    <span className="text-[10px] text-hospital-800 flex items-center gap-1 font-bold uppercase">
+                      <Thermometer className="w-3.5 h-3.5 text-hospital-500" /> Temperature
                     </span>
-                    <p className="text-base font-extrabold text-slate-900 mt-1 font-mono">{selectedDossierPatient.vitals.temperature}</p>
+                    <p className="text-base font-extrabold text-hospital-950 mt-1 font-mono">{selectedDossierPatient.vitals.temperature}</p>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                    <span className="text-[10px] text-slate-600 flex items-center gap-1 font-bold uppercase">
-                      <Heart className="w-3.5 h-3.5 text-rose-500" /> Blood Pressure
+                  <div className="p-3.5 rounded-xl bg-hospital-50 border border-hospital-300">
+                    <span className="text-[10px] text-hospital-800 flex items-center gap-1 font-bold uppercase">
+                      <Heart className="w-3.5 h-3.5 text-hospital-500" /> Blood Pressure
                     </span>
-                    <p className="text-base font-extrabold text-slate-900 mt-1 font-mono">{selectedDossierPatient.vitals.bloodPressure}</p>
+                    <p className="text-base font-extrabold text-hospital-950 mt-1 font-mono">{selectedDossierPatient.vitals.bloodPressure}</p>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                    <span className="text-[10px] text-slate-600 flex items-center gap-1 font-bold uppercase">
-                      <Activity className="w-3.5 h-3.5 text-[#5B21B6]" /> Pulse Rate
+                  <div className="p-3.5 rounded-xl bg-hospital-50 border border-hospital-300">
+                    <span className="text-[10px] text-hospital-800 flex items-center gap-1 font-bold uppercase">
+                      <Activity className="w-3.5 h-3.5 text-[#39786B]" /> Pulse Rate
                     </span>
-                    <p className="text-base font-extrabold text-slate-900 mt-1 font-mono">{selectedDossierPatient.vitals.pulseRate} bpm</p>
+                    <p className="text-base font-extrabold text-hospital-950 mt-1 font-mono">{selectedDossierPatient.vitals.pulseRate} bpm</p>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                    <span className="text-[10px] text-slate-600 flex items-center gap-1 font-bold uppercase">
-                      <Wind className="w-3.5 h-3.5 text-emerald-600" /> SpO2 Oxygen
+                  <div className="p-3.5 rounded-xl bg-hospital-50 border border-hospital-300">
+                    <span className="text-[10px] text-hospital-800 flex items-center gap-1 font-bold uppercase">
+                      <Wind className="w-3.5 h-3.5 text-hospital-600" /> SpO2 Oxygen
                     </span>
-                    <p className="text-base font-extrabold text-slate-900 mt-1 font-mono">{selectedDossierPatient.vitals.spO2}%</p>
+                    <p className="text-base font-extrabold text-hospital-950 mt-1 font-mono">{selectedDossierPatient.vitals.spO2}%</p>
                   </div>
                 </div>
               </div>
 
               {/* Clinical Assignment & Contacts */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-                  <span className="text-[10px] text-slate-600 uppercase font-extrabold tracking-wider">Clinical Assignment</span>
-                  <p className="text-slate-800">Doctor: <strong className="text-slate-900">{selectedDossierPatient.assignedDoctorName}</strong></p>
-                  <p className="text-slate-800">Assigned Bed: <strong className="text-indigo-700">{selectedDossierPatient.assignedBed || 'None (Outpatient)'}</strong></p>
-                  {selectedDossierPatient.ward && <p className="text-slate-800">Ward: <strong>{selectedDossierPatient.ward}</strong></p>}
+                <div className="p-3.5 rounded-xl bg-hospital-50 border border-hospital-300 space-y-1.5">
+                  <span className="text-[10px] text-hospital-800 uppercase font-extrabold tracking-wider">Clinical Assignment</span>
+                  <p className="text-hospital-900">Doctor: <strong className="text-hospital-950">{selectedDossierPatient.assignedDoctorName}</strong></p>
+                  <p className="text-hospital-900">Assigned Bed: <strong className="text-hospital-700">{selectedDossierPatient.assignedBed || 'None (Outpatient)'}</strong></p>
+                  {selectedDossierPatient.ward && <p className="text-hospital-900">Ward: <strong>{selectedDossierPatient.ward}</strong></p>}
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-                  <span className="text-[10px] text-slate-600 uppercase font-extrabold tracking-wider">Contact & Registration</span>
-                  <p className="text-slate-800">Phone: <strong className="font-mono text-slate-900">{selectedDossierPatient.phone}</strong></p>
-                  <p className="text-slate-800">Email: <strong>{selectedDossierPatient.email}</strong></p>
-                  <p className="text-slate-800">Registered: <strong className="font-mono">{selectedDossierPatient.registrationDate}</strong></p>
+                <div className="p-3.5 rounded-xl bg-hospital-50 border border-hospital-300 space-y-1.5">
+                  <span className="text-[10px] text-hospital-800 uppercase font-extrabold tracking-wider">Contact & Registration</span>
+                  <p className="text-hospital-900">Phone: <strong className="font-mono text-hospital-950">{selectedDossierPatient.phone}</strong></p>
+                  <p className="text-hospital-900">Email: <strong>{selectedDossierPatient.email}</strong></p>
+                  <p className="text-hospital-900">Registered: <strong className="font-mono">{selectedDossierPatient.registrationDate}</strong></p>
                 </div>
               </div>
 
               {/* Quick Care Status Transition */}
-              <div className="p-3.5 rounded-xl bg-indigo-50/50 border border-indigo-200/80 flex flex-wrap items-center justify-between gap-2 text-xs">
-                <span className="font-bold text-indigo-950 uppercase tracking-wider text-[10px]">Quick Care Stage Switch</span>
+              <div className="p-3.5 rounded-xl bg-hospital-50/50 border border-hospital-200/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span className="font-bold text-hospital-950 uppercase tracking-wider text-[10px]">Quick Care Stage Switch</span>
                 <div className="flex flex-wrap items-center gap-1.5">
                   {(['Outpatient', 'Consulting', 'Admitted', 'In Emergency'] as const).map(st => (
                     <button
@@ -595,7 +595,7 @@ export const PatientManagement: React.FC = () => {
                       className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition border ${
                         selectedDossierPatient.status === st
                           ? 'btn-zoho-primary text-white border-transparent shadow-xs'
-                          : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-300'
+                          : 'bg-white text-hospital-900 border-hospital-300 hover:border-hospital-300'
                       }`}
                     >
                       {st}
@@ -606,47 +606,47 @@ export const PatientManagement: React.FC = () => {
 
               {/* ABHA & Health ID */}
               {selectedDossierPatient.abhaAddress && (
-                <div className="p-3.5 rounded-xl bg-lavender-50/85 border border-lavender-200 text-xs">
-                  <span className="text-[10px] text-[#2D1B69] uppercase font-extrabold tracking-wider">Digital Health ID</span>
-                  <p className="text-[#1C103B] font-mono font-semibold mt-0.5">{selectedDossierPatient.abhaAddress}</p>
+                <div className="p-3.5 rounded-xl bg-hospital-50/85 border border-hospital-200 text-xs">
+                  <span className="text-[10px] text-[#1D4840] uppercase font-extrabold tracking-wider">Digital Health ID</span>
+                  <p className="text-[#10221F] font-mono font-semibold mt-0.5">{selectedDossierPatient.abhaAddress}</p>
                 </div>
               )}
 
               {/* Allergies & Chronic Conditions */}
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2">
+              <div className="p-3.5 rounded-xl bg-hospital-50 border border-hospital-300 text-xs space-y-2">
                 <div>
-                  <span className="font-bold text-rose-700 block mb-0.5">Known Allergies:</span>
-                  <p className="text-slate-800 font-medium">{selectedDossierPatient.allergies.join(', ') || 'None Reported'}</p>
+                  <span className="font-bold text-hospital-700 block mb-0.5">Known Allergies:</span>
+                  <p className="text-hospital-900 font-medium">{selectedDossierPatient.allergies.join(', ') || 'None Reported'}</p>
                 </div>
                 <div>
-                  <span className="font-bold text-slate-900 block mb-0.5">Chronic Medical Conditions:</span>
-                  <p className="text-slate-800 font-medium">{selectedDossierPatient.chronicConditions.join(', ') || 'None'}</p>
+                  <span className="font-bold text-hospital-950 block mb-0.5">Chronic Medical Conditions:</span>
+                  <p className="text-hospital-900 font-medium">{selectedDossierPatient.chronicConditions.join(', ') || 'None'}</p>
                 </div>
               </div>
 
               {/* If Discharged -> Display Discharge Summary Protocol */}
               {selectedDossierPatient.status === 'Discharged' && (
-                <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs space-y-1.5">
+                <div className="p-4 rounded-xl bg-hospital-50/70 border border-hospital-200 text-xs space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] uppercase font-extrabold text-emerald-900 tracking-wider flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="text-[10px] uppercase font-extrabold text-hospital-900 tracking-wider flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-hospital-600" />
                       <span>Discharge Protocol & Medical Summary</span>
                     </span>
-                    <span className="text-[11px] font-mono font-bold text-emerald-800">
+                    <span className="text-[11px] font-mono font-bold text-hospital-800">
                       Discharged: {selectedDossierPatient.dischargeDate || 'Recorded'}
                     </span>
                   </div>
-                  <p className="text-slate-800 leading-relaxed font-medium mt-1">
+                  <p className="text-hospital-900 leading-relaxed font-medium mt-1">
                     {selectedDossierPatient.dischargeSummary || 'Patient clinically stable. Discharged with home medication advice and 7-day OPD follow-up.'}
                   </p>
                 </div>
               )}
 
-              <div className="pt-2 flex justify-end border-t border-slate-100">
+              <div className="pt-2 flex justify-end border-t border-hospital-50">
                 <button
                   type="button"
                   onClick={() => setSelectedDossierPatient(null)}
-                  className="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition"
+                  className="px-5 py-2 rounded-xl bg-hospital-50 hover:bg-hospital-300 text-hospital-900 text-xs font-bold transition"
                 >
                   Close Dossier
                 </button>
@@ -658,49 +658,49 @@ export const PatientManagement: React.FC = () => {
 
       {/* Discharge Patient Modal */}
       {dischargeModalPatient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 backdrop-blur-md p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden glide-enter">
-            <div className="h-1.5 bg-gradient-to-r from-emerald-500 to-teal-500" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-hospital-950/55 backdrop-blur-md p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white border border-hospital-300 shadow-2xl overflow-hidden glide-enter">
+            <div className="h-1.5 bg-gradient-to-r from-hospital-500 to-hospital-500" />
             <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3 border-b border-hospital-50">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-hospital-50 text-hospital-600 border border-hospital-200 flex items-center justify-center">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-extrabold font-display text-slate-900 text-sm">Discharge Inpatient</h3>
-                    <p className="text-[11px] text-slate-600 font-medium">{dischargeModalPatient.name} ({dischargeModalPatient.id})</p>
+                    <h3 className="font-extrabold font-display text-hospital-950 text-sm">Discharge Inpatient</h3>
+                    <p className="text-[11px] text-hospital-800 font-medium">{dischargeModalPatient.name} ({dischargeModalPatient.id})</p>
                   </div>
                 </div>
-                <button onClick={() => setDischargeModalPatient(null)} className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100">
+                <button onClick={() => setDischargeModalPatient(null)} className="text-hospital-700 hover:text-hospital-900 p-1 rounded-lg hover:bg-hospital-50">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200 text-xs text-slate-700 space-y-1">
+              <div className="p-3.5 rounded-xl bg-hospital-50/60 border border-hospital-200 text-xs text-hospital-900 space-y-1">
                 <p>✓ Patient's bed (<strong>{dischargeModalPatient.assignedBed || 'Ward'}</strong>) will be released and marked for sanitization.</p>
                 <p>✓ All medical records, bedside vitals, diagnoses, and invoices will be <strong>permanently stored &amp; archived</strong>.</p>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1.5">Clinical Discharge Summary &amp; Advice</label>
+                <label className="text-xs font-bold text-hospital-900 block mb-1.5">Clinical Discharge Summary &amp; Advice</label>
                 <textarea
                   rows={3}
                   value={dischargeSummaryText}
                   onChange={(e) => setDischargeSummaryText(e.target.value)}
-                  className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 focus:bg-white transition"
+                  className="w-full p-3 rounded-xl bg-hospital-50 border border-hospital-300 text-xs text-hospital-950 focus:outline-none focus:border-hospital-500 focus:ring-4 focus:ring-hospital-500/10 focus:bg-white transition"
                   placeholder="Enter clinical notes, home prescription advice, follow-up schedule..."
                 />
               </div>
 
-              <div className="flex justify-end pt-2 border-t border-slate-100">
+              <div className="flex justify-end pt-2 border-t border-hospital-50">
                 <button
                   type="button"
                   onClick={() => {
                     dischargePatient(dischargeModalPatient.id, dischargeSummaryText);
                     setDischargeModalPatient(null);
                   }}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:brightness-105 text-white font-bold text-xs shadow-sm transition"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-hospital-600 to-hospital-600 hover:brightness-105 text-white font-bold text-xs shadow-sm transition"
                 >
                   Confirm Discharge &amp; Retain Records
                 </button>
@@ -712,57 +712,57 @@ export const PatientManagement: React.FC = () => {
 
       {/* Register New Patient Modal */}
       {isRegisterModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 backdrop-blur-md p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden glide-enter max-h-[90vh] flex flex-col">
-            <div className="h-1.5 bg-gradient-to-r from-[#2D1B69] via-[#5B21B6] to-[#0D9488]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-hospital-950/55 backdrop-blur-md p-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white border border-hospital-300 shadow-2xl overflow-hidden glide-enter max-h-[90vh] flex flex-col">
+            <div className="h-1.5 bg-gradient-to-r from-[#1D4840] via-[#39786B] to-[#39786B]" />
             <div className="p-6 space-y-4 overflow-y-auto">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3 border-b border-hospital-50">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2.5 rounded-xl bg-lavender-50 text-[#5B21B6] border border-lavender-200">
+                  <div className="p-2.5 rounded-xl bg-hospital-50 text-[#39786B] border border-hospital-200">
                     <UserPlus className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-extrabold font-display text-slate-900 text-base">Register New Patient</h3>
-                    <p className="text-xs text-slate-600">Enter patient demographic and admission details</p>
+                    <h3 className="font-extrabold font-display text-hospital-950 text-base">Register New Patient</h3>
+                    <p className="text-xs text-hospital-800">Enter patient demographic and admission details</p>
                   </div>
                 </div>
-                <button onClick={() => setIsRegisterModalOpen(false)} className="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100">
+                <button onClick={() => setIsRegisterModalOpen(false)} className="text-hospital-700 hover:text-hospital-900 p-1.5 rounded-lg hover:bg-hospital-50">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <form onSubmit={handleRegisterSubmit} className="space-y-3">
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Patient Full Name *</label>
+                  <label className="text-xs font-bold text-hospital-900 block mb-1">Patient Full Name *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Suresh Nair"
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:ring-4 focus:ring-[#5B21B6]/10 focus:bg-white transition"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-hospital-50 border border-hospital-300 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:ring-4 focus:ring-[#39786B]/10 focus:bg-white transition"
                   />
                 </div>
 
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">Age *</label>
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">Age *</label>
                     <input
                       type="number"
                       required
                       placeholder="35"
                       value={formData.age}
                       onChange={e => setFormData({ ...formData, age: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-hospital-50 border border-hospital-300 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">Gender</label>
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">Gender</label>
                     <select
                       value={formData.gender}
                       onChange={e => setFormData({ ...formData, gender: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-hospital-50 border border-hospital-300 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     >
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
@@ -771,11 +771,11 @@ export const PatientManagement: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">Blood Group</label>
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">Blood Group</label>
                     <select
                       value={formData.bloodGroup}
                       onChange={e => setFormData({ ...formData, bloodGroup: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-hospital-50 border border-hospital-300 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     >
                       {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => (
                         <option key={bg} value={bg}>{bg}</option>
@@ -786,22 +786,22 @@ export const PatientManagement: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">Phone Number</label>
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">Phone Number</label>
                     <input
                       type="text"
                       placeholder="+91 98765 43210"
                       value={formData.phone}
                       onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-hospital-50 border border-hospital-300 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">Admission Status</label>
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">Admission Status</label>
                     <select
                       value={formData.status}
                       onChange={e => setFormData({ ...formData, status: e.target.value as any })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-hospital-50 border border-hospital-300 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     >
                       <option value="Outpatient">Outpatient (OPD)</option>
                       <option value="Admitted">Admitted (IPD)</option>
@@ -813,11 +813,11 @@ export const PatientManagement: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">Assign Doctor</label>
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">Assign Doctor</label>
                     <select
                       value={formData.assignedDoctorName}
                       onChange={e => setFormData({ ...formData, assignedDoctorName: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-hospital-50 border border-hospital-300 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     >
                       {doctorList.length > 0 ? (
                         doctorList.map(d => (
@@ -830,11 +830,11 @@ export const PatientManagement: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">Assign Bed (Optional)</label>
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">Assign Bed (Optional)</label>
                     <select
                       value={formData.assignedBed}
                       onChange={e => setFormData({ ...formData, assignedBed: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-hospital-50 border border-hospital-300 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     >
                       <option value="">None / Outpatient</option>
                       {availableBeds.map(b => (
@@ -846,44 +846,44 @@ export const PatientManagement: React.FC = () => {
 
                 <div className="grid grid-cols-4 gap-2 pt-1">
                   <div>
-                    <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">Temp</label>
+                    <label className="text-[10px] font-bold text-hospital-800 block mb-1 uppercase">Temp</label>
                     <input
                       type="text"
                       value={formData.temperature}
                       onChange={e => setFormData({ ...formData, temperature: e.target.value })}
-                      className="w-full px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-mono"
+                      className="w-full px-2.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300 text-xs text-hospital-950 font-mono"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">BP</label>
+                    <label className="text-[10px] font-bold text-hospital-800 block mb-1 uppercase">BP</label>
                     <input
                       type="text"
                       value={formData.bloodPressure}
                       onChange={e => setFormData({ ...formData, bloodPressure: e.target.value })}
-                      className="w-full px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-mono"
+                      className="w-full px-2.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300 text-xs text-hospital-950 font-mono"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">Pulse</label>
+                    <label className="text-[10px] font-bold text-hospital-800 block mb-1 uppercase">Pulse</label>
                     <input
                       type="text"
                       value={formData.pulseRate}
                       onChange={e => setFormData({ ...formData, pulseRate: e.target.value })}
-                      className="w-full px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-mono"
+                      className="w-full px-2.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300 text-xs text-hospital-950 font-mono"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold text-slate-600 block mb-1 uppercase">SpO2 %</label>
+                    <label className="text-[10px] font-bold text-hospital-800 block mb-1 uppercase">SpO2 %</label>
                     <input
                       type="text"
                       value={formData.spO2}
                       onChange={e => setFormData({ ...formData, spO2: e.target.value })}
-                      className="w-full px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-mono"
+                      className="w-full px-2.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300 text-xs text-hospital-950 font-mono"
                     />
                   </div>
                 </div>
 
-                <div className="pt-3 flex justify-end border-t border-slate-100">
+                <div className="pt-3 flex justify-end border-t border-hospital-50">
                   <button
                     type="submit"
                     className="btn-zoho-primary px-5 py-2.5 rounded-xl text-white font-bold text-xs shadow-sm transition"

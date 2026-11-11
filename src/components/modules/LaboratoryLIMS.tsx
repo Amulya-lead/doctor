@@ -32,18 +32,18 @@ const getTubeColor = (sampleType: string) => {
     return { name: 'Lavender (EDTA)', bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-300', dot: 'bg-purple-600' };
   }
   if (lower.includes('serum') || lower.includes('gold') || lower.includes('red') || lower.includes('sst')) {
-    return { name: 'Gold / Red (SST)', bg: 'bg-amber-100', text: 'text-amber-900', border: 'border-amber-300', dot: 'bg-amber-600' };
+    return { name: 'Gold / Red (SST)', bg: 'bg-hospital-100', text: 'text-hospital-900', border: 'border-hospital-300', dot: 'bg-hospital-600' };
   }
   if (lower.includes('grey') || lower.includes('fluoride') || lower.includes('glucose')) {
-    return { name: 'Grey (Fluoride)', bg: 'bg-slate-200', text: 'text-slate-800', border: 'border-slate-400', dot: 'bg-slate-600' };
+    return { name: 'Grey (Fluoride)', bg: 'bg-hospital-300', text: 'text-hospital-900', border: 'border-hospital-300', dot: 'bg-hospital-800' };
   }
   if (lower.includes('citrate') || lower.includes('blue') || lower.includes('coagulation')) {
     return { name: 'Light Blue (Citrate)', bg: 'bg-sky-100', text: 'text-sky-800', border: 'border-sky-300', dot: 'bg-sky-600' };
   }
   if (lower.includes('urine')) {
-    return { name: 'Yellow (Sterile Cup)', bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-300', dot: 'bg-yellow-500' };
+    return { name: 'Yellow (Sterile Cup)', bg: 'bg-hospital-100', text: 'text-hospital-800', border: 'border-hospital-300', dot: 'bg-hospital-500' };
   }
-  return { name: 'Clear Vial', bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-300', dot: 'bg-slate-500' };
+  return { name: 'Clear Vial', bg: 'bg-hospital-50', text: 'text-hospital-900', border: 'border-hospital-300', dot: 'bg-hospital-700' };
 };
 
 // Preset catalog packages for direct ordering
@@ -178,17 +178,17 @@ export const LaboratoryLIMS: React.FC = () => {
   const getStatusBadge = (status: LabTestStatus) => {
     switch (status) {
       case 'Ordered':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
+        return 'bg-hospital-100 text-hospital-800 border-hospital-200';
       case 'Sample Collected':
-        return 'bg-lavender-100 text-[#4C1D95] border-lavender-200';
+        return 'bg-hospital-100 text-[#39786B] border-hospital-200';
       case 'Analyzing':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-200 animate-pulse';
+        return 'bg-hospital-100 text-hospital-800 border-hospital-200 animate-pulse';
       case 'Approved':
-        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+        return 'bg-hospital-100 text-hospital-800 border-hospital-200';
       case 'Delivered':
-        return 'bg-teal-100 text-teal-800 border-teal-200';
+        return 'bg-hospital-100 text-hospital-800 border-hospital-200';
       default:
-        return 'bg-slate-100 text-slate-700 border-slate-200';
+        return 'bg-hospital-50 text-hospital-900 border-hospital-300';
     }
   };
 
@@ -267,14 +267,14 @@ export const LaboratoryLIMS: React.FC = () => {
       {/* Architectural Workspace Banner */}
       <div className="workspace-banner workspace-banner-lab p-6 sm:p-7 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-white/15 backdrop-blur-md border border-lavender-300/35 text-[11px] font-bold uppercase tracking-wider text-lavender-200">
+          <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-white/15 backdrop-blur-md border border-hospital-300/35 text-[11px] font-bold uppercase tracking-wider text-hospital-200">
             <span>Pathology &amp; Diagnostics &bull; {labTests.length} Active Orders</span>
           </div>
           <h2 className="font-display text-2xl font-extrabold text-white flex items-center gap-2.5 tracking-tight">
-            <FlaskConical className="w-6 h-6 text-lavender-300" />
+            <FlaskConical className="w-6 h-6 text-hospital-300" />
             <span>Laboratory LIMS &amp; Specimen Tracking</span>
           </h2>
-          <p className="text-xs sm:text-sm text-slate-100 max-w-2xl">
+          <p className="text-xs sm:text-sm text-hospital-50 max-w-2xl">
             Specimen collection barcodes, automated analyzer results, and certified pathologist approvals.
           </p>
         </div>
@@ -286,16 +286,16 @@ export const LaboratoryLIMS: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white border border-white/25 text-xs font-bold transition active:scale-[0.98]"
               title="Populate realistic demo orders across Hematology and Biochemistry"
             >
-              <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
+              <Sparkles className="w-3.5 h-3.5 text-hospital-300" />
               <span>Seed Demo Orders</span>
             </button>
           )}
 
           <button
             onClick={() => setIsNewOrderModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-lavender-50 text-[#1C103B] text-xs font-bold shadow-lg transition active:scale-[0.98]"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-hospital-50 text-[#10221F] text-xs font-bold shadow-lg transition active:scale-[0.98]"
           >
-            <Plus className="w-3.5 h-3.5 text-[#4C1D95]" />
+            <Plus className="w-3.5 h-3.5 text-[#39786B]" />
             <span>Walk-In Test Order</span>
           </button>
 
@@ -313,7 +313,7 @@ export const LaboratoryLIMS: React.FC = () => {
             onClick={() => setSelectedCategory(cat)}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${selectedCategory === cat
                 ? 'btn-zoho-primary text-white shadow-xs'
-                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                : 'bg-white border border-hospital-300 text-hospital-800 hover:bg-hospital-50'
               }`}
           >
             {cat}
@@ -326,19 +326,19 @@ export const LaboratoryLIMS: React.FC = () => {
         {/* Left 5 cols: Test Queue */}
         <div className="lg:col-span-5 space-y-3">
           <div className="relative">
-            <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-hospital-700 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search test name, barcode, patient..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-9 py-2.5 text-xs font-medium text-slate-900 placeholder-slate-500 focus:outline-none focus:border-[#5B21B6] focus:ring-4 focus:ring-[#5B21B6]/10 shadow-sm transition"
+              className="w-full bg-white border border-hospital-300 rounded-xl pl-10 pr-9 py-2.5 text-xs font-medium text-hospital-950 placeholder-hospital-500 focus:outline-none focus:border-[#39786B] focus:ring-4 focus:ring-[#39786B]/10 shadow-sm transition"
             />
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-hospital-700 hover:text-hospital-900 hover:bg-hospital-50 transition"
                 title="Clear search"
               >
                 <X className="w-3.5 h-3.5" />
@@ -348,12 +348,12 @@ export const LaboratoryLIMS: React.FC = () => {
 
           {filteredTests.length === 0 ? (
             <div className="lavish-card p-8 rounded-2xl text-center space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-lavender-50 text-[#5B21B6] flex items-center justify-center mx-auto border border-lavender-200">
+              <div className="w-12 h-12 rounded-2xl bg-hospital-50 text-[#39786B] flex items-center justify-center mx-auto border border-hospital-200">
                 <FlaskConical className="w-6 h-6" />
               </div>
               <div>
-                <p className="font-extrabold font-display text-slate-900 text-sm">No Lab Orders in Queue</p>
-                <p className="text-xs text-slate-600 mt-1 max-w-xs mx-auto leading-relaxed">
+                <p className="font-extrabold font-display text-hospital-950 text-sm">No Lab Orders in Queue</p>
+                <p className="text-xs text-hospital-800 mt-1 max-w-xs mx-auto leading-relaxed">
                   Orders placed by doctors or direct walk-ins will appear here with barcoded vacutainer tracking.
                 </p>
               </div>
@@ -361,7 +361,7 @@ export const LaboratoryLIMS: React.FC = () => {
                 <div className="pt-2 flex justify-center">
                   <button
                     onClick={() => setSearch('')}
-                    className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition"
+                    className="px-3.5 py-2 rounded-xl bg-hospital-50 hover:bg-hospital-300 text-hospital-900 font-bold text-xs transition"
                   >
                     Clear Search
                   </button>
@@ -383,8 +383,8 @@ export const LaboratoryLIMS: React.FC = () => {
                       setIsEditingParameters(false);
                     }}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all duration-200 relative ${isSelected
-                        ? 'bg-gradient-to-r from-lavender-50/90 via-white to-purple-50/60 border-[#5B21B6] shadow-md'
-                        : 'bg-white border-slate-200 hover:border-lavender-300 hover:shadow-sm'
+                        ? 'bg-gradient-to-r from-hospital-50/90 via-white to-hospital-50/60 border-[#39786B] shadow-md'
+                        : 'bg-white border-hospital-300 hover:border-hospital-300 hover:shadow-sm'
                       }`}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -396,15 +396,15 @@ export const LaboratoryLIMS: React.FC = () => {
                         />
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-extrabold font-display text-xs sm:text-sm text-slate-900">{test.testName}</span>
+                            <span className="font-extrabold font-display text-xs sm:text-sm text-hospital-950">{test.testName}</span>
                             {hasAbnormal && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1">
-                                <AlertTriangle className="w-2.5 h-2.5 text-rose-600" />
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-hospital-50 text-hospital-700 border border-hospital-200 flex items-center gap-1">
+                                <AlertTriangle className="w-2.5 h-2.5 text-hospital-600" />
                                 <span>Abnormal Flag</span>
                               </span>
                             )}
                           </div>
-                          <p className="text-[11px] text-slate-600 font-medium mt-0.5">
+                          <p className="text-[11px] text-hospital-800 font-medium mt-0.5">
                             {test.patientName} • {test.patientAge}y, {test.patientGender}
                           </p>
                         </div>
@@ -415,11 +415,11 @@ export const LaboratoryLIMS: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600">
-                      <span className="font-mono text-[10px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/70">
+                    <div className="mt-3 pt-2.5 border-t border-hospital-50 flex items-center justify-between text-[11px] text-hospital-800">
+                      <span className="font-mono text-[10px] font-semibold text-hospital-900 bg-hospital-50 px-2 py-0.5 rounded-md border border-hospital-300/70">
                         {test.barcode}
                       </span>
-                      <span className="text-[11px] font-medium text-slate-600 truncate max-w-[160px]">
+                      <span className="text-[11px] font-medium text-hospital-800 truncate max-w-[160px]">
                         {test.orderedByDoctor.split(',')[0]}
                       </span>
                     </div>
@@ -435,59 +435,59 @@ export const LaboratoryLIMS: React.FC = () => {
           {activeTest ? (
             <div className="lavish-card p-6 rounded-2xl space-y-5">
               {/* Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-hospital-50 gap-3">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-lg font-extrabold font-display text-slate-900">{activeTest.testName}</h3>
+                    <h3 className="text-lg font-extrabold font-display text-hospital-950">{activeTest.testName}</h3>
                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${getStatusBadge(activeTest.status)}`}>
                       {activeTest.status}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 font-mono mt-0.5 font-medium">
-                    Order ID: <span className="text-slate-800 font-bold">{activeTest.id}</span> • Specimen: {activeTest.sampleType}
+                  <p className="text-xs text-hospital-800 font-mono mt-0.5 font-medium">
+                    Order ID: <span className="text-hospital-900 font-bold">{activeTest.id}</span> • Specimen: {activeTest.sampleType}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setIsLabelModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 transition"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-hospital-50 hover:bg-hospital-300 text-hospital-900 text-xs font-bold border border-hospital-300 transition"
                     title="Print Vacutainer Vial Barcode Label"
                   >
-                    <Tag className="w-3.5 h-3.5 text-slate-600" />
+                    <Tag className="w-3.5 h-3.5 text-hospital-800" />
                     <span>Print Tube Label</span>
                   </button>
 
                   <button
                     onClick={() => setIsReportModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-lavender-50 hover:bg-lavender-100 text-[#4C1D95] text-xs font-bold border border-lavender-200 transition"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-hospital-50 hover:bg-hospital-100 text-[#39786B] text-xs font-bold border border-hospital-200 transition"
                     title="View & Download Official NABL Diagnostic PDF Report"
                   >
-                    <FileText className="w-3.5 h-3.5 text-[#5B21B6]" />
+                    <FileText className="w-3.5 h-3.5 text-[#39786B]" />
                     <span>View Report</span>
                   </button>
                 </div>
               </div>
 
               {/* Patient & Specimen Info Banner */}
-              <div className="p-4 rounded-xl bg-gradient-to-br from-slate-50 to-sky-50/40 border border-slate-200/80 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-hospital-50 to-hospital-50/40 border border-hospital-300/80 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase font-extrabold tracking-wider block">Patient Record</span>
-                  <p className="font-extrabold text-slate-900 mt-0.5">{activeTest.patientName}</p>
-                  <p className="text-slate-600 text-[11px] font-medium">{activeTest.patientGender}, {activeTest.patientAge} years</p>
+                  <span className="text-[10px] text-hospital-700 uppercase font-extrabold tracking-wider block">Patient Record</span>
+                  <p className="font-extrabold text-hospital-950 mt-0.5">{activeTest.patientName}</p>
+                  <p className="text-hospital-800 text-[11px] font-medium">{activeTest.patientGender}, {activeTest.patientAge} years</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase font-extrabold tracking-wider block">Specimen Vacutainer</span>
+                  <span className="text-[10px] text-hospital-700 uppercase font-extrabold tracking-wider block">Specimen Vacutainer</span>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <span className={`w-2.5 h-2.5 rounded-full ${getTubeColor(activeTest.sampleType).dot}`} />
-                    <p className="font-extrabold text-slate-900">{getTubeColor(activeTest.sampleType).name}</p>
+                    <p className="font-extrabold text-hospital-950">{getTubeColor(activeTest.sampleType).name}</p>
                   </div>
-                  <p className="text-slate-600 text-[10px] font-mono font-semibold">{activeTest.barcode}</p>
+                  <p className="text-hospital-800 text-[10px] font-mono font-semibold">{activeTest.barcode}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase font-extrabold tracking-wider block">Clinical Assignment</span>
-                  <p className="font-extrabold text-slate-900 mt-0.5">{activeTest.orderedByDoctor}</p>
-                  <p className="text-slate-600 text-[10px] font-mono">{activeTest.orderedAt}</p>
+                  <span className="text-[10px] text-hospital-700 uppercase font-extrabold tracking-wider block">Clinical Assignment</span>
+                  <p className="font-extrabold text-hospital-950 mt-0.5">{activeTest.orderedByDoctor}</p>
+                  <p className="text-hospital-800 text-[10px] font-mono">{activeTest.orderedAt}</p>
                 </div>
               </div>
 
@@ -495,27 +495,27 @@ export const LaboratoryLIMS: React.FC = () => {
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-xs font-extrabold font-display text-slate-900 uppercase tracking-wider">
+                    <span className="text-xs font-extrabold font-display text-hospital-950 uppercase tracking-wider">
                       Laboratory Analyzer Parameters & Findings
                     </span>
-                    <p className="text-[11px] text-slate-600">Edit observed values to simulate analyzer inputs</p>
+                    <p className="text-[11px] text-hospital-800">Edit observed values to simulate analyzer inputs</p>
                   </div>
 
                   <button
                     onClick={() => setIsEditingParameters(!isEditingParameters)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition border ${
                       isEditingParameters
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        : 'bg-lavender-50 text-[#4C1D95] border-lavender-200 hover:bg-lavender-100'
+                        ? 'bg-hospital-50 text-hospital-700 border-hospital-200'
+                        : 'bg-hospital-50 text-[#39786B] border-hospital-200 hover:bg-hospital-100'
                     }`}
                   >
                     {isEditingParameters ? 'Done Editing' : 'Edit Values'}
                   </button>
                 </div>
 
-                <div className="overflow-x-auto rounded-xl border border-slate-200">
+                <div className="overflow-x-auto rounded-xl border border-hospital-300">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-gradient-to-r from-[#F7F5FF] to-[#F1ECFE] border-b border-slate-200 text-slate-700 font-bold text-[10px] uppercase tracking-wider">
+                    <thead className="bg-gradient-to-r from-[#E7F0E9] to-[#F1ECFE] border-b border-hospital-300 text-hospital-900 font-bold text-[10px] uppercase tracking-wider">
                       <tr>
                         <th className="p-3.5">Test Parameter</th>
                         <th className="p-3.5">Observed Value</th>
@@ -523,39 +523,39 @@ export const LaboratoryLIMS: React.FC = () => {
                         <th className="p-3.5 text-right">Clinical Flag</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-hospital-50">
                       {activeTest.parameters.map((param, i) => (
-                        <tr key={i} className="hover:bg-lavender-50/45 transition">
-                          <td className="p-3.5 font-bold text-slate-900">
+                        <tr key={i} className="hover:bg-hospital-50/45 transition">
+                          <td className="p-3.5 font-bold text-hospital-950">
                             {param.name}
                           </td>
-                          <td className="p-3.5 font-bold font-mono text-slate-900">
+                          <td className="p-3.5 font-bold font-mono text-hospital-950">
                             {isEditingParameters ? (
                               <div className="flex items-center gap-1.5">
                                 <input
                                   type="text"
                                   value={param.value}
                                   onChange={(e) => handleParameterValueChange(i, e.target.value)}
-                                  className="w-24 px-2.5 py-1 rounded-lg bg-white border border-lavender-300 text-xs text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#5B21B6]/20"
+                                  className="w-24 px-2.5 py-1 rounded-lg bg-white border border-hospital-300 text-xs text-hospital-950 font-bold focus:outline-none focus:ring-2 focus:ring-[#39786B]/20"
                                 />
-                                <span className="text-[11px] text-slate-600">{param.unit}</span>
+                                <span className="text-[11px] text-hospital-800">{param.unit}</span>
                               </div>
                             ) : (
-                              <span>{param.value} <span className="text-slate-600 text-[11px] font-medium">{param.unit}</span></span>
+                              <span>{param.value} <span className="text-hospital-800 text-[11px] font-medium">{param.unit}</span></span>
                             )}
                           </td>
-                          <td className="p-3.5 text-slate-600 font-mono text-[11px]">
+                          <td className="p-3.5 text-hospital-800 font-mono text-[11px]">
                             {param.normalRange} {param.unit}
                           </td>
                           <td className="p-3.5 text-right">
                             {param.isAbnormal ? (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
-                                <AlertTriangle className="w-2.5 h-2.5 text-rose-600" />
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-hospital-50 text-hospital-700 border border-hospital-200">
+                                <AlertTriangle className="w-2.5 h-2.5 text-hospital-600" />
                                 <span>Abnormal</span>
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-hospital-50 text-hospital-700 border border-hospital-200">
+                                <CheckCircle2 className="w-2.5 h-2.5 text-hospital-600" />
                                 <span>Normal</span>
                               </span>
                             )}
@@ -568,26 +568,26 @@ export const LaboratoryLIMS: React.FC = () => {
               </div>
 
               {/* Workflow Stepper & Advance Action */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-4 rounded-xl bg-hospital-50 border border-hospital-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2 text-xs">
                   <div className="flex items-center gap-1.5">
-                    <span className={`w-2.5 h-2.5 rounded-full ${activeTest.status === 'Ordered' ? 'bg-amber-500 animate-ping' : 'bg-emerald-500'}`} />
-                    <span className="font-bold text-slate-800">1. Ordered</span>
+                    <span className={`w-2.5 h-2.5 rounded-full ${activeTest.status === 'Ordered' ? 'bg-hospital-500 animate-ping' : 'bg-hospital-500'}`} />
+                    <span className="font-bold text-hospital-900">1. Ordered</span>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                  <ChevronRight className="w-3.5 h-3.5 text-hospital-700" />
                   <div className="flex items-center gap-1.5">
-                    <span className={`w-2.5 h-2.5 rounded-full ${activeTest.status === 'Sample Collected' ? 'bg-[#6D28D9] animate-ping' : activeTest.status === 'Ordered' ? 'bg-slate-300' : 'bg-emerald-500'}`} />
-                    <span className="font-bold text-slate-800">2. Drawn</span>
+                    <span className={`w-2.5 h-2.5 rounded-full ${activeTest.status === 'Sample Collected' ? 'bg-[#39786B] animate-ping' : activeTest.status === 'Ordered' ? 'bg-hospital-300' : 'bg-hospital-500'}`} />
+                    <span className="font-bold text-hospital-900">2. Drawn</span>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                  <ChevronRight className="w-3.5 h-3.5 text-hospital-700" />
                   <div className="flex items-center gap-1.5">
-                    <span className={`w-2.5 h-2.5 rounded-full ${activeTest.status === 'Analyzing' ? 'bg-indigo-500 animate-ping' : (activeTest.status === 'Approved' || activeTest.status === 'Delivered') ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-                    <span className="font-bold text-slate-800">3. Analyzing</span>
+                    <span className={`w-2.5 h-2.5 rounded-full ${activeTest.status === 'Analyzing' ? 'bg-hospital-500 animate-ping' : (activeTest.status === 'Approved' || activeTest.status === 'Delivered') ? 'bg-hospital-500' : 'bg-hospital-300'}`} />
+                    <span className="font-bold text-hospital-900">3. Analyzing</span>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                  <ChevronRight className="w-3.5 h-3.5 text-hospital-700" />
                   <div className="flex items-center gap-1.5">
-                    <span className={`w-2.5 h-2.5 rounded-full ${activeTest.status === 'Approved' || activeTest.status === 'Delivered' ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-                    <span className="font-bold text-slate-800">4. Sign-Off</span>
+                    <span className={`w-2.5 h-2.5 rounded-full ${activeTest.status === 'Approved' || activeTest.status === 'Delivered' ? 'bg-hospital-500' : 'bg-hospital-300'}`} />
+                    <span className="font-bold text-hospital-900">4. Sign-Off</span>
                   </div>
                 </div>
 
@@ -607,7 +607,7 @@ export const LaboratoryLIMS: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="lavish-card p-16 rounded-2xl text-center text-slate-600 text-xs font-medium">
+            <div className="lavish-card p-16 rounded-2xl text-center text-hospital-800 text-xs font-medium">
               Select a test order from the queue to view parameters and advance workflow
             </div>
           )}
@@ -616,18 +616,18 @@ export const LaboratoryLIMS: React.FC = () => {
 
       {/* ================= MODAL 1: WALK-IN LAB ORDER ================= */}
       {isNewOrderModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 backdrop-blur-md p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden glide-enter">
-            <div className="h-1.5 bg-gradient-to-r from-cyan-500 via-sky-500 to-indigo-600" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-hospital-950/55 backdrop-blur-md p-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white border border-hospital-300 shadow-2xl overflow-hidden glide-enter">
+            <div className="h-1.5 bg-gradient-to-r from-hospital-500 via-hospital-500 to-hospital-600" />
             <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3 border-b border-hospital-50">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-lavender-50 text-[#5B21B6] border border-lavender-200 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-hospital-50 text-[#39786B] border border-hospital-200 flex items-center justify-center">
                     <FlaskConical className="w-4 h-4" />
                   </div>
-                  <h3 className="font-extrabold font-display text-slate-900 text-base">Direct Walk-In Diagnostic Order</h3>
+                  <h3 className="font-extrabold font-display text-hospital-950 text-base">Direct Walk-In Diagnostic Order</h3>
                 </div>
-                <button onClick={() => setIsNewOrderModalOpen(false)} className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100">
+                <button onClick={() => setIsNewOrderModalOpen(false)} className="text-hospital-700 hover:text-hospital-900 p-1 rounded-lg hover:bg-hospital-50">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -635,7 +635,7 @@ export const LaboratoryLIMS: React.FC = () => {
               <form onSubmit={handleCreateOrderSubmit} className="space-y-4">
                 {/* Select or type patient */}
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">Select Registered Patient or Type Walk-In</label>
+                  <label className="text-xs font-bold text-hospital-900 block mb-1.5">Select Registered Patient or Type Walk-In</label>
                   <select
                     value={selectedPatientId}
                     onChange={(e) => {
@@ -647,7 +647,7 @@ export const LaboratoryLIMS: React.FC = () => {
                         setWalkinPatientGender(found.gender);
                       }
                     }}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white mb-2 transition"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-hospital-50 border border-hospital-300 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white mb-2 transition"
                   >
                     <option value="">-- Or enter new walk-in details below --</option>
                     {patients.map(p => (
@@ -663,19 +663,19 @@ export const LaboratoryLIMS: React.FC = () => {
                         value={walkinPatientName}
                         onChange={(e) => setWalkinPatientName(e.target.value)}
                         required
-                        className="sm:col-span-1 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                        className="sm:col-span-1 px-3 py-2 rounded-xl bg-hospital-50 border border-hospital-300 text-xs text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                       />
                       <input
                         type="number"
                         placeholder="Age"
                         value={walkinPatientAge}
                         onChange={(e) => setWalkinPatientAge(e.target.value)}
-                        className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                        className="px-3 py-2 rounded-xl bg-hospital-50 border border-hospital-300 text-xs text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                       />
                       <select
                         value={walkinPatientGender}
                         onChange={(e) => setWalkinPatientGender(e.target.value)}
-                        className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                        className="px-3 py-2 rounded-xl bg-hospital-50 border border-hospital-300 text-xs text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                       >
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -687,23 +687,23 @@ export const LaboratoryLIMS: React.FC = () => {
 
                 {/* Predefined Test Catalog */}
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">Diagnostic Test Package</label>
-                  <div className="space-y-1.5 max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-2 bg-slate-50/50">
+                  <label className="text-xs font-bold text-hospital-900 block mb-1.5">Diagnostic Test Package</label>
+                  <div className="space-y-1.5 max-h-48 overflow-y-auto border border-hospital-300 rounded-xl p-2 bg-hospital-50/50">
                     {LAB_CATALOG.map((pkg, idx) => (
                       <div
                         key={pkg.name}
                         onClick={() => setSelectedCatalogIndex(idx)}
                         className={`p-2.5 rounded-xl border text-xs cursor-pointer flex items-center justify-between transition ${selectedCatalogIndex === idx
-                            ? 'bg-lavender-50 border-[#5B21B6] font-bold text-[#1C103B] shadow-xs'
-                            : 'bg-white border-slate-200/80 hover:border-lavender-300 text-slate-800'
+                            ? 'bg-hospital-50 border-[#39786B] font-bold text-[#10221F] shadow-xs'
+                            : 'bg-white border-hospital-300/80 hover:border-hospital-300 text-hospital-900'
                           }`}
                       >
                         <div className="flex items-center gap-2">
                           <span className={`w-2.5 h-2.5 rounded-full ${getTubeColor(pkg.sampleType).dot}`} />
                           <span>{pkg.name}</span>
-                          <span className="text-[10px] text-slate-500 font-medium">({pkg.sampleType})</span>
+                          <span className="text-[10px] text-hospital-700 font-medium">({pkg.sampleType})</span>
                         </div>
-                        <span className="font-mono text-emerald-700 font-bold">₹{pkg.cost}</span>
+                        <span className="font-mono text-hospital-700 font-bold">₹{pkg.cost}</span>
                       </div>
                     ))}
                   </div>
@@ -711,16 +711,16 @@ export const LaboratoryLIMS: React.FC = () => {
 
                 {/* Ordering Clinician */}
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">Referring Clinician</label>
+                  <label className="text-xs font-bold text-hospital-900 block mb-1.5">Referring Clinician</label>
                   <input
                     type="text"
                     value={referringDoctor}
                     onChange={(e) => setReferringDoctor(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-hospital-50 border border-hospital-300 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                   />
                 </div>
 
-                <div className="pt-3 flex justify-end border-t border-slate-100">
+                <div className="pt-3 flex justify-end border-t border-hospital-50">
                   <button
                     type="submit"
                     className="btn-zoho-primary px-5 py-2.5 rounded-xl text-white font-bold text-xs shadow-sm transition"
@@ -736,23 +736,23 @@ export const LaboratoryLIMS: React.FC = () => {
 
       {/* ================= MODAL 2: VACUTAINER VIAL BARCODE LABEL ================= */}
       {isLabelModalOpen && activeTest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 backdrop-blur-md p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden glide-enter">
-            <div className="h-1.5 bg-gradient-to-r from-[#2D1B69] to-[#0D9488]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-hospital-950/55 backdrop-blur-md p-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white border border-hospital-300 shadow-2xl overflow-hidden glide-enter">
+            <div className="h-1.5 bg-gradient-to-r from-[#1D4840] to-[#39786B]" />
             <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                <h3 className="font-extrabold font-display text-slate-900 text-sm flex items-center gap-2">
-                  <Tag className="w-4 h-4 text-[#5B21B6]" />
+              <div className="flex items-center justify-between pb-2.5 border-b border-hospital-50">
+                <h3 className="font-extrabold font-display text-hospital-950 text-sm flex items-center gap-2">
+                  <Tag className="w-4 h-4 text-[#39786B]" />
                   <span>Specimen Vial Label (Print)</span>
                 </h3>
-                <button onClick={() => setIsLabelModalOpen(false)} className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100">
+                <button onClick={() => setIsLabelModalOpen(false)} className="text-hospital-700 hover:text-hospital-900 p-1 rounded-lg hover:bg-hospital-50">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Realistic Barcode Tube Sticker */}
-              <div className="p-4 rounded-xl border-2 border-dashed border-slate-300 bg-white shadow-xs space-y-2">
-                <div className="flex items-center justify-between border-b border-slate-200 pb-1 text-[11px] font-bold text-slate-800">
+              <div className="p-4 rounded-xl border-2 border-dashed border-hospital-300 bg-white shadow-xs space-y-2">
+                <div className="flex items-center justify-between border-b border-hospital-300 pb-1 text-[11px] font-bold text-hospital-900">
                   <span>{currentTenant.name}</span>
                   <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${getTubeColor(activeTest.sampleType).bg} ${getTubeColor(activeTest.sampleType).text}`}>
                     {getTubeColor(activeTest.sampleType).name}
@@ -760,18 +760,18 @@ export const LaboratoryLIMS: React.FC = () => {
                 </div>
 
                 <div>
-                  <p className="font-bold text-sm text-slate-900">{activeTest.patientName}</p>
-                  <p className="text-[10px] text-slate-600 font-mono">ID: {activeTest.patientId} • {activeTest.patientGender}/{activeTest.patientAge}</p>
-                  <p className="text-[11px] font-semibold text-slate-800 mt-1">{activeTest.testName}</p>
+                  <p className="font-bold text-sm text-hospital-950">{activeTest.patientName}</p>
+                  <p className="text-[10px] text-hospital-800 font-mono">ID: {activeTest.patientId} • {activeTest.patientGender}/{activeTest.patientAge}</p>
+                  <p className="text-[11px] font-semibold text-hospital-900 mt-1">{activeTest.testName}</p>
                 </div>
 
                 {/* Barcode graphic */}
                 <div className="pt-2 text-center">
                   <div className="h-10 bg-[repeating-linear-gradient(90deg,#000_0px,#000_2px,transparent_2px,transparent_4px,#000_4px,#000_7px,transparent_7px,transparent_9px)] rounded-xs w-full" />
-                  <p className="font-mono text-xs font-bold text-slate-900 tracking-widest mt-1">{activeTest.barcode}</p>
+                  <p className="font-mono text-xs font-bold text-hospital-950 tracking-widest mt-1">{activeTest.barcode}</p>
                 </div>
 
-                <div className="pt-1 border-t border-slate-100 text-[9px] text-slate-500 font-medium flex items-center justify-between">
+                <div className="pt-1 border-t border-hospital-50 text-[9px] text-hospital-700 font-medium flex items-center justify-between">
                   <span>Collected: {activeTest.orderedAt}</span>
                   <span>Tech: {activeTest.technicianName || 'DMLT-1'}</span>
                 </div>
@@ -793,20 +793,20 @@ export const LaboratoryLIMS: React.FC = () => {
 
       {/* ================= MODAL 3: OFFICIAL NABL DIAGNOSTIC REPORT ================= */}
       {isReportModalOpen && activeTest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 backdrop-blur-md p-4">
-          <div className="w-full max-w-2xl max-h-[90vh] rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden glide-enter flex flex-col">
-            <div className="h-1.5 bg-gradient-to-r from-[#2D1B69] via-[#6D28D9] to-[#10B981]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-hospital-950/55 backdrop-blur-md p-4">
+          <div className="w-full max-w-2xl max-h-[90vh] rounded-2xl bg-white border border-hospital-300 shadow-2xl overflow-hidden glide-enter flex flex-col">
+            <div className="h-1.5 bg-gradient-to-r from-[#1D4840] via-[#39786B] to-[#39786B]" />
             <div className="p-6 sm:p-8 space-y-6 overflow-y-auto">
               {/* Header */}
-              <div className="flex items-start justify-between pb-4 border-b-2 border-slate-900">
+              <div className="flex items-start justify-between pb-4 border-b-2 border-hospital-950">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white flex items-center justify-center font-extrabold text-sm">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1D4840] to-[#39786B] text-white flex items-center justify-center font-extrabold text-sm">
                       +
                     </div>
                     <div>
-                      <h2 className="text-lg font-black font-display text-slate-900 tracking-tight">{currentTenant.name}</h2>
-                      <p className="text-[10px] text-slate-600 uppercase tracking-widest font-bold">
+                      <h2 className="text-lg font-black font-display text-hospital-950 tracking-tight">{currentTenant.name}</h2>
+                      <p className="text-[10px] text-hospital-800 uppercase tracking-widest font-bold">
                         Department of Laboratory Medicine & Pathology (NABL Accredited)
                       </p>
                     </div>
@@ -814,63 +814,63 @@ export const LaboratoryLIMS: React.FC = () => {
                 </div>
 
                 <div className="text-right">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
-                    <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-hospital-50 text-hospital-800 text-[10px] font-bold border border-hospital-200">
+                    <ShieldCheck className="w-3 h-3 text-hospital-600" />
                     <span>NABL ISO 15189 Certified</span>
                   </span>
-                  <p className="text-[10px] font-mono text-slate-600 font-semibold mt-1">Barcode: {activeTest.barcode}</p>
+                  <p className="text-[10px] font-mono text-hospital-800 font-semibold mt-1">Barcode: {activeTest.barcode}</p>
                 </div>
               </div>
 
               {/* Patient Demographic Table */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div className="p-4 rounded-xl bg-hospital-50 border border-hospital-300 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase font-bold">Patient Name</span>
-                  <p className="font-bold text-slate-900">{activeTest.patientName}</p>
+                  <span className="text-[10px] text-hospital-700 uppercase font-bold">Patient Name</span>
+                  <p className="font-bold text-hospital-950">{activeTest.patientName}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase font-bold">Age / Gender</span>
-                  <p className="font-bold text-slate-900">{activeTest.patientAge} Years / {activeTest.patientGender}</p>
+                  <span className="text-[10px] text-hospital-700 uppercase font-bold">Age / Gender</span>
+                  <p className="font-bold text-hospital-950">{activeTest.patientAge} Years / {activeTest.patientGender}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase font-bold">Patient ID</span>
-                  <p className="font-bold font-mono text-slate-900">{activeTest.patientId}</p>
+                  <span className="text-[10px] text-hospital-700 uppercase font-bold">Patient ID</span>
+                  <p className="font-bold font-mono text-hospital-950">{activeTest.patientId}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 uppercase font-bold">Sample Drawn</span>
-                  <p className="font-bold text-slate-900">{activeTest.orderedAt}</p>
+                  <span className="text-[10px] text-hospital-700 uppercase font-bold">Sample Drawn</span>
+                  <p className="font-bold text-hospital-950">{activeTest.orderedAt}</p>
                 </div>
               </div>
 
               {/* Test Investigation Findings */}
               <div>
-                <div className="border-b-2 border-slate-900 pb-1.5 mb-2 flex items-center justify-between">
-                  <span className="font-extrabold font-display text-slate-900 text-xs uppercase tracking-wider">
+                <div className="border-b-2 border-hospital-950 pb-1.5 mb-2 flex items-center justify-between">
+                  <span className="font-extrabold font-display text-hospital-950 text-xs uppercase tracking-wider">
                     Investigation: {activeTest.testName}
                   </span>
-                  <span className="text-[11px] text-slate-600 font-mono font-semibold">Specimen: {activeTest.sampleType}</span>
+                  <span className="text-[11px] text-hospital-800 font-mono font-semibold">Specimen: {activeTest.sampleType}</span>
                 </div>
 
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-200 text-[10px] uppercase text-slate-600 font-bold">
+                    <tr className="border-b border-hospital-300 text-[10px] uppercase text-hospital-800 font-bold">
                       <th className="py-2">Test Parameter</th>
                       <th className="py-2">Observed Result</th>
                       <th className="py-2">Biological Reference Interval</th>
                       <th className="py-2 text-right">Interpretation</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-mono">
+                  <tbody className="divide-y divide-hospital-50 font-mono">
                     {activeTest.parameters.map((p, i) => (
                       <tr key={i} className="py-2">
-                        <td className="py-2.5 font-sans font-bold text-slate-900">{p.name}</td>
-                        <td className="py-2.5 font-bold text-slate-900">{p.value} {p.unit}</td>
-                        <td className="py-2.5 text-slate-600 text-[11px]">{p.normalRange} {p.unit}</td>
+                        <td className="py-2.5 font-sans font-bold text-hospital-950">{p.name}</td>
+                        <td className="py-2.5 font-bold text-hospital-950">{p.value} {p.unit}</td>
+                        <td className="py-2.5 text-hospital-800 text-[11px]">{p.normalRange} {p.unit}</td>
                         <td className="py-2.5 text-right font-sans">
                           {p.isAbnormal ? (
-                            <span className="text-rose-600 font-bold text-[11px]">HIGH / ABNORMAL</span>
+                            <span className="text-hospital-600 font-bold text-[11px]">HIGH / ABNORMAL</span>
                           ) : (
-                            <span className="text-emerald-700 font-bold text-[11px]">NORMAL</span>
+                            <span className="text-hospital-700 font-bold text-[11px]">NORMAL</span>
                           )}
                         </td>
                       </tr>
@@ -880,27 +880,27 @@ export const LaboratoryLIMS: React.FC = () => {
               </div>
 
               {/* Pathologist Endorsement Sign-off */}
-              <div className="pt-4 border-t border-slate-200 flex items-center justify-between text-xs">
+              <div className="pt-4 border-t border-hospital-300 flex items-center justify-between text-xs">
                 <div>
-                  <p className="text-[10px] text-slate-500 uppercase font-bold">Analyzed by</p>
-                  <p className="font-bold text-slate-900">{activeTest.technicianName || 'Rajesh Nair, DMLT'}</p>
-                  <p className="text-[10px] text-slate-600">Medical Laboratory Technologist</p>
+                  <p className="text-[10px] text-hospital-700 uppercase font-bold">Analyzed by</p>
+                  <p className="font-bold text-hospital-950">{activeTest.technicianName || 'Rajesh Nair, DMLT'}</p>
+                  <p className="text-[10px] text-hospital-800">Medical Laboratory Technologist</p>
                 </div>
 
                 <div className="text-right">
-                  <p className="text-[10px] text-slate-500 uppercase font-bold">Reviewed & Verified by</p>
-                  <p className="font-bold text-slate-900">{activeTest.approvedBy || 'Dr. Sunita Sen, MD (Pathology)'}</p>
-                  <p className="text-[10px] text-slate-600">Consultant Pathologist • Reg. No. 44102</p>
+                  <p className="text-[10px] text-hospital-700 uppercase font-bold">Reviewed & Verified by</p>
+                  <p className="font-bold text-hospital-950">{activeTest.approvedBy || 'Dr. Sunita Sen, MD (Pathology)'}</p>
+                  <p className="text-[10px] text-hospital-800">Consultant Pathologist • Reg. No. 44102</p>
                 </div>
               </div>
 
               {/* Footer Buttons */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-[10px] text-slate-500 font-mono font-medium">Digitally signed &amp; verified by HospitalOS LIMS</span>
+              <div className="pt-4 border-t border-hospital-50 flex items-center justify-between">
+                <span className="text-[10px] text-hospital-700 font-mono font-medium">Digitally signed &amp; verified by HospitalOS LIMS</span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setIsReportModalOpen(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition"
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-hospital-800 hover:text-hospital-950 hover:bg-hospital-50 transition"
                   >
                     Close
                   </button>

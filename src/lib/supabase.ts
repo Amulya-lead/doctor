@@ -720,7 +720,7 @@ export const fetchTenantsFromDb = async (): Promise<Tenant[] | null> => {
       licenseNumber: row.license_number || '',
       abdmFacilityId: row.abdm_facility_id || '',
       nabhAccredited: Boolean(row.nabh_accredited),
-      themeColor: row.theme_color || '#0284c7',
+      themeColor: row.theme_color || '#39786B',
       branches: Array.isArray(row.branches) ? row.branches : [],
       currentBranchId: row.branches?.[0]?.id || 'branch-main'
     }));

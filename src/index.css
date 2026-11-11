@@ -19,16 +19,16 @@
   }
 
   body {
-    background-color: #faf8ff;
+    background-color: #E7F0E9;
     background-image:
-      radial-gradient(at 0% 0%, rgba(76, 29, 149, 0.085) 0px, transparent 48%),
-      radial-gradient(at 100% 0%, rgba(13, 148, 136, 0.065) 0px, transparent 44%),
-      radial-gradient(at 50% 100%, rgba(91, 33, 182, 0.07) 0px, transparent 50%),
-      radial-gradient(rgba(45, 27, 105, 0.032) 1px, transparent 1px);
+      radial-gradient(at 0% 0%, rgba(57, 120, 107, 0.11) 0px, transparent 48%),
+      radial-gradient(at 100% 0%, rgba(121, 169, 154, 0.12) 0px, transparent 44%),
+      radial-gradient(at 50% 100%, rgba(29, 72, 64, 0.08) 0px, transparent 50%),
+      radial-gradient(rgba(16, 34, 31, 0.04) 1px, transparent 1px);
     background-size: 100% 100%, 100% 100%, 100% 100%, 24px 24px;
     background-attachment: fixed;
-    color: #0f172a;
-    font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+    color: #10221F;
+    font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
@@ -40,10 +40,8 @@
   h2,
   h3,
   .font-display {
-    font-family: 'Bricolage Grotesque', 'Manrope', system-ui, -apple-system, sans-serif;
-    letter-spacing: -0.03em;
-    font-optical-sizing: auto;
-    font-feature-settings: 'ss01', 'ss02';
+    font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.025em;
   }
 }
 
@@ -269,12 +267,12 @@
 /* Lavish Elevated Clinical Card Surfaces */
 .clean-card,
 .lavish-card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(249, 247, 255, 0.94) 100%);
-  border: 1px solid rgba(203, 213, 225, 0.72);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(231, 240, 233, 0.55) 100%);
+  border: 1px solid rgba(183, 211, 198, 0.8);
   border-radius: 1rem;
   box-shadow:
-    0 1px 2px rgba(28, 16, 59, 0.04),
-    0 10px 28px -14px rgba(76, 29, 149, 0.10);
+    0 1px 2px rgba(16, 34, 31, 0.04),
+    0 10px 28px -14px rgba(29, 72, 64, 0.11);
   transition:
     transform 0.28s var(--glide-ease),
     box-shadow 0.28s var(--glide-ease),
@@ -284,24 +282,24 @@
 .clean-card-hover:hover,
 .lavish-card-hover:hover {
   transform: translate3d(0, -3px, 0);
-  border-color: rgba(91, 33, 182, 0.36);
+  border-color: rgba(57, 120, 107, 0.5);
   box-shadow:
-    0 6px 16px -4px rgba(76, 29, 149, 0.16),
-    0 20px 38px -14px rgba(28, 16, 59, 0.14);
+    0 6px 16px -4px rgba(57, 120, 107, 0.18),
+    0 20px 38px -14px rgba(16, 34, 31, 0.15);
 }
 
 .lavish-glass {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.90);
   backdrop-filter: blur(18px) saturate(165%);
   -webkit-backdrop-filter: blur(18px) saturate(165%);
 }
 
-/* Crisp Royal Dark-Lavender Graded Action Button with Magnetic Sheen */
+/* Crisp Forest-Teal Graded Action Button with Magnetic Sheen */
 .btn-zoho-primary {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #2d1b69 0%, #4c1d95 52%, #6d28d9 100%);
-  box-shadow: 0 8px 22px -6px rgba(76, 29, 149, 0.44);
+  background: linear-gradient(135deg, #10221F 0%, #1D4840 46%, #39786B 100%);
+  box-shadow: 0 8px 22px -6px rgba(29, 72, 64, 0.44);
   transition:
     transform 0.28s var(--glide-ease),
     box-shadow 0.28s var(--glide-ease),
@@ -315,7 +313,7 @@
   left: -100%;
   width: 65%;
   height: 100%;
-  background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.24) 50%, transparent 80%);
+  background: linear-gradient(110deg, transparent 20%, rgba(183, 211, 198, 0.28) 50%, transparent 80%);
   transform: skewX(-18deg);
   transition: left 0.55s var(--glide-ease);
   pointer-events: none;
@@ -326,29 +324,29 @@
 }
 
 .btn-zoho-primary:hover {
-  filter: brightness(1.09);
+  filter: brightness(1.08);
   transform: translate3d(0, -2px, 0);
-  box-shadow: 0 14px 28px -6px rgba(76, 29, 149, 0.58);
+  box-shadow: 0 14px 28px -6px rgba(29, 72, 64, 0.55);
 }
 
 .btn-zoho-primary:active {
   transform: scale(0.98);
 }
 
-/* Role-Distinct Zoho Architectural Mesh & Grid Banners (Zero Repeated Photos) */
+/* Role-Distinct Pine & Mint Architectural Mesh Banners */
 .workspace-banner {
   position: relative;
   overflow: hidden;
   border-radius: 1.125rem;
-  background-color: #1c103b;
+  background-color: #10221F;
   background-image:
-    radial-gradient(at 88% 18%, rgba(167, 139, 250, 0.30) 0px, transparent 50%),
-    radial-gradient(at 14% 92%, rgba(91, 33, 182, 0.44) 0px, transparent 52%),
-    linear-gradient(122deg, #170d33 0%, #2d1b69 52%, #4c1d95 100%);
-  border: 1px solid rgba(167, 139, 250, 0.30);
+    radial-gradient(at 88% 18%, rgba(183, 211, 198, 0.24) 0px, transparent 50%),
+    radial-gradient(at 14% 92%, rgba(57, 120, 107, 0.45) 0px, transparent 52%),
+    linear-gradient(122deg, #10221F 0%, #1D4840 52%, #39786B 100%);
+  border: 1px solid rgba(183, 211, 198, 0.28);
   box-shadow:
-    0 18px 44px -20px rgba(45, 27, 105, 0.48),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    0 18px 44px -20px rgba(16, 34, 31, 0.46),
+    inset 0 1px 0 rgba(231, 240, 233, 0.16);
   animation: glideUp 0.48s var(--glide-ease) both;
   transition:
     transform 0.32s var(--glide-ease),
@@ -362,8 +360,8 @@
   pointer-events: none;
   opacity: 0.24;
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.12) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+    linear-gradient(to right, rgba(231, 240, 233, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(231, 240, 233, 0.12) 1px, transparent 1px);
   background-size: 32px 32px;
   mask-image: linear-gradient(120deg, rgba(0, 0, 0, 0.08) 15%, rgba(0, 0, 0, 0.9) 100%);
 }
@@ -377,7 +375,7 @@
   height: 340px;
   border-radius: 9999px;
   pointer-events: none;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 68%);
+  background: radial-gradient(circle, rgba(231, 240, 233, 0.16) 0%, rgba(231, 240, 233, 0) 68%);
   transition: transform 0.65s var(--glide-ease), opacity 0.4s ease;
 }
 
@@ -391,66 +389,66 @@
 }
 
 .workspace-banner-payroll {
-  background-color: #190e38;
+  background-color: #10221F;
   background-image:
-    radial-gradient(at 86% 18%, rgba(192, 132, 252, 0.28) 0px, transparent 48%),
-    radial-gradient(at 10% 90%, rgba(13, 148, 136, 0.26) 0px, transparent 54%),
-    linear-gradient(122deg, #160b32 0%, #3b1d7a 52%, #5b21b6 100%);
-  border-color: rgba(167, 139, 250, 0.36);
+    radial-gradient(at 86% 18%, rgba(183, 211, 198, 0.25) 0px, transparent 48%),
+    radial-gradient(at 10% 90%, rgba(57, 120, 107, 0.36) 0px, transparent 54%),
+    linear-gradient(122deg, #10221F 0%, #1D4840 55%, #39786B 100%);
+  border-color: rgba(183, 211, 198, 0.34);
 }
 
 .workspace-banner-wards {
-  background-color: #1c103b;
+  background-color: #10221F;
   background-image:
-    radial-gradient(at 88% 20%, rgba(45, 212, 191, 0.30) 0px, transparent 50%),
-    radial-gradient(at 15% 88%, rgba(124, 58, 237, 0.38) 0px, transparent 52%),
-    linear-gradient(122deg, #160c30 0%, #3b1c78 52%, #0f766e 100%);
-  border-color: rgba(167, 139, 250, 0.32);
+    radial-gradient(at 88% 20%, rgba(121, 169, 154, 0.30) 0px, transparent 50%),
+    radial-gradient(at 15% 88%, rgba(29, 72, 64, 0.45) 0px, transparent 52%),
+    linear-gradient(122deg, #10221F 0%, #1D4840 48%, #39786B 100%);
+  border-color: rgba(121, 169, 154, 0.35);
 }
 
 .workspace-banner-patients {
-  background-color: #1c103b;
+  background-color: #10221F;
   background-image:
-    radial-gradient(at 85% 22%, rgba(20, 184, 166, 0.30) 0px, transparent 50%),
-    radial-gradient(at 12% 88%, rgba(139, 92, 246, 0.42) 0px, transparent 52%),
-    linear-gradient(122deg, #170d33 0%, #4c1d95 54%, #0d9488 100%);
-  border-color: rgba(167, 139, 250, 0.34);
+    radial-gradient(at 85% 22%, rgba(183, 211, 198, 0.26) 0px, transparent 50%),
+    radial-gradient(at 12% 88%, rgba(57, 120, 107, 0.44) 0px, transparent 52%),
+    linear-gradient(122deg, #10221F 0%, #1D4840 54%, #39786B 100%);
+  border-color: rgba(183, 211, 198, 0.34);
 }
 
 .workspace-banner-pharmacy {
-  background-color: #191236;
+  background-color: #10221F;
   background-image:
-    radial-gradient(at 86% 18%, rgba(167, 139, 250, 0.32) 0px, transparent 48%),
-    radial-gradient(at 15% 88%, rgba(16, 185, 129, 0.36) 0px, transparent 54%),
-    linear-gradient(122deg, #170e33 0%, #3b1c78 48%, #047857 100%);
-  border-color: rgba(52, 211, 153, 0.32);
+    radial-gradient(at 86% 18%, rgba(183, 211, 198, 0.28) 0px, transparent 48%),
+    radial-gradient(at 15% 88%, rgba(57, 120, 107, 0.38) 0px, transparent 54%),
+    linear-gradient(122deg, #10221F 0%, #1D4840 48%, #39786B 100%);
+  border-color: rgba(121, 169, 154, 0.36);
 }
 
 .workspace-banner-lab {
-  background-color: #1c103b;
+  background-color: #10221F;
   background-image:
-    radial-gradient(at 86% 18%, rgba(56, 189, 248, 0.28) 0px, transparent 50%),
-    radial-gradient(at 14% 90%, rgba(139, 92, 246, 0.45) 0px, transparent 52%),
-    linear-gradient(122deg, #150b2e 0%, #4c1d95 54%, #6d28d9 100%);
-  border-color: rgba(167, 139, 250, 0.36);
+    radial-gradient(at 86% 18%, rgba(121, 169, 154, 0.28) 0px, transparent 50%),
+    radial-gradient(at 14% 90%, rgba(57, 120, 107, 0.42) 0px, transparent 52%),
+    linear-gradient(122deg, #10221F 0%, #1D4840 52%, #39786B 100%);
+  border-color: rgba(183, 211, 198, 0.36);
 }
 
 .workspace-banner-billing {
-  background-color: #1a1038;
+  background-color: #10221F;
   background-image:
-    radial-gradient(at 88% 18%, rgba(52, 211, 153, 0.32) 0px, transparent 50%),
-    radial-gradient(at 12% 90%, rgba(124, 58, 237, 0.40) 0px, transparent 52%),
-    linear-gradient(122deg, #160c30 0%, #431a85 52%, #065f46 100%);
-  border-color: rgba(167, 139, 250, 0.32);
+    radial-gradient(at 88% 18%, rgba(183, 211, 198, 0.26) 0px, transparent 50%),
+    radial-gradient(at 12% 90%, rgba(29, 72, 64, 0.48) 0px, transparent 52%),
+    linear-gradient(122deg, #10221F 0%, #1D4840 54%, #39786B 100%);
+  border-color: rgba(121, 169, 154, 0.34);
 }
 
 .workspace-banner-insurance {
-  background-color: #1c103b;
+  background-color: #10221F;
   background-image:
-    radial-gradient(at 85% 20%, rgba(192, 132, 252, 0.34) 0px, transparent 50%),
-    radial-gradient(at 12% 90%, rgba(109, 40, 217, 0.44) 0px, transparent 54%),
-    linear-gradient(122deg, #160b32 0%, #4c1d95 52%, #5b21b6 100%);
-  border-color: rgba(196, 181, 253, 0.36);
+    radial-gradient(at 85% 20%, rgba(183, 211, 198, 0.26) 0px, transparent 50%),
+    radial-gradient(at 12% 90%, rgba(57, 120, 107, 0.44) 0px, transparent 54%),
+    linear-gradient(122deg, #10221F 0%, #1D4840 52%, #39786B 100%);
+  border-color: rgba(183, 211, 198, 0.36);
 }
 
 @keyframes kenBurnsSlow {

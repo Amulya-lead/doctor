@@ -17,7 +17,7 @@ const PatientPortal = React.lazy(() => import('./components/modules/PatientPorta
 
 const ModuleLoader = () => (
   <div className="space-y-5 glide-enter p-1">
-    <div className="h-24 rounded-2xl border border-slate-200/80 bg-white/80 p-6 flex items-center justify-between shadow-sm">
+    <div className="h-24 rounded-2xl border border-hospital-300/80 bg-white/80 p-6 flex items-center justify-between shadow-sm">
       <div className="space-y-2.5 w-1/2">
         <div className="h-5 w-48 rounded-lg skeleton-shimmer" />
         <div className="h-3.5 w-72 rounded-md skeleton-shimmer" />
@@ -25,9 +25,9 @@ const ModuleLoader = () => (
       <div className="h-9 w-28 rounded-xl skeleton-shimmer" />
     </div>
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div className="h-32 rounded-2xl border border-slate-200/80 bg-white/80 p-5 skeleton-shimmer" />
-      <div className="h-32 rounded-2xl border border-slate-200/80 bg-white/80 p-5 skeleton-shimmer" />
-      <div className="h-32 rounded-2xl border border-slate-200/80 bg-white/80 p-5 skeleton-shimmer" />
+      <div className="h-32 rounded-2xl border border-hospital-300/80 bg-white/80 p-5 skeleton-shimmer" />
+      <div className="h-32 rounded-2xl border border-hospital-300/80 bg-white/80 p-5 skeleton-shimmer" />
+      <div className="h-32 rounded-2xl border border-hospital-300/80 bg-white/80 p-5 skeleton-shimmer" />
     </div>
   </div>
 );
@@ -120,7 +120,7 @@ const MainAppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#F7F5FF] via-[#FAF8FF] to-[#F3EEFF] text-slate-900 selection:bg-[#5B21B6]/20 selection:text-[#1C103B]">
+    <div className="min-h-screen flex flex-col bg-[#E7F0E9] text-[#10221F] selection:bg-[#39786B]/20 selection:text-[#10221F]">
       <Navbar
         onNavigateHome={() => setCurrentView('home')}
         onNavigateLogin={() => {

@@ -62,7 +62,7 @@ export const INITIAL_TENANTS: Tenant[] = [
     licenseNumber: 'HOSP-REG-2026-001',
     abdmFacilityId: 'IN-HFR-2026-101',
     nabhAccredited: true,
-    themeColor: '#0284c7',
+    themeColor: '#39786B',
     branches: [
       { id: 'branch-main', name: 'Main Hospital Campus', city: 'Metro Center', beds: 45, activeDoctors: 7 }
     ],
@@ -77,7 +77,7 @@ export const INITIAL_TENANTS: Tenant[] = [
     licenseNumber: 'HOSP-REG-2026-002',
     abdmFacilityId: 'IN-HFR-2026-102',
     nabhAccredited: true,
-    themeColor: '#059669',
+    themeColor: '#39786B',
     branches: [
       { id: 'branch-lifecare', name: 'LifeCare Medical City', city: 'South Zone', beds: 60, activeDoctors: 5 }
     ],

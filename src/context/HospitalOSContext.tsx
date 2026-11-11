@@ -803,7 +803,7 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       licenseNumber: tenantData.licenseNumber || `REG-${Date.now().toString().slice(-6)}`,
       abdmFacilityId: tenantData.abdmFacilityId || `IN-HFR-${Date.now().toString().slice(-6)}`,
       nabhAccredited: tenantData.nabhAccredited ?? true,
-      themeColor: '#0284c7',
+      themeColor: '#39786B',
       branches:
         tenantData.branches && tenantData.branches.length > 0
           ? tenantData.branches

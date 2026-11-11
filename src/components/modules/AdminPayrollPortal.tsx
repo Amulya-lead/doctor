@@ -22,10 +22,10 @@ import { StaffEmployee, UserRole } from '../../types';
 import { STANDARD_DEPARTMENTS, STANDARD_STAFF_ROLES } from '../../data/mockData';
 
 const STAFF_AVATAR_THEMES = [
-  'from-[#2D1B69] to-[#6D28D9] shadow-lavender-700/20',
-  'from-[#0D9488] to-[#10B981] shadow-teal-500/20',
-  'from-[#4C1D95] to-[#7C3AED] shadow-lavender-700/20',
-  'from-[#0284C7] to-[#2563EB] shadow-sky-500/20'
+  'from-[#1D4840] to-[#39786B] shadow-hospital-800/20',
+  'from-[#39786B] to-[#39786B] shadow-hospital-500/20',
+  'from-[#39786B] to-[#39786B] shadow-hospital-800/20',
+  'from-[#1D4840] to-[#39786B] shadow-hospital-500/20'
 ];
 
 function getStaffInitials(name: string): string {
@@ -245,10 +245,10 @@ export const AdminPayrollPortal: React.FC = () => {
     <div className="space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-top-4 duration-200">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+        <div className="fixed top-5 right-5 z-50 bg-hospital-950 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 border border-hospital-900 animate-in fade-in slide-in-from-top-4 duration-200">
+          <CheckCircle2 className="w-5 h-5 text-hospital-400 flex-shrink-0" />
           <span className="text-xs font-semibold">{toastMessage}</span>
-          <button onClick={() => setToastMessage(null)} className="text-slate-400 hover:text-white ml-2">
+          <button onClick={() => setToastMessage(null)} className="text-hospital-700 hover:text-white ml-2">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -258,18 +258,18 @@ export const AdminPayrollPortal: React.FC = () => {
       <div className="workspace-banner workspace-banner-payroll p-6 sm:p-7 text-white flex flex-col xl:flex-row xl:items-center justify-between gap-5">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-3 py-0.5 rounded-full text-[11px] font-bold uppercase bg-white/15 backdrop-blur-md border border-lavender-300/30 text-lavender-100 tracking-wider">
+            <span className="px-3 py-0.5 rounded-full text-[11px] font-bold uppercase bg-white/15 backdrop-blur-md border border-hospital-300/30 text-hospital-100 tracking-wider">
               Admin Exclusive Portal
             </span>
-            <span className="text-xs text-slate-100 font-semibold">{currentTenant.name}</span>
+            <span className="text-xs text-hospital-50 font-semibold">{currentTenant.name}</span>
           </div>
           <h2 className="font-display text-2xl sm:text-[1.65rem] font-extrabold text-white flex items-center gap-2.5 tracking-tight">
             <span className="w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center flex-shrink-0">
-              <DollarSign className="w-5 h-5 text-emerald-300" />
+              <DollarSign className="w-5 h-5 text-hospital-300" />
             </span>
             <span>Hospital Staff &amp; Payroll Desk</span>
           </h2>
-          <p className="text-xs sm:text-sm text-slate-100 max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-hospital-50 max-w-2xl leading-relaxed">
             Add doctors, nurses, and hospital staff. Award performance bonuses (+₹), apply roster deductions (-₹), and disburse monthly pay.
           </p>
         </div>
@@ -280,22 +280,22 @@ export const AdminPayrollPortal: React.FC = () => {
             title="Populate complete 20-member hospital staff roster across all departments"
             className="px-3.5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/25 text-white font-bold text-xs flex items-center gap-1.5 whitespace-nowrap transition active:scale-[0.98]"
           >
-            <Users className="w-4 h-4 text-lavender-300" />
+            <Users className="w-4 h-4 text-hospital-300" />
             <span>Load 20 Staff</span>
           </button>
 
           <button
             onClick={() => setIsAddStaffModalOpen(true)}
-            className="px-4 py-2.5 rounded-xl bg-white hover:bg-lavender-50 text-[#1C103B] font-bold text-xs flex items-center gap-1.5 shadow-lg whitespace-nowrap transition active:scale-[0.98]"
+            className="px-4 py-2.5 rounded-xl bg-white hover:bg-hospital-50 text-[#10221F] font-bold text-xs flex items-center gap-1.5 shadow-lg whitespace-nowrap transition active:scale-[0.98]"
           >
-            <UserPlus className="w-4 h-4 text-[#4C1D95]" />
+            <UserPlus className="w-4 h-4 text-[#39786B]" />
             <span>Add Staff</span>
           </button>
 
           {pendingCount > 0 ? (
             <button
               onClick={handleBatchDisburse}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:brightness-105 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/25 whitespace-nowrap transition active:scale-[0.98]"
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-hospital-500 to-hospital-500 hover:brightness-105 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-hospital-500/25 whitespace-nowrap transition active:scale-[0.98]"
             >
               <Send className="w-4 h-4" />
               <span>Disburse All ({pendingCount})</span>
@@ -306,7 +306,7 @@ export const AdminPayrollPortal: React.FC = () => {
               title="Reset disbursement cycle to Pending for the new month"
               className="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/25 text-white font-bold text-xs flex items-center gap-1.5 whitespace-nowrap transition active:scale-[0.98]"
             >
-              <RotateCcw className="w-4 h-4 text-slate-100" />
+              <RotateCcw className="w-4 h-4 text-hospital-50" />
               <span>New Month Cycle</span>
             </button>
           )}
@@ -316,73 +316,73 @@ export const AdminPayrollPortal: React.FC = () => {
       {/* Lavish Financial Metrics Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="relative overflow-hidden lavish-card lavish-card-hover p-5">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#2D1B69] to-[#6D28D9]" />
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#1D4840] to-[#39786B]" />
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-700">Total Monthly Net Payroll</span>
-            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white flex items-center justify-center shadow-xs flex-shrink-0">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-hospital-900">Total Monthly Net Payroll</span>
+            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1D4840] to-[#39786B] text-white flex items-center justify-center shadow-xs flex-shrink-0">
               <Building2 className="w-4 h-4" />
             </span>
           </div>
-          <div className="mt-2.5 font-display text-2xl font-extrabold text-slate-950 font-mono tracking-tight">
+          <div className="mt-2.5 font-display text-2xl font-extrabold text-hospital-950 font-mono tracking-tight">
             ₹{Math.round(totalNet).toLocaleString('en-IN')}
           </div>
-          <p className="mt-1 text-xs font-medium text-slate-700">
+          <p className="mt-1 text-xs font-medium text-hospital-900">
             Across {staff.length} Doctors, Nurses &amp; Staff
           </p>
         </div>
 
         <div className="relative overflow-hidden lavish-card lavish-card-hover p-5">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-hospital-500 to-hospital-500" />
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Total Bonuses Awarded</span>
-            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-xs flex-shrink-0">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-hospital-800">Total Bonuses Awarded</span>
+            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-hospital-500 to-hospital-500 text-white flex items-center justify-center shadow-xs flex-shrink-0">
               <Sparkles className="w-4 h-4" />
             </span>
           </div>
-          <div className="mt-2.5 font-display text-2xl font-extrabold text-emerald-700 font-mono tracking-tight">
+          <div className="mt-2.5 font-display text-2xl font-extrabold text-hospital-700 font-mono tracking-tight">
             +₹{totalBonuses.toLocaleString('en-IN')}
           </div>
-          <p className="mt-1 text-xs font-medium text-slate-700">
+          <p className="mt-1 text-xs font-medium text-hospital-900">
             Performance rewards &amp; overtime
           </p>
         </div>
 
         <div className="relative overflow-hidden lavish-card lavish-card-hover p-5">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rose-500 to-orange-500" />
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-hospital-500 to-hospital-500" />
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-rose-800">Deductions &amp; Penalties</span>
-            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center shadow-xs flex-shrink-0">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-hospital-800">Deductions &amp; Penalties</span>
+            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-hospital-500 to-hospital-600 text-white flex items-center justify-center shadow-xs flex-shrink-0">
               <AlertTriangle className="w-4 h-4" />
             </span>
           </div>
-          <div className="mt-2.5 font-display text-2xl font-extrabold text-rose-700 font-mono tracking-tight">
+          <div className="mt-2.5 font-display text-2xl font-extrabold text-hospital-700 font-mono tracking-tight">
             -₹{totalDeductions.toLocaleString('en-IN')}
           </div>
-          <p className="mt-1 text-xs font-medium text-slate-700">
+          <p className="mt-1 text-xs font-medium text-hospital-900">
             Absences &amp; roster adjustments
           </p>
         </div>
 
         <div className="relative overflow-hidden lavish-card lavish-card-hover p-5">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#4C1D95] to-[#7C3AED]" />
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#39786B] to-[#39786B]" />
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#4C1D95]">Disbursement Progress</span>
-            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#4C1D95] to-[#7C3AED] text-white flex items-center justify-center shadow-xs flex-shrink-0">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#39786B]">Disbursement Progress</span>
+            <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#39786B] to-[#39786B] text-white flex items-center justify-center shadow-xs flex-shrink-0">
               <CheckCircle2 className="w-4 h-4" />
             </span>
           </div>
           <div className="mt-2.5 flex items-baseline justify-between gap-2">
-            <div className="font-display text-2xl font-extrabold text-slate-950 font-mono flex items-baseline gap-1.5">
+            <div className="font-display text-2xl font-extrabold text-hospital-950 font-mono flex items-baseline gap-1.5">
               <span>{paidCount}</span>
-              <span className="text-xs font-sans font-semibold text-slate-700">/ {staff.length} Disbursed</span>
+              <span className="text-xs font-sans font-semibold text-hospital-900">/ {staff.length} Disbursed</span>
             </div>
-            <span className="font-mono text-xs font-bold text-[#4C1D95] bg-lavender-50 border border-lavender-200/80 px-2 py-0.5 rounded-md">
+            <span className="font-mono text-xs font-bold text-[#39786B] bg-hospital-50 border border-hospital-200/80 px-2 py-0.5 rounded-md">
               {staff.length > 0 ? Math.round((paidCount / staff.length) * 100) : 0}%
             </span>
           </div>
-          <div className="mt-2.5 w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+          <div className="mt-2.5 w-full bg-hospital-50 rounded-full h-2 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-[#5B21B6] to-[#10B981] h-full rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-[#39786B] to-[#39786B] h-full rounded-full transition-all duration-300"
               style={{ width: `${staff.length > 0 ? (paidCount / staff.length) * 100 : 0}%` }}
             />
           </div>
@@ -393,18 +393,18 @@ export const AdminPayrollPortal: React.FC = () => {
       <div className="lavish-card p-4 space-y-3.5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="relative w-full sm:max-w-md">
-            <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-4 h-4 text-hospital-700 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               placeholder="Search staff by name, title, department, or ID..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-10 pr-8 py-2 rounded-xl bg-slate-50/90 border border-slate-300/80 text-xs font-medium text-slate-950 placeholder-slate-500 focus:outline-none focus:border-[#5B21B6] focus:ring-2 focus:ring-[#5B21B6]/15 focus:bg-white transition"
+              className="w-full pl-10 pr-8 py-2 rounded-xl bg-hospital-50/90 border border-hospital-300/80 text-xs font-medium text-hospital-950 placeholder-hospital-500 focus:outline-none focus:border-[#39786B] focus:ring-2 focus:ring-[#39786B]/15 focus:bg-white transition"
             />
             {search && (
               <button
                 onClick={() => setSearch('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900 p-0.5"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-hospital-700 hover:text-hospital-950 p-0.5"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -412,7 +412,7 @@ export const AdminPayrollPortal: React.FC = () => {
           </div>
 
           {/* Bigin-Style Sliding Status Filter Switch */}
-          <div className="relative grid grid-cols-3 bg-lavender-50 border border-lavender-200/80 p-1 rounded-xl self-start sm:self-auto min-w-[270px]">
+          <div className="relative grid grid-cols-3 bg-hospital-50 border border-hospital-200/80 p-1 rounded-xl self-start sm:self-auto min-w-[270px]">
             <div
               aria-hidden="true"
               className="absolute top-1 bottom-1 left-1 w-[calc(33.333%-0.25rem)] rounded-lg bg-white shadow-xs transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
@@ -433,13 +433,13 @@ export const AdminPayrollPortal: React.FC = () => {
                   onClick={() => setStatusFilter(status)}
                   className={`relative z-10 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors duration-200 flex items-center justify-center gap-1.5 ${
                     statusFilter === status
-                      ? 'text-[#4C1D95]'
-                      : 'text-slate-700 hover:text-slate-950'
+                      ? 'text-[#39786B]'
+                      : 'text-hospital-900 hover:text-hospital-950'
                   }`}
                 >
                   <span>{status === 'ALL' ? 'All' : status}</span>
                   <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
-                    statusFilter === status ? 'bg-lavender-50 text-[#4C1D95]' : 'bg-slate-200/70 text-slate-700'
+                    statusFilter === status ? 'bg-hospital-50 text-[#39786B]' : 'bg-hospital-300/70 text-hospital-900'
                   }`}>
                     {count}
                   </span>
@@ -450,7 +450,7 @@ export const AdminPayrollPortal: React.FC = () => {
         </div>
 
         {/* Full Non-Clipped Department Pills */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-2.5 border-t border-slate-100">
+        <div className="flex flex-wrap items-center gap-1.5 pt-2.5 border-t border-hospital-50">
           {activeDepartments.map(dept => (
             <button
               key={dept}
@@ -458,7 +458,7 @@ export const AdminPayrollPortal: React.FC = () => {
               className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-150 ${
                 selectedDept === dept
                   ? 'btn-zoho-primary text-white shadow-xs'
-                  : 'bg-slate-50 border border-slate-200/90 text-slate-700 hover:bg-lavender-50/80 hover:text-[#4C1D95] hover:border-lavender-200'
+                  : 'bg-hospital-50 border border-hospital-300/90 text-hospital-900 hover:bg-hospital-50/80 hover:text-[#39786B] hover:border-hospital-200'
               }`}
             >
               {dept === 'ALL' ? 'All Departments' : dept}
@@ -471,11 +471,11 @@ export const AdminPayrollPortal: React.FC = () => {
       <div className="space-y-3">
         {filteredStaff.length === 0 ? (
           <div className="p-12 lavish-card text-center space-y-2.5">
-            <div className="w-12 h-12 rounded-xl bg-lavender-50 text-[#4C1D95] border border-lavender-200/80 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-xl bg-hospital-50 text-[#39786B] border border-hospital-200/80 flex items-center justify-center mx-auto">
               <Users className="w-6 h-6" />
             </div>
-            <h3 className="font-display font-bold text-slate-950 text-base">No Staff Members Found</h3>
-            <p className="text-xs text-slate-700 max-w-sm mx-auto">
+            <h3 className="font-display font-bold text-hospital-950 text-base">No Staff Members Found</h3>
+            <p className="text-xs text-hospital-900 max-w-sm mx-auto">
               {search || selectedDept !== 'ALL' || statusFilter !== 'ALL'
                 ? 'No staff members match your active search or department filter.'
                 : 'Use "Load 20 Staff" or "Add Staff" in the banner above to populate the payroll roster.'}
@@ -485,7 +485,7 @@ export const AdminPayrollPortal: React.FC = () => {
           <div className="lavish-card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-gradient-to-r from-[#F7F5FF] to-[#F1ECFE] border-b border-slate-200/90 text-slate-800 font-bold uppercase text-[11px] tracking-wider">
+                <thead className="bg-gradient-to-r from-[#E7F0E9] to-[#F1ECFE] border-b border-hospital-300/90 text-hospital-900 font-bold uppercase text-[11px] tracking-wider">
                   <tr>
                     <th className="py-3.5 px-4 whitespace-nowrap">Staff Member</th>
                     <th className="py-3.5 px-4 whitespace-nowrap">Department</th>
@@ -497,7 +497,7 @@ export const AdminPayrollPortal: React.FC = () => {
                     <th className="py-3.5 px-4 text-right whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-hospital-50">
                   {filteredStaff.map((emp, idx) => {
                     const netPay = emp.baseSalary + emp.incentives + (emp.bonuses || 0) - (emp.deductions || 0) - (emp.baseSalary * 0.12) - 200;
                     const isPaid = emp.salaryStatus === 'Paid';
@@ -506,7 +506,7 @@ export const AdminPayrollPortal: React.FC = () => {
                     return (
                       <tr
                         key={emp.id}
-                        className="hover:bg-lavender-50/50 transition-colors duration-150"
+                        className="hover:bg-hospital-50/50 transition-colors duration-150"
                       >
                         {/* Name & Role */}
                         <td className="py-3.5 px-4">
@@ -515,9 +515,9 @@ export const AdminPayrollPortal: React.FC = () => {
                               {getStaffInitials(emp.name)}
                             </div>
                             <div className="min-w-0">
-                              <p className="font-display font-bold text-slate-950 text-[13px] truncate">{emp.name}</p>
-                              <p className="text-[11px] text-slate-700 font-medium mt-0.5 truncate">
-                                <span className="font-mono text-[#4C1D95] font-semibold">{emp.id}</span> &bull; {emp.designation}
+                              <p className="font-display font-bold text-hospital-950 text-[13px] truncate">{emp.name}</p>
+                              <p className="text-[11px] text-hospital-900 font-medium mt-0.5 truncate">
+                                <span className="font-mono text-[#39786B] font-semibold">{emp.id}</span> &bull; {emp.designation}
                               </p>
                             </div>
                           </div>
@@ -525,13 +525,13 @@ export const AdminPayrollPortal: React.FC = () => {
 
                         {/* Department */}
                         <td className="py-3.5 px-4">
-                          <span className="whitespace-nowrap inline-block px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/90 text-[11px] font-bold text-slate-800">
+                          <span className="whitespace-nowrap inline-block px-2.5 py-1 rounded-lg bg-hospital-50 border border-hospital-300/90 text-[11px] font-bold text-hospital-900">
                             {emp.department}
                           </span>
                         </td>
 
                         {/* Base Pay */}
-                        <td className="py-3.5 px-4 text-right font-mono font-semibold text-slate-800 tabular-nums whitespace-nowrap">
+                        <td className="py-3.5 px-4 text-right font-mono font-semibold text-hospital-900 tabular-nums whitespace-nowrap">
                           ₹{emp.baseSalary.toLocaleString('en-IN')}
                         </td>
 
@@ -539,13 +539,13 @@ export const AdminPayrollPortal: React.FC = () => {
                         <td className="py-3.5 px-4 text-right font-mono tabular-nums whitespace-nowrap">
                           {(emp.bonuses && emp.bonuses > 0) ? (
                             <span
-                              className="text-emerald-800 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200"
+                              className="text-hospital-800 font-bold bg-hospital-50 px-2 py-0.5 rounded-md border border-hospital-200"
                               title={emp.bonusReason || 'Bonus'}
                             >
                               +₹{emp.bonuses.toLocaleString('en-IN')}
                             </span>
                           ) : (
-                            <span className="text-slate-600 font-medium">₹0</span>
+                            <span className="text-hospital-800 font-medium">₹0</span>
                           )}
                         </td>
 
@@ -553,18 +553,18 @@ export const AdminPayrollPortal: React.FC = () => {
                         <td className="py-3.5 px-4 text-right font-mono tabular-nums whitespace-nowrap">
                           {(emp.deductions && emp.deductions > 0) ? (
                             <span
-                              className="text-rose-700 font-bold bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200"
+                              className="text-hospital-700 font-bold bg-hospital-50 px-2 py-0.5 rounded-md border border-hospital-200"
                               title={emp.deductionReason || 'Deduction'}
                             >
                               -₹{emp.deductions.toLocaleString('en-IN')}
                             </span>
                           ) : (
-                            <span className="text-slate-600 font-medium">₹0</span>
+                            <span className="text-hospital-800 font-medium">₹0</span>
                           )}
                         </td>
 
                         {/* Net Payable */}
-                        <td className="py-3.5 px-4 text-right font-mono font-extrabold text-slate-950 tabular-nums whitespace-nowrap">
+                        <td className="py-3.5 px-4 text-right font-mono font-extrabold text-hospital-950 tabular-nums whitespace-nowrap">
                           ₹{Math.max(0, Math.round(netPay)).toLocaleString('en-IN')}
                         </td>
 
@@ -572,10 +572,10 @@ export const AdminPayrollPortal: React.FC = () => {
                         <td className="py-3.5 px-4 text-center whitespace-nowrap">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
                             isPaid
-                              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                              : 'bg-amber-50 text-amber-800 border-amber-200'
+                              ? 'bg-hospital-50 text-hospital-800 border-hospital-200'
+                              : 'bg-hospital-50 text-hospital-800 border-hospital-200'
                           }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${isPaid ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                            <span className={`w-1.5 h-1.5 rounded-full ${isPaid ? 'bg-hospital-500' : 'bg-hospital-500'}`} />
                             <span>{isPaid ? 'Paid' : 'Pending'}</span>
                           </span>
                         </td>
@@ -590,7 +590,7 @@ export const AdminPayrollPortal: React.FC = () => {
                                 setBonusModalStaff(emp);
                                 setBonusAmount('5000');
                               }}
-                              className="p-1.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-emerald-700 hover:bg-emerald-100 transition"
+                              className="p-1.5 rounded-lg bg-hospital-50 border border-hospital-200/80 text-hospital-700 hover:bg-hospital-100 transition"
                             >
                               <PlusCircle className="w-4 h-4" />
                             </button>
@@ -602,7 +602,7 @@ export const AdminPayrollPortal: React.FC = () => {
                                 setDeductModalStaff(emp);
                                 setDeductAmount('2000');
                               }}
-                              className="p-1.5 rounded-lg bg-rose-50 border border-rose-200/80 text-rose-700 hover:bg-rose-100 transition"
+                              className="p-1.5 rounded-lg bg-hospital-50 border border-hospital-200/80 text-hospital-700 hover:bg-hospital-100 transition"
                             >
                               <MinusCircle className="w-4 h-4" />
                             </button>
@@ -613,7 +613,7 @@ export const AdminPayrollPortal: React.FC = () => {
                               onClick={() => handleDisburseSingle(emp)}
                               className={`p-1.5 rounded-lg transition ${
                                 isPaid
-                                  ? 'bg-emerald-100 border border-emerald-300 text-emerald-800 hover:bg-emerald-200'
+                                  ? 'bg-hospital-100 border border-hospital-300 text-hospital-800 hover:bg-hospital-200'
                                   : 'btn-zoho-primary text-white'
                               }`}
                             >
@@ -629,7 +629,7 @@ export const AdminPayrollPortal: React.FC = () => {
                                   showToast(`Removed ${emp.name} from hospital staff.`);
                                 }
                               }}
-                              className="p-1.5 rounded-lg border border-transparent text-slate-500 hover:text-rose-700 hover:bg-rose-50 hover:border-rose-200 transition"
+                              className="p-1.5 rounded-lg border border-transparent text-hospital-700 hover:text-hospital-700 hover:bg-hospital-50 hover:border-hospital-200 transition"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -643,12 +643,12 @@ export const AdminPayrollPortal: React.FC = () => {
             </div>
 
             {/* Clean Roster Footer Summary */}
-            <div className="px-4 py-3 bg-gradient-to-r from-[#F8FAFF] to-[#F1F6FE] border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <span className="font-semibold text-slate-700">
-                Displaying <strong className="text-slate-950">{filteredStaff.length}</strong> of <strong className="text-slate-950">{staff.length}</strong> active personnel
+            <div className="px-4 py-3 bg-gradient-to-r from-[#F8FAFF] to-[#F1F6FE] border-t border-hospital-300/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <span className="font-semibold text-hospital-900">
+                Displaying <strong className="text-hospital-950">{filteredStaff.length}</strong> of <strong className="text-hospital-950">{staff.length}</strong> active personnel
               </span>
-              <span className="font-semibold text-slate-700">
-                Payroll Ledger Sync: <span className="font-mono font-bold text-[#4C1D95]">{currentTenant.name}</span>
+              <span className="font-semibold text-hospital-900">
+                Payroll Ledger Sync: <span className="font-mono font-bold text-[#39786B]">{currentTenant.name}</span>
               </span>
             </div>
           </div>
@@ -657,23 +657,23 @@ export const AdminPayrollPortal: React.FC = () => {
 
       {/* Add Staff Member Modal */}
       {isAddStaffModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-          <div className="w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
-            <div className="h-1.5 w-full bg-gradient-to-r from-[#2D1B69] via-[#6D28D9] to-[#0D9488]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-hospital-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-lg rounded-2xl bg-white border border-hospital-300 shadow-2xl overflow-hidden">
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#1D4840] via-[#39786B] to-[#39786B]" />
             <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3 border-b border-hospital-50">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2.5 rounded-xl bg-lavender-50 text-[#4C1D95] border border-lavender-200/80">
+                  <div className="p-2.5 rounded-xl bg-hospital-50 text-[#39786B] border border-hospital-200/80">
                     <UserPlus className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-display font-bold text-slate-950 text-base">Add Hospital Staff Member</h3>
-                    <p className="text-xs font-medium text-slate-700">Register doctors, nurses, technicians, or administrators</p>
+                    <h3 className="font-display font-bold text-hospital-950 text-base">Add Hospital Staff Member</h3>
+                    <p className="text-xs font-medium text-hospital-900">Register doctors, nurses, technicians, or administrators</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsAddStaffModalOpen(false)}
-                  className="text-slate-600 hover:text-slate-950 hover:bg-slate-100 rounded-lg p-1.5"
+                  className="text-hospital-800 hover:text-hospital-950 hover:bg-hospital-50 rounded-lg p-1.5"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -681,7 +681,7 @@ export const AdminPayrollPortal: React.FC = () => {
 
               <form onSubmit={handleAddStaffSubmit} className="space-y-3.5">
                 <div>
-                  <label className="text-xs font-bold text-slate-800 block mb-1">
+                  <label className="text-xs font-bold text-hospital-900 block mb-1">
                     Full Name *
                   </label>
                   <input
@@ -690,19 +690,19 @@ export const AdminPayrollPortal: React.FC = () => {
                     placeholder="e.g. Dr. Rajesh Sharma, MS"
                     value={newStaffForm.name}
                     onChange={e => setNewStaffForm({ ...newStaffForm, name: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                    className="w-full px-3.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300/80 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-slate-800 block mb-1">
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">
                       Role Category *
                     </label>
                     <select
                       value={newStaffForm.role}
                       onChange={e => handleRoleChange(e.target.value as UserRole)}
-                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300/80 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     >
                       {STANDARD_STAFF_ROLES.map(r => (
                         <option key={r.role} value={r.role}>{r.title}</option>
@@ -711,7 +711,7 @@ export const AdminPayrollPortal: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-800 block mb-1">
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">
                       Designation / Title *
                     </label>
                     <input
@@ -720,20 +720,20 @@ export const AdminPayrollPortal: React.FC = () => {
                       placeholder="e.g. Chief Surgeon, Head Nurse"
                       value={newStaffForm.designation}
                       onChange={e => setNewStaffForm({ ...newStaffForm, designation: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300/80 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-slate-800 block mb-1">
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">
                       Department *
                     </label>
                     <select
                       value={newStaffForm.department}
                       onChange={e => setNewStaffForm({ ...newStaffForm, department: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300/80 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     >
                       {STANDARD_DEPARTMENTS.map(d => (
                         <option key={d} value={d}>{d}</option>
@@ -742,7 +742,7 @@ export const AdminPayrollPortal: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-800 block mb-1">
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">
                       Base Salary (₹/Month) *
                     </label>
                     <input
@@ -753,20 +753,20 @@ export const AdminPayrollPortal: React.FC = () => {
                       placeholder="e.g. 75000"
                       value={newStaffForm.baseSalary}
                       onChange={e => setNewStaffForm({ ...newStaffForm, baseSalary: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-mono font-bold text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300/80 text-xs font-mono font-bold text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-slate-800 block mb-1">
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">
                       Duty Shift
                     </label>
                     <select
                       value={newStaffForm.shift}
                       onChange={e => setNewStaffForm({ ...newStaffForm, shift: e.target.value as any })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300/80 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     >
                       <option value="General (09:00 - 18:00)">General (09:00 - 18:00)</option>
                       <option value="Morning (08:00 - 14:00)">Morning (08:00 - 14:00)</option>
@@ -776,7 +776,7 @@ export const AdminPayrollPortal: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-800 block mb-1">
+                    <label className="text-xs font-bold text-hospital-900 block mb-1">
                       Contact Phone
                     </label>
                     <input
@@ -784,7 +784,7 @@ export const AdminPayrollPortal: React.FC = () => {
                       placeholder="e.g. +91 98765 43210"
                       value={newStaffForm.phone}
                       onChange={e => setNewStaffForm({ ...newStaffForm, phone: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      className="w-full px-3.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300/80 text-xs font-medium text-hospital-950 focus:outline-none focus:border-[#39786B] focus:bg-white transition"
                     />
                   </div>
                 </div>
@@ -805,23 +805,23 @@ export const AdminPayrollPortal: React.FC = () => {
 
       {/* Give Bonus Modal with Quick Presets */}
       {bonusModalStaff && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
-            <div className="h-1.5 w-full bg-gradient-to-r from-emerald-500 to-teal-500" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-hospital-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md rounded-2xl bg-white border border-hospital-300 shadow-2xl overflow-hidden">
+            <div className="h-1.5 w-full bg-gradient-to-r from-hospital-500 to-hospital-500" />
             <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3 border-b border-hospital-50">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/70">
+                  <div className="p-2.5 rounded-xl bg-hospital-50 text-hospital-700 border border-hospital-200/70">
                     <PlusCircle className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-display font-bold text-slate-950 text-base">Grant Bonus (+₹)</h3>
-                    <p className="text-xs font-medium text-slate-700">To {bonusModalStaff.name} ({bonusModalStaff.designation})</p>
+                    <h3 className="font-display font-bold text-hospital-950 text-base">Grant Bonus (+₹)</h3>
+                    <p className="text-xs font-medium text-hospital-900">To {bonusModalStaff.name} ({bonusModalStaff.designation})</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setBonusModalStaff(null)}
-                  className="text-slate-600 hover:text-slate-950 hover:bg-slate-100 rounded-lg p-1.5"
+                  className="text-hospital-800 hover:text-hospital-950 hover:bg-hospital-50 rounded-lg p-1.5"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -830,7 +830,7 @@ export const AdminPayrollPortal: React.FC = () => {
               <form onSubmit={handleGiveBonus} className="space-y-4">
                 {/* Quick Amount Presets */}
                 <div>
-                  <label className="text-xs font-bold text-slate-800 block mb-1.5">
+                  <label className="text-xs font-bold text-hospital-900 block mb-1.5">
                     Select Bonus Amount
                   </label>
                   <div className="grid grid-cols-4 gap-2 mb-2">
@@ -841,8 +841,8 @@ export const AdminPayrollPortal: React.FC = () => {
                         onClick={() => setBonusAmount(val)}
                         className={`py-1.5 px-2 rounded-xl text-xs font-mono font-bold border transition ${
                           bonusAmount === val
-                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                            : 'bg-slate-50 text-slate-800 border-slate-300/80 hover:bg-slate-100'
+                            ? 'bg-hospital-600 text-white border-hospital-600 shadow-xs'
+                            : 'bg-hospital-50 text-hospital-900 border-hospital-300/80 hover:bg-hospital-50'
                         }`}
                       >
                         +₹{Number(val).toLocaleString('en-IN')}
@@ -856,13 +856,13 @@ export const AdminPayrollPortal: React.FC = () => {
                     required
                     value={bonusAmount}
                     onChange={e => setBonusAmount(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-sm font-mono font-bold text-slate-950 focus:outline-none focus:border-emerald-500 focus:bg-white transition"
+                    className="w-full px-3.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300/80 text-sm font-mono font-bold text-hospital-950 focus:outline-none focus:border-hospital-500 focus:bg-white transition"
                   />
                 </div>
 
                 {/* Quick Reason Presets */}
                 <div>
-                  <label className="text-xs font-bold text-slate-800 block mb-1.5">
+                  <label className="text-xs font-bold text-hospital-900 block mb-1.5">
                     Reason for Bonus
                   </label>
                   <div className="flex flex-wrap gap-1.5 mb-2">
@@ -878,8 +878,8 @@ export const AdminPayrollPortal: React.FC = () => {
                         onClick={() => setBonusReason(reason)}
                         className={`text-[11px] px-2.5 py-1 rounded-full border transition ${
                           bonusReason === reason
-                            ? 'bg-emerald-100 text-emerald-900 border-emerald-300 font-bold'
-                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                            ? 'bg-hospital-100 text-hospital-900 border-hospital-300 font-bold'
+                            : 'bg-hospital-50 text-hospital-900 border-hospital-300 hover:bg-hospital-50'
                         }`}
                       >
                         {reason}
@@ -891,14 +891,14 @@ export const AdminPayrollPortal: React.FC = () => {
                     required
                     value={bonusReason}
                     onChange={e => setBonusReason(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-emerald-500 focus:bg-white transition"
+                    className="w-full px-3.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300/80 text-xs font-medium text-hospital-950 focus:outline-none focus:border-hospital-500 focus:bg-white transition"
                   />
                 </div>
 
                 <div className="pt-2 flex justify-end">
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:brightness-105 text-white font-bold text-xs shadow-sm transition"
+                    className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-hospital-600 to-hospital-600 hover:brightness-105 text-white font-bold text-xs shadow-sm transition"
                   >
                     Grant Bonus (+₹{Number(bonusAmount || 0).toLocaleString('en-IN')})
                   </button>
@@ -911,23 +911,23 @@ export const AdminPayrollPortal: React.FC = () => {
 
       {/* Minus Money / Deduction Modal with Quick Presets */}
       {deductModalStaff && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
-            <div className="h-1.5 w-full bg-gradient-to-r from-rose-500 to-pink-600" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-hospital-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md rounded-2xl bg-white border border-hospital-300 shadow-2xl overflow-hidden">
+            <div className="h-1.5 w-full bg-gradient-to-r from-hospital-500 to-hospital-600" />
             <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3 border-b border-hospital-50">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200/70">
+                  <div className="p-2.5 rounded-xl bg-hospital-50 text-hospital-700 border border-hospital-200/70">
                     <MinusCircle className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-display font-bold text-slate-950 text-base">Salary Deduction (-₹)</h3>
-                    <p className="text-xs font-medium text-slate-700">From {deductModalStaff.name} ({deductModalStaff.designation})</p>
+                    <h3 className="font-display font-bold text-hospital-950 text-base">Salary Deduction (-₹)</h3>
+                    <p className="text-xs font-medium text-hospital-900">From {deductModalStaff.name} ({deductModalStaff.designation})</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setDeductModalStaff(null)}
-                  className="text-slate-600 hover:text-slate-950 hover:bg-slate-100 rounded-lg p-1.5"
+                  className="text-hospital-800 hover:text-hospital-950 hover:bg-hospital-50 rounded-lg p-1.5"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -936,7 +936,7 @@ export const AdminPayrollPortal: React.FC = () => {
               <form onSubmit={handleDeductSalary} className="space-y-4">
                 {/* Quick Amount Presets */}
                 <div>
-                  <label className="text-xs font-bold text-slate-800 block mb-1.5">
+                  <label className="text-xs font-bold text-hospital-900 block mb-1.5">
                     Select Deduction Amount
                   </label>
                   <div className="grid grid-cols-4 gap-2 mb-2">
@@ -947,8 +947,8 @@ export const AdminPayrollPortal: React.FC = () => {
                         onClick={() => setDeductAmount(val)}
                         className={`py-1.5 px-2 rounded-xl text-xs font-mono font-bold border transition ${
                           deductAmount === val
-                            ? 'bg-rose-600 text-white border-rose-600 shadow-xs'
-                            : 'bg-slate-50 text-slate-800 border-slate-300/80 hover:bg-slate-100'
+                            ? 'bg-hospital-600 text-white border-hospital-600 shadow-xs'
+                            : 'bg-hospital-50 text-hospital-900 border-hospital-300/80 hover:bg-hospital-50'
                         }`}
                       >
                         -₹{Number(val).toLocaleString('en-IN')}
@@ -962,13 +962,13 @@ export const AdminPayrollPortal: React.FC = () => {
                     required
                     value={deductAmount}
                     onChange={e => setDeductAmount(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-sm font-mono font-bold text-slate-950 focus:outline-none focus:border-rose-500 focus:bg-white transition"
+                    className="w-full px-3.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300/80 text-sm font-mono font-bold text-hospital-950 focus:outline-none focus:border-hospital-500 focus:bg-white transition"
                   />
                 </div>
 
                 {/* Quick Reason Presets */}
                 <div>
-                  <label className="text-xs font-bold text-slate-800 block mb-1.5">
+                  <label className="text-xs font-bold text-hospital-900 block mb-1.5">
                     Reason for Deduction
                   </label>
                   <div className="flex flex-wrap gap-1.5 mb-2">
@@ -984,8 +984,8 @@ export const AdminPayrollPortal: React.FC = () => {
                         onClick={() => setDeductReason(reason)}
                         className={`text-[11px] px-2.5 py-1 rounded-full border transition ${
                           deductReason === reason
-                            ? 'bg-rose-100 text-rose-900 border-rose-300 font-bold'
-                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                            ? 'bg-hospital-100 text-hospital-900 border-hospital-300 font-bold'
+                            : 'bg-hospital-50 text-hospital-900 border-hospital-300 hover:bg-hospital-50'
                         }`}
                       >
                         {reason}
@@ -997,14 +997,14 @@ export const AdminPayrollPortal: React.FC = () => {
                     required
                     value={deductReason}
                     onChange={e => setDeductReason(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-rose-500 focus:bg-white transition"
+                    className="w-full px-3.5 py-2 rounded-xl bg-hospital-50 border border-hospital-300/80 text-xs font-medium text-hospital-950 focus:outline-none focus:border-hospital-500 focus:bg-white transition"
                   />
                 </div>
 
                 <div className="pt-2 flex justify-end">
                   <button
                     type="submit"
-                    className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:brightness-105 text-white font-bold text-xs shadow-sm transition"
+                    className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-hospital-600 to-hospital-600 hover:brightness-105 text-white font-bold text-xs shadow-sm transition"
                   >
                     Apply Deduction (-₹{Number(deductAmount || 0).toLocaleString('en-IN')})
                   </button>
