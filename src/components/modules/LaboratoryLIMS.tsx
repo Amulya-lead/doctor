@@ -877,7 +877,7 @@ export const LaboratoryLIMS: React.FC = () => {
 
             {/* Footer Buttons */}
             <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[10px] text-slate-400 font-mono">Digitally signed & synced with ABDM Health Locker</span>
+              <span className="text-[10px] text-slate-400 font-mono">Digitally signed &amp; verified by HospitalOS LIMS</span>
               <div className="flex gap-2">
                 <button
                   onClick={() => setIsReportModalOpen(false)}

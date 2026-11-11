@@ -529,7 +529,7 @@ export const PatientManagement: React.FC = () => {
             {/* ABHA & Health ID */}
             {selectedDossierPatient.abhaAddress && (
               <div className="p-3 rounded-xl bg-sky-50/70 border border-sky-100 text-xs">
-                <span className="text-[10px] text-sky-800 uppercase font-bold tracking-wider">ABDM Ayushman Bharat Health Account</span>
+                <span className="text-[10px] text-sky-800 uppercase font-bold tracking-wider">Digital Health ID</span>
                 <p className="text-sky-950 font-mono mt-0.5">{selectedDossierPatient.abhaAddress}</p>
               </div>
             )}

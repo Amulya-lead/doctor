@@ -230,7 +230,7 @@ export interface BillingInvoice {
 export interface SystemEventLog {
   id: string;
   timestamp: string;
-  module: 'PATIENT' | 'DOCTOR' | 'LIMS' | 'PHARMACY' | 'BILLING' | 'BEDS' | 'NOTIFICATIONS' | 'ABDM' | 'SECURITY';
+  module: 'PATIENT' | 'DOCTOR' | 'LIMS' | 'PHARMACY' | 'BILLING' | 'BEDS' | 'NOTIFICATIONS' | 'SECURITY';
   title: string;
   description: string;
   severity: 'info' | 'success' | 'warning' | 'critical';

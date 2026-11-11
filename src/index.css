@@ -6,55 +6,161 @@
   :root {
     --bg-primary: #f8fafc;
     --card-surface: #ffffff;
-    --border-subtle: #e2e8f0;
+    --border-subtle: rgba(226, 232, 240, 0.85);
+    --glide-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     background-color: #f8fafc;
+    background-image:
+      radial-gradient(at 12% 0%, rgba(14, 165, 233, 0.06) 0px, transparent 48%),
+      radial-gradient(at 88% 0%, rgba(20, 184, 166, 0.05) 0px, transparent 45%);
+    background-attachment: fixed;
     color: #0f172a;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.011em;
   }
 }
 
-/* Clean Professional Scrollbar */
+/* Refined Minimal Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: rgba(148, 163, 184, 0.45);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: rgba(100, 116, 139, 0.7);
 }
 
-/* Simple Crisp Clean Cards */
-.clean-card {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+/* Smooth GPU-Accelerated Keyframes */
+@keyframes glideUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
 }
 
-.clean-card-hover {
-  transition: all 0.2s ease;
-}
-.clean-card-hover:hover {
-  border-color: #0284c7;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+@keyframes fadeInSmooth {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 4px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
-/* Hide scrollbar for tabs */
+@keyframes shimmerSlide {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+/* Module & View Glide Utility */
+.glide-enter {
+  animation: glideUp 0.34s var(--glide-ease) both;
+  will-change: transform, opacity;
+}
+
+/* Polyfill for animate-in / fade-in classes used across components */
+.animate-in.fade-in {
+  animation: fadeInSmooth 0.24s var(--glide-ease) both;
+}
+
+/* Lavish Elevated Clinical Card Surfaces */
+.clean-card,
+.lavish-card {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 1rem;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03),
+    0 8px 24px -12px rgba(15, 23, 42, 0.07);
+  transition:
+    transform 0.28s var(--glide-ease),
+    box-shadow 0.28s var(--glide-ease),
+    border-color 0.22s ease;
+}
+
+.clean-card-hover:hover,
+.lavish-card-hover:hover {
+  transform: translate3d(0, -2px, 0);
+  border-color: rgba(14, 165, 233, 0.45);
+  box-shadow:
+    0 4px 12px -2px rgba(14, 165, 233, 0.08),
+    0 16px 32px -12px rgba(15, 23, 42, 0.1);
+}
+
+.lavish-glass {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+/* Scalable off-screen rendering optimization for large grids/lists */
+.scalable-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 220px;
+}
+
+/* Skeleton Loader Shimmer */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 800px 100%;
+  animation: shimmerSlide 1.5s infinite linear;
+}
+
+/* Smooth button & interactive transitions */
+button,
+a,
+input,
+select,
+textarea {
+  transition-timing-function: var(--glide-ease);
+}
+
+/* Hide scrollbar for horizontal tab strips */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glide-enter,
+  .animate-in.fade-in,
+  .skeleton-shimmer {
+    animation: none !important;
+  }
+  .clean-card,
+  .lavish-card,
+  .clean-card-hover:hover,
+  .lavish-card-hover:hover {
+    transform: none !important;
+    transition: none !important;
+  }
 }

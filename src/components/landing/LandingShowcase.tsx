@@ -3,7 +3,6 @@ import {
   Activity, 
   Layers, 
   ShieldCheck, 
-  Cpu, 
   Radio, 
   CheckCircle2, 
   Sparkles, 
@@ -99,9 +98,9 @@ export const LandingShowcase: React.FC<LandingShowcaseProps> = ({ onLaunchOS }) 
           </div>
 
           <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
-            <span className="text-[10px] text-slate-400 uppercase tracking-widest">India Health Stack</span>
-            <p className="text-base font-extrabold text-white mt-0.5">ABDM Level 3</p>
-            <span className="text-[11px] text-vital-violet">ABHA + HFR + FHIR R4</span>
+            <span className="text-[10px] text-slate-400 uppercase tracking-widest">Clinical Standards</span>
+            <p className="text-base font-extrabold text-white mt-0.5">HL7 &amp; FHIR R4</p>
+            <span className="text-[11px] text-vital-violet">Encrypted EMR Vault</span>
           </div>
 
           <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
@@ -249,7 +248,7 @@ export const LandingShowcase: React.FC<LandingShowcaseProps> = ({ onLaunchOS }) 
               id: 'insurance',
               icon: ShieldCheck,
               title: 'I. Insurance & Claims',
-              desc: 'ABDM PMJAY & private TPA cashless desk, 30-minute pre-authorizations, electronic claim settlement status.',
+              desc: 'Government & private TPA cashless desk, 30-minute pre-authorizations, electronic claim settlement status.',
               color: 'text-purple-400'
             },
             {
@@ -260,17 +259,10 @@ export const LandingShowcase: React.FC<LandingShowcaseProps> = ({ onLaunchOS }) 
               color: 'text-vital-emerald'
             },
             {
-              id: 'abdm',
-              icon: Cpu,
-              title: 'K. ABDM & India Stack',
-              desc: 'ABHA verification, HFR facility certification, HPR doctor credentials, and FHIR R4 standard data bundles.',
-              color: 'text-vital-violet'
-            },
-            {
               id: 'patient_portal',
               icon: HeartPulse,
-              title: 'L. Patient Health Locker',
-              desc: 'Digital ABHA smart card, instant PDF prescription downloads, verified lab results, and online bill payments.',
+              title: 'K. Patient Health Locker',
+              desc: 'Digital patient health card, instant PDF prescription downloads, verified lab results, and online bill payments.',
               color: 'text-rose-400'
             }
           ].map(module => {

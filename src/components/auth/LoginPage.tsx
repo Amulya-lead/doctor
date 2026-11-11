@@ -97,18 +97,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-sky-50/20 to-slate-100 flex flex-col justify-between p-4 sm:p-6 text-slate-800">
+    <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 text-slate-800 glide-enter">
       {/* Top Header */}
       <div className="max-w-4xl w-full mx-auto flex items-center justify-between pb-4">
         <button
           onClick={onNavigateHome}
           className="flex items-center gap-2.5 group text-slate-700 hover:text-slate-900 focus:outline-none"
         >
-          <div className="w-9 h-9 rounded-xl bg-sky-600 flex items-center justify-center text-white shadow-xs">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center text-white shadow-sm shadow-sky-500/25 group-hover:scale-105 transition-transform duration-200">
             <Activity className="w-5 h-5" />
           </div>
           <div>
-            <span className="font-bold text-lg text-slate-900 tracking-tight">
+            <span className="font-extrabold text-lg text-slate-900 tracking-tight">
               Hospital<span className="text-sky-600">OS</span>
             </span>
             <span className="hidden sm:inline text-xs text-slate-400 ml-2 font-medium">Healthcare Portal</span>
@@ -117,7 +117,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
         <button
           onClick={onNavigateHome}
-          className="px-3.5 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 flex items-center gap-1.5 transition shadow-xs"
+          className="px-3.5 py-1.5 rounded-xl border border-slate-200/90 bg-white/90 hover:bg-slate-50 text-xs font-semibold text-slate-700 hover:text-slate-900 flex items-center gap-1.5 transition-all duration-200 shadow-xs active:scale-95"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Home</span>
@@ -125,16 +125,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       </div>
 
       {/* Main Login Card */}
-      <div className="max-w-lg w-full mx-auto my-auto bg-white rounded-2xl border border-slate-200 shadow-xl p-6 sm:p-8 space-y-6">
+      <div className="max-w-lg w-full mx-auto my-auto bg-white/95 backdrop-blur-xl rounded-3xl border border-slate-200/90 shadow-[0_24px_64px_-16px_rgba(15,23,42,0.12)] p-6 sm:p-8 space-y-6">
         
-        {/* Dual Mode Switcher Tabs */}
-        <div className="grid grid-cols-2 p-1 rounded-xl bg-slate-100 border border-slate-200/80">
+        {/* Dual Mode Sliding Switcher Tabs */}
+        <div className="relative grid grid-cols-2 p-1 rounded-2xl bg-slate-100/90 border border-slate-200/80">
+          <div
+            aria-hidden="true"
+            className={`absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] rounded-xl bg-white shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              activeTab === 'admin' ? 'translate-x-full' : 'translate-x-0'
+            }`}
+          />
           <button
             type="button"
             onClick={() => { setActiveTab('user'); setErrorMsg(null); }}
-            className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition ${
+            className={`relative z-10 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors ${
               activeTab === 'user'
-                ? 'bg-white text-sky-700 shadow-xs'
+                ? 'text-sky-700'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -145,9 +151,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           <button
             type="button"
             onClick={() => { setActiveTab('admin'); setErrorMsg(null); }}
-            className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition ${
+            className={`relative z-10 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors ${
               activeTab === 'admin'
-                ? 'bg-white text-slate-900 shadow-xs'
+                ? 'text-slate-900'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -189,7 +195,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                   placeholder="Enter your name (e.g. John Doe, Priya Sharma)..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:bg-white transition"
+                  className="w-full bg-slate-50/90 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:bg-white transition"
                 />
               </div>
 
@@ -204,7 +210,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                     value={userPhone}
                     onChange={(e) => setUserPhone(e.target.value)}
                     placeholder="+91 98765 00000"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:bg-white transition"
+                    className="w-full bg-slate-50/90 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:bg-white transition"
                   />
                 </div>
 
@@ -218,7 +224,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                     value={userEmail}
                     onChange={(e) => setUserEmail(e.target.value)}
                     placeholder="patient@gmail.com"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:bg-white transition"
+                    className="w-full bg-slate-50/90 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 focus:bg-white transition"
                   />
                 </div>
               </div>
@@ -226,7 +232,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition active:scale-95 disabled:opacity-50"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-cyan-600 hover:from-sky-500 hover:to-cyan-600 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-sky-600/20 transition-all duration-200 active:scale-[0.98] disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <span>Entering Patient Portal...</span>
@@ -318,7 +324,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition active:scale-95 disabled:opacity-50"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 hover:from-black hover:to-slate-900 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-slate-900/15 transition-all duration-200 active:scale-[0.98] disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <span>Authenticating Admin...</span>

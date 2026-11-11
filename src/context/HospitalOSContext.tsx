@@ -56,7 +56,6 @@ export type NavigationModule =
   | 'billing'
   | 'admin_payroll'
   | 'insurance'
-  | 'abdm'
   | 'patient_portal';
 
 export interface UserSession {
@@ -282,7 +281,7 @@ export const ROLE_DEFAULT_MODULES: Record<UserRole, NavigationModule> = {
 };
 
 export const ROLE_ALLOWED_MODULES: Record<UserRole, NavigationModule[]> = {
-  admin: ['admin_payroll', 'operations', 'insurance', 'abdm'],
+  admin: ['admin_payroll', 'operations', 'insurance'],
   doctor: ['doctors', 'patients'],
   nurse: ['operations', 'patients'],
   receptionist: ['patients'],

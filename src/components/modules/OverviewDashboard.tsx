@@ -57,7 +57,7 @@ export const OverviewDashboard: React.FC = () => {
               </span>
               <span className="px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest uppercase bg-vital-emerald/15 text-vital-emerald border border-vital-emerald/30 flex items-center gap-1.5 font-mono shadow-sm">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                ABDM LEVEL 3 FEDERATED
+                NABH MULTI-TENANT SYNC
               </span>
             </div>
 
@@ -249,7 +249,7 @@ export const OverviewDashboard: React.FC = () => {
 
             {/* Module Filter Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-              {['ALL', 'DOCTOR', 'LIMS', 'PHARMACY', 'BEDS', 'BILLING', 'ABDM'].map(m => (
+              {['ALL', 'DOCTOR', 'LIMS', 'PHARMACY', 'BEDS', 'BILLING'].map(m => (
                 <button
                   key={m}
                   onClick={() => setSelectedModuleFilter(m)}

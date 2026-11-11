@@ -13,12 +13,22 @@ const HospitalOperations = React.lazy(() => import('./components/modules/Hospita
 const BillingFinancials = React.lazy(() => import('./components/modules/BillingFinancials').then(m => ({ default: m.BillingFinancials })));
 const AdminPayrollPortal = React.lazy(() => import('./components/modules/AdminPayrollPortal').then(m => ({ default: m.AdminPayrollPortal })));
 const InsuranceClaims = React.lazy(() => import('./components/modules/InsuranceClaims').then(m => ({ default: m.InsuranceClaims })));
-const ABDMHub = React.lazy(() => import('./components/modules/ABDMHub').then(m => ({ default: m.ABDMHub })));
 const PatientPortal = React.lazy(() => import('./components/modules/PatientPortal').then(m => ({ default: m.PatientPortal })));
 
 const ModuleLoader = () => (
-  <div className="flex items-center justify-center min-h-[320px] text-slate-500 text-sm font-medium">
-    Loading workspace module...
+  <div className="space-y-5 glide-enter p-1">
+    <div className="h-24 rounded-2xl border border-slate-200/80 bg-white/80 p-6 flex items-center justify-between shadow-sm">
+      <div className="space-y-2.5 w-1/2">
+        <div className="h-5 w-48 rounded-lg skeleton-shimmer" />
+        <div className="h-3.5 w-72 rounded-md skeleton-shimmer" />
+      </div>
+      <div className="h-9 w-28 rounded-xl skeleton-shimmer" />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="h-32 rounded-2xl border border-slate-200/80 bg-white/80 p-5 skeleton-shimmer" />
+      <div className="h-32 rounded-2xl border border-slate-200/80 bg-white/80 p-5 skeleton-shimmer" />
+      <div className="h-32 rounded-2xl border border-slate-200/80 bg-white/80 p-5 skeleton-shimmer" />
+    </div>
   </div>
 );
 
@@ -28,6 +38,7 @@ const MainAppContent: React.FC = () => {
   const { activeModule, isAuthenticated, currentRole, logout } = useHospitalOS();
 
   const [loginTab, setLoginTab] = useState<'user' | 'admin'>('user');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Persist view across browser refresh
   const [currentView, setCurrentView] = useState<AppView>(() => {
@@ -104,27 +115,32 @@ const MainAppContent: React.FC = () => {
       case 'operations': return <HospitalOperations />;
       case 'billing': return <BillingFinancials />;
       case 'insurance': return <InsuranceClaims />;
-      case 'abdm': return <ABDMHub />;
       default: return <DoctorManagement />;
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-sky-500/20 selection:text-sky-900">
+    <div className="min-h-screen flex flex-col bg-slate-50/70 text-slate-900 selection:bg-sky-500/20 selection:text-sky-900">
       <Navbar
         onNavigateHome={() => setCurrentView('home')}
         onNavigateLogin={() => {
           setLoginTab('admin');
           setCurrentView('login');
         }}
+        onToggleMobileSidebar={() => setMobileSidebarOpen(prev => !prev)}
       />
 
-      <div className="flex-1 flex overflow-hidden">
-        <Sidebar />
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50">
-          <Suspense fallback={<ModuleLoader />}>
-            {renderActiveModule()}
-          </Suspense>
+      <div className="flex-1 flex relative">
+        <Sidebar
+          mobileOpen={mobileSidebarOpen}
+          onCloseMobile={() => setMobileSidebarOpen(false)}
+        />
+        <main className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 lg:p-8">
+          <div key={activeModule} className="max-w-7xl mx-auto glide-enter">
+            <Suspense fallback={<ModuleLoader />}>
+              {renderActiveModule()}
+            </Suspense>
+          </div>
         </main>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Activity, 
   ChevronDown, 
@@ -7,12 +7,9 @@ import {
   Plus, 
   Building2, 
   LogOut, 
-  User, 
   X,
   Bell,
-  CheckCircle2,
-  Calendar,
-  Globe
+  Menu
 } from 'lucide-react';
 import { useHospitalOS } from '../../context/HospitalOSContext';
 import { UserRole } from '../../types';
@@ -20,9 +17,10 @@ import { UserRole } from '../../types';
 interface NavbarProps {
   onNavigateHome: () => void;
   onNavigateLogin: () => void;
+  onToggleMobileSidebar?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onNavigateHome, onNavigateLogin }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onNavigateHome, onNavigateLogin, onToggleMobileSidebar }) => {
   const { 
     tenants, 
     currentTenant, 
@@ -45,6 +43,20 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigateHome, onNavigateLogin 
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isAddHospModalOpen, setIsAddHospModalOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
+        setTenantDropdownOpen(false);
+        setRoleDropdownOpen(false);
+        setNotificationsOpen(false);
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
   const [hospForm, setHospForm] = useState({
     name: '',
@@ -89,10 +101,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigateHome, onNavigateLogin 
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white shadow-sm">
+    <header ref={headerRef} className="sticky top-0 z-40 w-full border-b border-slate-200/80 lavish-glass shadow-[0_4px_24px_-8px_rgba(15,23,42,0.06)] transition-all">
       {/* Emergency Alert Banner */}
       {emergencyAlert && (
-        <div className="bg-rose-600 text-white px-4 py-2 flex items-center justify-between text-xs sm:text-sm font-semibold tracking-wide">
+        <div className="bg-gradient-to-r from-rose-600 via-red-600 to-rose-600 text-white px-4 py-2 flex items-center justify-between text-xs sm:text-sm font-semibold tracking-wide animate-in fade-in">
           <div className="flex items-center gap-2 truncate">
             <AlertTriangle className="w-4 h-4 flex-shrink-0 animate-bounce" />
             <span className="font-bold flex-shrink-0">CODE BLUE ALERT:</span>
@@ -100,7 +112,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigateHome, onNavigateLogin 
           </div>
           <button 
             onClick={clearEmergencyAlert}
-            className="ml-2 px-2.5 py-1 rounded bg-rose-800 hover:bg-rose-900 text-xs uppercase tracking-wider text-white transition flex-shrink-0"
+            className="ml-2 px-3 py-1 rounded-lg bg-white/15 hover:bg-white/25 backdrop-blur-sm text-xs uppercase tracking-wider text-white transition flex-shrink-0"
           >
             Dismiss
           </button>
@@ -109,34 +121,50 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigateHome, onNavigateLogin 
 
       {/* Main Bar */}
       <div className="w-full px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-        {/* Left Side: Brand Logo & Hospital Switcher */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        {/* Left Side: Mobile Drawer Toggle, Brand Logo & Hospital Switcher */}
+        <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
+          {onToggleMobileSidebar && (
+            <button
+              onClick={onToggleMobileSidebar}
+              className="md:hidden p-2 rounded-xl bg-slate-100/80 hover:bg-slate-200/80 border border-slate-200/80 text-slate-700 transition active:scale-95"
+              title="Open Workspace Menu"
+              aria-label="Open Workspace Menu"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+          )}
+
           <button 
             onClick={onNavigateHome}
-            className="flex items-center gap-2 text-left focus:outline-none"
+            className="flex items-center gap-2.5 text-left focus:outline-none group"
             title="Hospital OS Home"
           >
-            <div className="w-9 h-9 rounded-xl bg-sky-600 flex items-center justify-center text-white shadow-sm">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center text-white shadow-sm shadow-sky-500/25 group-hover:scale-105 transition-transform duration-200">
               <Activity className="w-5 h-5" />
             </div>
             <div className="hidden sm:block">
-              <span className="font-bold text-base tracking-tight text-slate-900">
+              <span className="font-extrabold text-base tracking-tight text-slate-900">
                 Hospital<span className="text-sky-600">OS</span>
               </span>
             </div>
           </button>
 
-          <div className="h-6 w-px bg-slate-200 hidden sm:block" />
+          <div className="h-6 w-px bg-slate-200/80 hidden sm:block" />
 
           {/* Hospital Facility Selector */}
           <div className="relative">
             <button
-              onClick={() => setTenantDropdownOpen(!tenantDropdownOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs text-slate-800 transition"
+              onClick={() => {
+                setTenantDropdownOpen(!tenantDropdownOpen);
+                setRoleDropdownOpen(false);
+                setNotificationsOpen(false);
+                setUserMenuOpen(false);
+              }}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/90 hover:bg-slate-50 border border-slate-200/90 hover:border-sky-300 text-xs text-slate-800 shadow-sm transition-all duration-200 active:scale-[0.98]"
               title="Switch or Add Hospital"
             >
               <span className="text-base">{currentTenant.logo}</span>
-              <div className="text-left hidden md:block max-w-[170px] truncate">
+              <div className="text-left hidden md:block max-w-[175px] truncate">
                 <p className="font-semibold text-slate-900 truncate text-xs leading-tight">
                   {currentTenant.name}
                 </p>
@@ -144,13 +172,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigateHome, onNavigateLogin 
                   {currentTenant.type}
                 </p>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${tenantDropdownOpen ? 'rotate-180 text-sky-600' : ''}`} />
             </button>
 
             {tenantDropdownOpen && (
               <div 
-                className="absolute left-0 mt-2 w-80 rounded-xl bg-white border border-slate-200 shadow-xl p-2 z-50 animate-in fade-in"
-                onMouseLeave={() => setTenantDropdownOpen(false)}
+                className="absolute left-0 mt-2 w-80 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl shadow-slate-900/10 p-2.5 z-50 animate-in fade-in"
               >
                 <div className="px-2 py-1.5 border-b border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-500">
                   <span>Hospitals ({tenants.length})</span>
@@ -242,21 +269,25 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigateHome, onNavigateLogin 
           {/* Role Persona Switcher */}
           <div className="relative">
             <button
-              onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs text-slate-800 transition"
+              onClick={() => {
+                setRoleDropdownOpen(!roleDropdownOpen);
+                setTenantDropdownOpen(false);
+                setNotificationsOpen(false);
+                setUserMenuOpen(false);
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 hover:bg-slate-50 border border-slate-200/90 hover:border-sky-300 text-xs text-slate-800 shadow-sm transition-all duration-200 active:scale-[0.98]"
               title="Switch Active Staff Role"
             >
               <span className="text-sm">{currentUser.avatar}</span>
-              <span className="font-medium text-slate-900 text-xs hidden sm:inline capitalize">
+              <span className="font-semibold text-slate-900 text-xs hidden sm:inline capitalize">
                 {currentRole.replace('_', ' ')}
               </span>
-              <ChevronDown className="w-3 h-3 text-slate-500" />
+              <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${roleDropdownOpen ? 'rotate-180 text-sky-600' : ''}`} />
             </button>
 
             {roleDropdownOpen && (
               <div 
-                className="absolute right-0 mt-2 w-64 rounded-xl bg-white border border-slate-200 shadow-xl p-2 z-50 animate-in fade-in"
-                onMouseLeave={() => setRoleDropdownOpen(false)}
+                className="absolute right-0 mt-2 w-64 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl shadow-slate-900/10 p-2 z-50 animate-in fade-in"
               >
                 <div className="px-2 py-1 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                   Switch Active Role Desk
@@ -289,30 +320,34 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigateHome, onNavigateLogin 
           {/* CODE BLUE CRITICAL BUTTON */}
           <button
             onClick={() => triggerEmergencyAlert('Code Blue in ICU Bed 01. Emergency Rapid Response Team Dispatched.')}
-            className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-sm transition active:scale-95"
+            className="flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-600 text-white font-bold text-xs shadow-md shadow-rose-500/20 hover:shadow-lg hover:shadow-rose-500/30 transition-all duration-200 active:scale-95"
             title="Trigger Immediate Hospital-Wide Code Blue Alert"
           >
-            <Flame className="w-3.5 h-3.5 text-white animate-bounce flex-shrink-0" />
+            <Flame className="w-3.5 h-3.5 text-white animate-pulse flex-shrink-0" />
             <span className="tracking-wide uppercase font-mono text-xs whitespace-nowrap">Code Blue</span>
           </button>
 
           {/* Notifications Stream */}
           <div className="relative">
             <button
-              onClick={() => setNotificationsOpen(!notificationsOpen)}
-              className="relative p-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-slate-900 transition"
+              onClick={() => {
+                setNotificationsOpen(!notificationsOpen);
+                setTenantDropdownOpen(false);
+                setRoleDropdownOpen(false);
+                setUserMenuOpen(false);
+              }}
+              className="relative p-2 rounded-xl bg-white/90 hover:bg-slate-50 border border-slate-200/90 hover:border-sky-300 text-slate-600 hover:text-slate-900 shadow-sm transition-all duration-200 active:scale-95"
               title="Hospital Event Notifications"
             >
               <Bell className="w-4 h-4" />
               {events.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white" />
               )}
             </button>
 
             {notificationsOpen && (
               <div 
-                className="absolute right-0 mt-2 w-80 rounded-xl bg-white border border-slate-200 shadow-xl p-3 z-50 animate-in fade-in"
-                onMouseLeave={() => setNotificationsOpen(false)}
+                className="absolute right-0 mt-2 w-80 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl shadow-slate-900/10 p-3 z-50 animate-in fade-in"
               >
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100 text-xs font-bold text-slate-700">
                   <span>Hospital System Logs</span>
@@ -340,20 +375,24 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigateHome, onNavigateLogin 
           {/* User Profile & Logout */}
           <div className="relative">
             <button
-              onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="flex items-center gap-1.5 p-1 rounded-lg hover:bg-slate-100 transition"
+              onClick={() => {
+                setUserMenuOpen(!userMenuOpen);
+                setTenantDropdownOpen(false);
+                setRoleDropdownOpen(false);
+                setNotificationsOpen(false);
+              }}
+              className="flex items-center gap-1.5 p-1 rounded-xl hover:bg-slate-100/80 transition-all duration-200 active:scale-95"
               title="User Account"
             >
-              <div className="w-7 h-7 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold text-xs border border-sky-200">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sky-50 to-cyan-100 text-sky-800 flex items-center justify-center font-bold text-xs border border-sky-200/80 shadow-xs">
                 {currentUser.name[0]}
               </div>
-              <ChevronDown className="w-3 h-3 text-slate-500 hidden sm:block" />
+              <ChevronDown className={`w-3 h-3 text-slate-500 hidden sm:block transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {userMenuOpen && (
               <div 
-                className="absolute right-0 mt-2 w-56 rounded-xl bg-white border border-slate-200 shadow-xl p-2 z-50 animate-in fade-in"
-                onMouseLeave={() => setUserMenuOpen(false)}
+                className="absolute right-0 mt-2 w-56 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl shadow-slate-900/10 p-2 z-50 animate-in fade-in"
               >
                 <div className="p-2 border-b border-slate-100">
                   <p className="font-bold text-xs text-slate-900 truncate">{currentUser.name}</p>
