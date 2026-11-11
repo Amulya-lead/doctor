@@ -28,17 +28,21 @@
     background-size: 100% 100%, 100% 100%, 100% 100%, 24px 24px;
     background-attachment: fixed;
     color: #0f172a;
-    font-family: 'Inter', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    font-family: 'Manrope', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
-    letter-spacing: -0.011em;
+    letter-spacing: -0.01em;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
+  h1,
+  h2,
+  h3,
   .font-display {
-    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
-    letter-spacing: -0.028em;
+    font-family: 'Bricolage Grotesque', 'Manrope', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.03em;
+    font-optical-sizing: auto;
     font-feature-settings: 'ss01', 'ss02';
   }
 }
