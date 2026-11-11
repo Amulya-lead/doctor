@@ -18,18 +18,26 @@
   }
 
   body {
-    background-color: #f1f5f9;
+    background-color: #f4f1fc;
     background-image:
-      radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.14) 0px, transparent 48%),
-      radial-gradient(at 100% 0%, rgba(20, 184, 166, 0.12) 0px, transparent 44%),
-      radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
-      radial-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+      radial-gradient(at 0% 0%, rgba(76, 29, 149, 0.12) 0px, transparent 48%),
+      radial-gradient(at 100% 0%, rgba(13, 148, 136, 0.10) 0px, transparent 44%),
+      radial-gradient(at 50% 100%, rgba(91, 33, 182, 0.10) 0px, transparent 50%),
+      radial-gradient(rgba(45, 27, 105, 0.045) 1px, transparent 1px);
     background-size: 100% 100%, 100% 100%, 100% 100%, 24px 24px;
     background-attachment: fixed;
-    color: #0f172a;
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: #091326;
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
-    letter-spacing: -0.011em;
+    letter-spacing: -0.008em;
+  }
+
+  .font-display {
+    font-family: 'Outfit', 'DM Sans', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.025em;
+    font-feature-settings: 'cv02', 'ss01';
   }
 }
 
@@ -83,8 +91,26 @@
 
 /* Module & View Glide Utility */
 .glide-enter {
-  animation: glideUp 0.34s var(--glide-ease) both;
-  will-change: transform, opacity;
+  animation: glideUp 0.42s var(--glide-ease) both;
+}
+
+.stagger-item {
+  animation: glideUp 0.55s var(--glide-ease) var(--stagger-delay, 0ms) both;
+}
+
+/* Smooth Scroll Reveal Wrapper */
+.scroll-reveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition:
+    opacity 0.65s var(--glide-ease),
+    transform 0.65s var(--glide-ease);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 /* Polyfill for animate-in / fade-in classes used across components */
@@ -95,12 +121,12 @@
 /* Lavish Elevated Clinical Card Surfaces */
 .clean-card,
 .lavish-card {
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(249, 247, 255, 0.94) 100%);
+  border: 1px solid rgba(203, 213, 225, 0.72);
   border-radius: 1rem;
   box-shadow:
-    0 1px 2px rgba(15, 23, 42, 0.03),
-    0 8px 24px -12px rgba(15, 23, 42, 0.07);
+    0 1px 2px rgba(28, 16, 59, 0.04),
+    0 10px 28px -14px rgba(76, 29, 149, 0.10);
   transition:
     transform 0.28s var(--glide-ease),
     box-shadow 0.28s var(--glide-ease),
@@ -109,23 +135,174 @@
 
 .clean-card-hover:hover,
 .lavish-card-hover:hover {
-  transform: translate3d(0, -2px, 0);
-  border-color: rgba(14, 165, 233, 0.45);
+  transform: translate3d(0, -3px, 0);
+  border-color: rgba(91, 33, 182, 0.36);
   box-shadow:
-    0 4px 12px -2px rgba(14, 165, 233, 0.08),
-    0 16px 32px -12px rgba(15, 23, 42, 0.1);
+    0 6px 16px -4px rgba(76, 29, 149, 0.16),
+    0 20px 38px -14px rgba(28, 16, 59, 0.14);
 }
 
 .lavish-glass {
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(18px) saturate(165%);
+  -webkit-backdrop-filter: blur(18px) saturate(165%);
 }
 
-/* Scalable off-screen rendering optimization for large grids/lists */
+/* Crisp Royal Dark-Lavender Graded Action Button */
+.btn-zoho-primary {
+  background: linear-gradient(135deg, #2d1b69 0%, #4c1d95 52%, #6d28d9 100%);
+  box-shadow: 0 8px 22px -6px rgba(76, 29, 149, 0.44);
+  transition:
+    transform 0.22s var(--glide-ease),
+    box-shadow 0.22s var(--glide-ease),
+    filter 0.2s ease;
+}
+
+.btn-zoho-primary:hover {
+  filter: brightness(1.09);
+  transform: translate3d(0, -1px, 0);
+  box-shadow: 0 12px 26px -6px rgba(76, 29, 149, 0.56);
+}
+
+.btn-zoho-primary:active {
+  transform: scale(0.985);
+}
+
+/* Role-Distinct Zoho Architectural Mesh & Grid Banners (Zero Repeated Photos) */
+.workspace-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.125rem;
+  background-color: #1c103b;
+  background-image:
+    radial-gradient(at 88% 18%, rgba(167, 139, 250, 0.30) 0px, transparent 50%),
+    radial-gradient(at 14% 92%, rgba(91, 33, 182, 0.44) 0px, transparent 52%),
+    linear-gradient(122deg, #170d33 0%, #2d1b69 52%, #4c1d95 100%);
+  border: 1px solid rgba(167, 139, 250, 0.30);
+  box-shadow:
+    0 18px 44px -20px rgba(45, 27, 105, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  animation: glideUp 0.48s var(--glide-ease) both;
+  transition:
+    transform 0.32s var(--glide-ease),
+    box-shadow 0.32s var(--glide-ease);
+}
+
+.workspace-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.24;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(120deg, rgba(0, 0, 0, 0.08) 15%, rgba(0, 0, 0, 0.9) 100%);
+}
+
+.workspace-banner::after {
+  content: '';
+  position: absolute;
+  top: -45%;
+  right: -12%;
+  width: 340px;
+  height: 340px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 68%);
+  transition: transform 0.65s var(--glide-ease), opacity 0.4s ease;
+}
+
+.workspace-banner:hover::after {
+  transform: translate3d(-18px, 10px, 0) scale(1.08);
+}
+
+.workspace-banner > * {
+  position: relative;
+  z-index: 1;
+}
+
+.workspace-banner-payroll {
+  background-color: #190e38;
+  background-image:
+    radial-gradient(at 86% 18%, rgba(192, 132, 252, 0.28) 0px, transparent 48%),
+    radial-gradient(at 10% 90%, rgba(13, 148, 136, 0.26) 0px, transparent 54%),
+    linear-gradient(122deg, #160b32 0%, #3b1d7a 52%, #5b21b6 100%);
+  border-color: rgba(167, 139, 250, 0.36);
+}
+
+.workspace-banner-wards {
+  background-color: #1c103b;
+  background-image:
+    radial-gradient(at 88% 20%, rgba(45, 212, 191, 0.30) 0px, transparent 50%),
+    radial-gradient(at 15% 88%, rgba(124, 58, 237, 0.38) 0px, transparent 52%),
+    linear-gradient(122deg, #160c30 0%, #3b1c78 52%, #0f766e 100%);
+  border-color: rgba(167, 139, 250, 0.32);
+}
+
+.workspace-banner-patients {
+  background-color: #1c103b;
+  background-image:
+    radial-gradient(at 85% 22%, rgba(20, 184, 166, 0.30) 0px, transparent 50%),
+    radial-gradient(at 12% 88%, rgba(139, 92, 246, 0.42) 0px, transparent 52%),
+    linear-gradient(122deg, #170d33 0%, #4c1d95 54%, #0d9488 100%);
+  border-color: rgba(167, 139, 250, 0.34);
+}
+
+.workspace-banner-pharmacy {
+  background-color: #191236;
+  background-image:
+    radial-gradient(at 86% 18%, rgba(167, 139, 250, 0.32) 0px, transparent 48%),
+    radial-gradient(at 15% 88%, rgba(16, 185, 129, 0.36) 0px, transparent 54%),
+    linear-gradient(122deg, #170e33 0%, #3b1c78 48%, #047857 100%);
+  border-color: rgba(52, 211, 153, 0.32);
+}
+
+.workspace-banner-lab {
+  background-color: #1c103b;
+  background-image:
+    radial-gradient(at 86% 18%, rgba(56, 189, 248, 0.28) 0px, transparent 50%),
+    radial-gradient(at 14% 90%, rgba(139, 92, 246, 0.45) 0px, transparent 52%),
+    linear-gradient(122deg, #150b2e 0%, #4c1d95 54%, #6d28d9 100%);
+  border-color: rgba(167, 139, 250, 0.36);
+}
+
+.workspace-banner-billing {
+  background-color: #1a1038;
+  background-image:
+    radial-gradient(at 88% 18%, rgba(52, 211, 153, 0.32) 0px, transparent 50%),
+    radial-gradient(at 12% 90%, rgba(124, 58, 237, 0.40) 0px, transparent 52%),
+    linear-gradient(122deg, #160c30 0%, #431a85 52%, #065f46 100%);
+  border-color: rgba(167, 139, 250, 0.32);
+}
+
+.workspace-banner-insurance {
+  background-color: #1c103b;
+  background-image:
+    radial-gradient(at 85% 20%, rgba(192, 132, 252, 0.34) 0px, transparent 50%),
+    radial-gradient(at 12% 90%, rgba(109, 40, 217, 0.44) 0px, transparent 54%),
+    linear-gradient(122deg, #160b32 0%, #4c1d95 52%, #5b21b6 100%);
+  border-color: rgba(196, 181, 253, 0.36);
+}
+
+@keyframes kenBurnsSlow {
+  0%, 100% {
+    transform: scale(1.01) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.055) translate3d(-0.5%, -0.5%, 0);
+  }
+}
+
+.kenburns-subtle {
+  animation: kenBurnsSlow 24s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Card layout containment without content-visibility clipping */
 .scalable-card {
-  content-visibility: auto;
-  contain-intrinsic-size: 220px;
+  contain: layout style;
 }
 
 /* Skeleton Loader Shimmer */
@@ -155,9 +332,21 @@ textarea {
 
 @media (prefers-reduced-motion: reduce) {
   .glide-enter,
+  .stagger-item,
+  .kenburns-subtle,
   .animate-in.fade-in,
+  .workspace-banner,
   .skeleton-shimmer {
     animation: none !important;
+  }
+  .workspace-banner::after {
+    transition: none !important;
+    transform: none !important;
+  }
+  .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
   .clean-card,
   .lavish-card,

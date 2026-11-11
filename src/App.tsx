@@ -120,7 +120,7 @@ const MainAppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/70 text-slate-900 selection:bg-sky-500/20 selection:text-sky-900">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#F7F5FF] via-[#FAF8FF] to-[#F3EEFF] text-slate-900 selection:bg-[#5B21B6]/20 selection:text-[#1C103B]">
       <Navbar
         onNavigateHome={() => setCurrentView('home')}
         onNavigateLogin={() => {
@@ -135,7 +135,7 @@ const MainAppContent: React.FC = () => {
           mobileOpen={mobileSidebarOpen}
           onCloseMobile={() => setMobileSidebarOpen(false)}
         />
-        <main className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 lg:p-8 scroll-smooth">
           <div key={activeModule} className="max-w-7xl mx-auto glide-enter">
             <Suspense fallback={<ModuleLoader />}>
               {renderActiveModule()}

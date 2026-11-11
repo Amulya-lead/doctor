@@ -35,19 +35,19 @@ const DESK_ICON_ACCENTS: Partial<Record<NavigationModule, { active: string; idle
     card: 'from-emerald-50 via-teal-50/50 to-white border-emerald-200/90 text-emerald-950'
   },
   doctors: {
-    active: 'bg-gradient-to-br from-sky-500 to-cyan-600 text-white shadow-sky-500/25',
-    idle: 'bg-sky-50 text-sky-600 group-hover:bg-sky-100',
-    card: 'from-sky-50 via-cyan-50/50 to-white border-sky-200/90 text-sky-950'
+    active: 'bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white shadow-lavender-700/25',
+    idle: 'bg-lavender-50 text-[#4C1D95] group-hover:bg-lavender-100',
+    card: 'from-lavender-50 via-lavender-50/40 to-white border-lavender-200/90 text-[#1C103B]'
   },
   patients: {
-    active: 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-teal-500/25',
+    active: 'bg-gradient-to-br from-teal-500 to-emerald-600 text-white shadow-teal-500/25',
     idle: 'bg-teal-50 text-teal-600 group-hover:bg-teal-100',
-    card: 'from-teal-50 via-cyan-50/50 to-white border-teal-200/90 text-teal-950'
+    card: 'from-teal-50 via-emerald-50/40 to-white border-teal-200/90 text-teal-950'
   },
   operations: {
-    active: 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-indigo-500/25',
-    idle: 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100',
-    card: 'from-indigo-50 via-violet-50/50 to-white border-indigo-200/90 text-indigo-950'
+    active: 'bg-gradient-to-br from-[#4C1D95] to-indigo-600 text-white shadow-indigo-500/25',
+    idle: 'bg-indigo-50 text-indigo-700 group-hover:bg-indigo-100',
+    card: 'from-indigo-50 via-lavender-50/50 to-white border-indigo-200/90 text-indigo-950'
   },
   pharmacy: {
     active: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-amber-500/25',
@@ -55,9 +55,9 @@ const DESK_ICON_ACCENTS: Partial<Record<NavigationModule, { active: string; idle
     card: 'from-amber-50 via-orange-50/50 to-white border-amber-200/90 text-amber-950'
   },
   lims: {
-    active: 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-cyan-500/25',
-    idle: 'bg-cyan-50 text-cyan-600 group-hover:bg-cyan-100',
-    card: 'from-cyan-50 via-sky-50/50 to-white border-cyan-200/90 text-cyan-950'
+    active: 'bg-gradient-to-br from-[#5B21B6] to-[#7C3AED] text-white shadow-lavender-600/25',
+    idle: 'bg-lavender-50 text-[#5B21B6] group-hover:bg-lavender-100',
+    card: 'from-lavender-50 via-purple-50/50 to-white border-lavender-200/90 text-[#1C103B]'
   },
   billing: {
     active: 'bg-gradient-to-br from-emerald-600 to-green-600 text-white shadow-emerald-500/25',
@@ -91,7 +91,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
       sublabel: 'Consultation & Prescriptions',
       icon: Stethoscope,
       badge: `${metrics.activeDoctors} Doctors`,
-      badgeColor: 'bg-sky-100 text-sky-800'
+      badgeColor: 'bg-lavender-100 text-[#4C1D95]'
     },
     {
       id: 'patients',
@@ -173,14 +173,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
           </div>
 
           {/* Role Workspace Pill */}
-          <div className="px-3.5 py-2.5 rounded-xl bg-gradient-to-br from-slate-50 via-white to-sky-50/40 border border-slate-200/80 shadow-xs flex items-center justify-between">
+          <div className="px-3.5 py-2.5 rounded-xl bg-gradient-to-br from-[#F7F5FF] via-white to-lavender-50/70 border border-lavender-200/80 shadow-xs flex items-center justify-between">
             <div className="flex items-center gap-2.5 min-w-0">
-              <span className="text-lg">{currentUser.avatar}</span>
+              <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white text-[10px] font-display font-extrabold flex items-center justify-center flex-shrink-0 shadow-xs">
+                {currentRole.slice(0, 2).toUpperCase()}
+              </span>
               <div className="min-w-0">
-                <p className="text-xs font-bold text-slate-900 capitalize truncate">
+                <p className="text-xs font-extrabold text-slate-900 capitalize truncate">
                   {currentRole.replace('_', ' ')}
                 </p>
-                <p className="text-[10px] text-slate-500 truncate font-medium">
+                <p className="text-[10px] text-slate-600 truncate font-semibold">
                   {visibleNavItems.length} Desk{visibleNavItems.length > 1 ? 's' : ''} Active
                 </p>
               </div>
@@ -195,9 +197,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
               const Icon = item.icon;
               const isActive = activeModule === item.id;
               const accent = DESK_ICON_ACCENTS[item.id] || {
-                active: 'bg-sky-600 text-white shadow-sky-600/25',
-                idle: 'bg-slate-100/80 text-slate-500 group-hover:bg-sky-50 group-hover:text-sky-600',
-                card: 'from-sky-50 via-cyan-50/60 to-white border-sky-200/90 text-sky-950'
+                active: 'bg-[#4C1D95] text-white shadow-lavender-700/25',
+                idle: 'bg-slate-100/80 text-slate-500 group-hover:bg-lavender-50 group-hover:text-[#4C1D95]',
+                card: 'from-lavender-50 via-lavender-50/40 to-white border-lavender-200/90 text-[#1C103B]'
               };
 
               return (
@@ -222,8 +224,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
                       <Icon className="w-3.5 h-3.5" />
                     </div>
                     <div className="truncate">
-                      <p className="truncate leading-tight">{item.label}</p>
-                      <p className="text-[10px] text-slate-400 truncate leading-tight font-normal mt-0.5">
+                      <p className="truncate leading-tight text-slate-900">{item.label}</p>
+                      <p className="text-[10px] text-slate-600 truncate leading-tight font-medium mt-0.5">
                         {item.sublabel}
                       </p>
                     </div>

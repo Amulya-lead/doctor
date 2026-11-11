@@ -41,207 +41,219 @@ export const OverviewDashboard: React.FC = () => {
     ? events 
     : events.filter(e => e.module === selectedModuleFilter);
 
-  return (
-    <div className="space-y-7 animate-in fade-in duration-300">
-      {/* 1. TOP EXECUTIVE TELEMETRY BANNER */}
-      <div className="relative overflow-hidden rounded-3xl luxury-glass border border-white/[0.12] p-6 sm:p-8 shadow-2xl">
-        <div className="absolute top-0 right-0 w-[500px] h-[300px] bg-brand-500/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[250px] bg-vital-violet/10 rounded-full blur-[90px] pointer-events-none" />
+  const getInitials = (name: string) =>
+    name
+      .replace(/^Dr\.\s*/i, '')
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(part => part[0]?.toUpperCase() || '')
+      .join('');
 
-        <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+  return (
+    <div className="space-y-6 glide-enter">
+      {/* 1. TOP EXECUTIVE TELEMETRY BANNER */}
+      <div className="workspace-banner rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest uppercase bg-brand-500/15 text-brand-300 border border-brand-500/30 flex items-center gap-1.5 font-mono shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-brand-400 animate-ping" />
-                SOVEREIGN OS v2.8 ACTIVE
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-white/15 backdrop-blur-sm border border-white/25 text-white flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-300 animate-ping" />
+                HospitalOS Command Active
               </span>
-              <span className="px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest uppercase bg-vital-emerald/15 text-vital-emerald border border-vital-emerald/30 flex items-center gap-1.5 font-mono shadow-sm">
+              <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-emerald-400/20 text-emerald-100 border border-emerald-300/30 flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                NABH MULTI-TENANT SYNC
+                NABH Multi-Tenant Sync
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight flex items-center gap-3">
-              <span>{currentTenant.name}</span>
-              <span className="text-3xl filter drop-shadow-md">{currentTenant.logo}</span>
-            </h1>
+            <div className="flex items-center gap-3 pt-0.5">
+              <div className="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/25 flex items-center justify-center font-display font-extrabold text-base text-white shadow-sm flex-shrink-0">
+                {getInitials(currentTenant.name)}
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold font-display text-white tracking-tight">
+                {currentTenant.name}
+              </h1>
+            </div>
 
-            <p className="text-xs sm:text-sm text-slate-400 flex flex-wrap items-center gap-2">
-              <span className="text-slate-300">{currentTenant.tagline}</span>
-              <span>•</span>
-              <span className="font-mono text-brand-300">License: {currentTenant.licenseNumber}</span>
+            <p className="text-xs sm:text-sm text-white/90 flex flex-wrap items-center gap-2">
+              <span>{currentTenant.tagline}</span>
+              <span className="text-white/50">•</span>
+              <span className="font-mono text-lavender-100 font-semibold">License: {currentTenant.licenseNumber}</span>
             </p>
           </div>
 
           {/* Real-Time Connected Flow Simulator Action */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 flex-shrink-0">
             <button
               onClick={startSimulation}
               disabled={isSimulating}
-              className={`px-5 py-3 rounded-2xl text-xs font-extrabold tracking-wide flex items-center gap-2.5 shadow-xl transition active:scale-95 ${
+              className={`px-5 py-2.5 rounded-xl text-xs font-extrabold tracking-wide flex items-center gap-2 shadow-lg transition active:scale-[0.98] ${
                 isSimulating 
-                  ? 'bg-brand-500/30 text-brand-200 cursor-not-allowed animate-pulse border border-brand-500/40'
-                  : 'bg-gradient-to-r from-brand-500 via-vital-cyan to-vital-emerald text-obsidian-950 hover:brightness-110 shadow-[0_10px_30px_-5px_rgba(6,182,212,0.4)]'
+                  ? 'bg-amber-400/20 text-amber-100 cursor-not-allowed animate-pulse border border-amber-300/40'
+                  : 'bg-white text-slate-900 hover:bg-lavender-50 shadow-black/20'
               }`}
             >
-              <Radio className={`w-4 h-4 ${isSimulating ? 'animate-spin' : ''}`} />
+              <Radio className={`w-4 h-4 text-[#5B21B6] ${isSimulating ? 'animate-spin' : ''}`} />
               <span>{isSimulating ? 'Cascading Flow...' : 'Simulate Connected Flow'}</span>
             </button>
           </div>
         </div>
 
-        {/* Live ECG Heartbeat Wave SVG Line */}
-        <div className="mt-6 pt-5 border-t border-white/[0.08] flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <HeartPulse className="w-5 h-5 text-rose-500 animate-pulse" />
+        {/* Live Telemetry Bar */}
+        <div className="relative z-10 mt-6 pt-4 border-t border-white/15 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <HeartPulse className="w-4 h-4 text-rose-300 animate-pulse" />
             <div className="font-mono text-xs">
-              <span className="font-extrabold text-white">Live Patient Vitals Telemetry:</span>{' '}
-              <span className="text-vital-emerald">Synchronized (0 Packet Loss)</span>
+              <span className="font-bold text-white">Live Patient Vitals Telemetry:</span>{' '}
+              <span className="text-emerald-200 font-semibold">Synchronized (0 Packet Loss)</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 font-mono text-[11px] text-slate-400">
+          <div className="flex items-center gap-3 font-mono text-[11px] text-white/85">
             <span>NABH Standards Verified</span>
-            <span>•</span>
-            <span className="text-vital-emerald flex items-center gap-1 font-semibold">
+            <span className="text-white/40">•</span>
+            <span className="text-emerald-200 flex items-center gap-1 font-semibold">
               <ShieldCheck className="w-4 h-4" /> 256-Bit TLS 1.3
             </span>
           </div>
         </div>
       </div>
 
-      {/* 2. SIZZLING METRIC CARDS GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {/* 2. EXECUTIVE KPI CARDS GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1 */}
         <div 
           onClick={() => setActiveModule('patients')}
-          className="luxury-glass luxury-glass-interactive rounded-2xl p-5 space-y-3 cursor-pointer group"
+          className="lavish-card lavish-card-hover stagger-item rounded-2xl p-5 space-y-3 cursor-pointer group border-t-4 border-t-sky-500"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Patients Today</span>
-            <div className="p-2.5 rounded-xl bg-brand-500/10 text-brand-400 group-hover:scale-110 transition border border-brand-500/20">
+            <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Total Patients Today</span>
+            <div className="p-2 rounded-xl bg-lavender-50 text-[#5B21B6] group-hover:scale-110 transition border border-lavender-200">
               <Users className="w-4 h-4" />
             </div>
           </div>
 
           <div className="flex items-baseline justify-between">
-            <p className="text-3xl font-extrabold text-white font-mono tracking-tight">
+            <p className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">
               {metrics.totalPatientsToday}
             </p>
-            <span className="text-xs font-bold text-vital-emerald flex items-center gap-0.5 font-mono">
-              <TrendingUp className="w-3.5 h-3.5" /> +14.2%
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-0.5 font-mono">
+              <TrendingUp className="w-3 h-3" /> +14.2%
             </span>
           </div>
 
-          <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400 font-mono">
-            <span>OPD: <strong className="text-slate-200">{metrics.opdCount}</strong></span>
-            <span>IPD: <strong className="text-vital-cyan">{metrics.ipdAdmissions}</strong></span>
+          <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600 font-mono">
+            <span>OPD: <strong className="text-slate-900">{metrics.opdCount}</strong></span>
+            <span>IPD: <strong className="text-[#4C1D95]">{metrics.ipdAdmissions}</strong></span>
           </div>
         </div>
 
         {/* Metric 2 */}
         <div 
           onClick={() => setActiveModule('operations')}
-          className="luxury-glass luxury-glass-interactive rounded-2xl p-5 space-y-3 cursor-pointer group"
+          className="lavish-card lavish-card-hover stagger-item rounded-2xl p-5 space-y-3 cursor-pointer group border-t-4 border-t-emerald-500"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Bed Occupancy Rate</span>
-            <div className="p-2.5 rounded-xl bg-vital-emerald/10 text-vital-emerald group-hover:scale-110 transition border border-vital-emerald/20">
+            <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Bed Occupancy Rate</span>
+            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 group-hover:scale-110 transition border border-emerald-200">
               <BedDouble className="w-4 h-4" />
             </div>
           </div>
 
           <div className="flex items-baseline justify-between">
-            <p className="text-3xl font-extrabold text-white font-mono tracking-tight">
+            <p className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">
               {metrics.bedOccupancyRate}%
             </p>
-            <span className="text-xs font-mono text-vital-emerald font-semibold">
-              {metrics.availableBeds} Beds Vacant
+            <span className="text-xs font-mono text-emerald-700 font-bold">
+              {metrics.availableBeds} Vacant
             </span>
           </div>
 
-          <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden p-0.5 border border-white/[0.08]">
+          <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200/80">
             <div 
-              className="bg-gradient-to-r from-vital-emerald to-vital-teal h-full rounded-full transition-all duration-700"
+              className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full transition-all duration-700"
               style={{ width: `${metrics.bedOccupancyRate}%` }}
             />
           </div>
 
-          <div className="text-[11px] text-slate-400 flex justify-between font-mono">
-            <span>ICU: 2 Free</span>
-            <span>Deluxe: 1 Free</span>
+          <div className="text-[11px] text-slate-600 flex justify-between font-mono font-semibold">
+            <span>ICU Telemetry Active</span>
+            <span className="text-emerald-700">Live Sync</span>
           </div>
         </div>
 
         {/* Metric 3 */}
         <div 
           onClick={() => setActiveModule('billing')}
-          className="luxury-glass luxury-glass-interactive rounded-2xl p-5 space-y-3 cursor-pointer group"
+          className="lavish-card lavish-card-hover stagger-item rounded-2xl p-5 space-y-3 cursor-pointer group border-t-4 border-t-amber-500"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Realized Revenue</span>
-            <div className="p-2.5 rounded-xl bg-vital-amber/10 text-vital-amber group-hover:scale-110 transition border border-vital-amber/20">
+            <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Realized Revenue</span>
+            <div className="p-2 rounded-xl bg-amber-50 text-amber-600 group-hover:scale-110 transition border border-amber-200">
               <CreditCard className="w-4 h-4" />
             </div>
           </div>
 
           <div className="flex items-baseline justify-between">
-            <p className="text-3xl font-extrabold text-white font-mono tracking-tight">
+            <p className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">
               ₹{metrics.totalRevenueToday.toLocaleString('en-IN')}
             </p>
-            <span className="text-xs font-bold text-vital-emerald flex items-center gap-0.5 font-mono">
-              <TrendingUp className="w-3.5 h-3.5" /> +8.9%
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-0.5 font-mono">
+              <TrendingUp className="w-3 h-3" /> +8.9%
             </span>
           </div>
 
-          <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400 font-mono">
+          <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 font-mono">
             <span>Pending TPA: ₹{metrics.pendingClaimsAmount.toLocaleString('en-IN')}</span>
-            <span className="text-brand-300">Cashless 82%</span>
+            <span className="text-indigo-700 font-bold">Cashless 82%</span>
           </div>
         </div>
 
         {/* Metric 4 */}
         <div 
           onClick={() => setActiveModule('lims')}
-          className="luxury-glass luxury-glass-interactive rounded-2xl p-5 space-y-3 cursor-pointer group"
+          className="lavish-card lavish-card-hover stagger-item rounded-2xl p-5 space-y-3 cursor-pointer group border-t-4 border-t-rose-500"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Critical Lab Alerts</span>
-            <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-400 group-hover:scale-110 transition border border-rose-500/20">
-              <AlertCircle className="w-4 h-4 animate-bounce" />
+            <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Critical Lab Alerts</span>
+            <div className="p-2 rounded-xl bg-rose-50 text-rose-600 group-hover:scale-110 transition border border-rose-200">
+              <AlertCircle className="w-4 h-4" />
             </div>
           </div>
 
           <div className="flex items-baseline justify-between">
-            <p className="text-3xl font-extrabold text-rose-400 font-mono tracking-tight">
+            <p className="text-3xl font-extrabold font-display text-rose-600 tracking-tight">
               {metrics.criticalLabAlerts}
             </p>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">
               STAT Attention
             </span>
           </div>
 
-          <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400 font-mono">
-            <span>CBC Elevated WBC</span>
-            <span className="text-brand-400 group-hover:underline">Review &rarr;</span>
+          <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600 font-semibold">
+            <span>LIMS Panic Values</span>
+            <span className="text-[#4C1D95] group-hover:translate-x-0.5 transition inline-flex items-center gap-0.5">
+              Review <ChevronRight className="w-3.5 h-3.5" />
+            </span>
           </div>
         </div>
       </div>
 
       {/* 3. SPLIT WORKSPACE: SYNCHRONIZED EVENT BUS & ACTIVE DOCTORS */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left 8 Cols: Real-Time Cross-Department Synchronized Event Stream */}
-        <div className="lg:col-span-8 luxury-glass rounded-3xl p-6 sm:p-7 space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
+        <div className="lg:col-span-8 lavish-card rounded-2xl p-5 sm:p-6 space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-brand-500/15 text-brand-400 border border-brand-500/30">
-                <Activity className="w-5 h-5 animate-pulse" />
+              <div className="p-2.5 rounded-xl bg-lavender-50 text-[#5B21B6] border border-lavender-200">
+                <Activity className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-base font-extrabold text-white tracking-wide">
+                <h2 className="text-base font-extrabold font-display text-slate-900">
                   Real-Time Cross-Department Event Bus
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   Sub-millisecond durable event stream connecting all clinical & administrative units
                 </p>
               </div>
@@ -253,10 +265,10 @@ export const OverviewDashboard: React.FC = () => {
                 <button
                   key={m}
                   onClick={() => setSelectedModuleFilter(m)}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition ${
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-mono font-bold transition ${
                     selectedModuleFilter === m
-                      ? 'bg-brand-500 text-obsidian-950 font-extrabold shadow-sm'
-                      : 'bg-white/[0.04] text-slate-400 hover:text-white'
+                      ? 'btn-zoho-primary text-white shadow-sm'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 border border-slate-200/80'
                   }`}
                 >
                   {m}
@@ -266,7 +278,7 @@ export const OverviewDashboard: React.FC = () => {
           </div>
 
           {/* Timeline Feed */}
-          <div className="space-y-3 max-h-[460px] overflow-y-auto pr-2">
+          <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
             {filteredEvents.map(evt => {
               const isCritical = evt.severity === 'critical';
               const isWarning = evt.severity === 'warning';
@@ -275,38 +287,38 @@ export const OverviewDashboard: React.FC = () => {
               return (
                 <div
                   key={evt.id}
-                  className={`p-4 rounded-2xl border transition-all duration-200 ${
+                  className={`p-4 rounded-xl border transition-all duration-200 ${
                     isCritical
-                      ? 'bg-rose-950/20 border-rose-500/40 hover:border-rose-400'
+                      ? 'bg-rose-50/70 border-rose-200 hover:border-rose-300'
                       : isWarning
-                      ? 'bg-amber-950/20 border-amber-500/40 hover:border-amber-400'
+                      ? 'bg-amber-50/70 border-amber-200 hover:border-amber-300'
                       : isSuccess
-                      ? 'bg-emerald-950/20 border-emerald-500/40 hover:border-emerald-400'
-                      : 'bg-black/30 border-white/[0.08] hover:border-white/20'
+                      ? 'bg-emerald-50/70 border-emerald-200 hover:border-emerald-300'
+                      : 'bg-slate-50/80 border-slate-200 hover:border-lavender-300'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2.5">
-                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                      <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
                         isCritical ? 'bg-rose-500 animate-ping' :
-                        isWarning ? 'bg-amber-400' :
-                        isSuccess ? 'bg-vital-emerald' : 'bg-brand-400'
+                        isWarning ? 'bg-amber-500' :
+                        isSuccess ? 'bg-emerald-500' : 'bg-[#6D28D9]'
                       }`} />
-                      <span className="font-extrabold text-xs sm:text-sm text-white">{evt.title}</span>
+                      <span className="font-extrabold font-display text-xs sm:text-sm text-slate-900">{evt.title}</span>
                     </div>
 
-                    <span className="text-[10px] font-mono text-brand-300 bg-black/50 px-2 py-0.5 rounded-md border border-white/[0.08] flex-shrink-0">
+                    <span className="text-[11px] font-mono font-semibold text-slate-600 bg-white px-2.5 py-0.5 rounded-md border border-slate-200 flex-shrink-0">
                       {evt.timestamp}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                  <p className="text-xs text-slate-700 mt-2 leading-relaxed">
                     {evt.description}
                   </p>
 
-                  <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-slate-400">
-                    <span>Source: <strong className="text-slate-200 font-semibold">{evt.actor}</strong></span>
-                    <span className="px-2 py-0.5 rounded bg-black/40 text-brand-300 border border-white/[0.06]">
+                  <div className="mt-3 pt-2.5 border-t border-slate-200/70 flex items-center justify-between text-[11px] font-mono text-slate-600">
+                    <span>Source: <strong className="text-slate-900 font-bold">{evt.actor}</strong></span>
+                    <span className="px-2 py-0.5 rounded bg-white text-[#4C1D95] font-bold border border-slate-200">
                       #{evt.module}
                     </span>
                   </div>
@@ -319,16 +331,16 @@ export const OverviewDashboard: React.FC = () => {
         {/* Right 4 Cols: Active Doctor Chambers & Critical Beds */}
         <div className="lg:col-span-4 space-y-6">
           {/* Active Chambers */}
-          <div className="luxury-glass rounded-3xl p-6 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+          <div className="lavish-card rounded-2xl p-5 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <Stethoscope className="w-4 h-4 text-brand-400" />
-                <h3 className="text-xs font-extrabold text-white uppercase tracking-wider">
+                <Stethoscope className="w-4 h-4 text-[#5B21B6]" />
+                <h3 className="text-xs font-extrabold font-display text-slate-900 uppercase tracking-wider">
                   OPD Doctor Chambers
                 </h3>
               </div>
-              <span className="text-[10px] text-brand-300 font-mono">
-                Real-Time Status
+              <span className="text-[11px] text-[#4C1D95] font-mono font-bold">
+                Real-Time
               </span>
             </div>
 
@@ -336,30 +348,33 @@ export const OverviewDashboard: React.FC = () => {
               {doctors.slice(0, 4).map(doc => (
                 <div 
                   key={doc.id}
-                  className="p-3 rounded-2xl bg-black/30 border border-white/[0.06] text-xs hover:border-white/20 transition space-y-2"
+                  onClick={() => setActiveModule('doctors')}
+                  className="p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 text-xs hover:border-lavender-300 hover:bg-white cursor-pointer transition space-y-2"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-2xl">{doc.avatar}</span>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white font-display font-extrabold text-xs flex items-center justify-center flex-shrink-0">
+                        {getInitials(doc.name)}
+                      </div>
                       <div className="min-w-0">
-                        <p className="font-extrabold text-white truncate">{doc.name}</p>
-                        <p className="text-[10px] text-slate-400 truncate">{doc.specialization}</p>
+                        <p className="font-extrabold text-slate-900 truncate">{doc.name}</p>
+                        <p className="text-[11px] text-slate-600 truncate">{doc.specialization}</p>
                       </div>
                     </div>
 
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold font-mono ${
-                      doc.status === 'In Consultation' ? 'bg-brand-500/20 text-brand-300 border border-brand-500/30' :
-                      doc.status === 'In Surgery' ? 'bg-vital-violet/20 text-vital-violet border border-vital-violet/30' :
-                      doc.status === 'Available' ? 'bg-vital-emerald/20 text-vital-emerald border border-vital-emerald/30' :
-                      'bg-slate-800 text-slate-400'
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold font-mono flex-shrink-0 border ${
+                      doc.status === 'In Consultation' ? 'bg-lavender-50 text-[#4C1D95] border-lavender-200' :
+                      doc.status === 'In Surgery' ? 'bg-violet-50 text-violet-700 border-violet-200' :
+                      doc.status === 'Available' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                      'bg-slate-100 text-slate-600 border-slate-200'
                     }`}>
                       {doc.status}
                     </span>
                   </div>
 
-                  <div className="pt-2 border-t border-white/[0.04] flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                  <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px] text-slate-600 font-mono">
                     <span>{doc.currentRoom}</span>
-                    <span>{doc.todayAppointmentsCount} Patients</span>
+                    <span className="font-semibold text-slate-800">{doc.todayAppointmentsCount} Patients</span>
                   </div>
                 </div>
               ))}
@@ -367,15 +382,15 @@ export const OverviewDashboard: React.FC = () => {
           </div>
 
           {/* Quick Bed Status */}
-          <div className="luxury-glass rounded-3xl p-6 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+          <div className="lavish-card rounded-2xl p-5 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <BedDouble className="w-4 h-4 text-vital-emerald" />
-                <h3 className="text-xs font-extrabold text-white uppercase tracking-wider">
+                <BedDouble className="w-4 h-4 text-emerald-600" />
+                <h3 className="text-xs font-extrabold font-display text-slate-900 uppercase tracking-wider">
                   Critical Care Beds
                 </h3>
               </div>
-              <span className="text-[10px] text-vital-emerald font-mono">
+              <span className="text-[11px] text-emerald-700 font-mono font-bold">
                 Live Telemetry
               </span>
             </div>
@@ -384,21 +399,22 @@ export const OverviewDashboard: React.FC = () => {
               {beds.slice(0, 4).map(b => (
                 <div 
                   key={b.id}
-                  className={`p-2.5 rounded-2xl border text-xs ${
+                  onClick={() => setActiveModule('operations')}
+                  className={`p-3 rounded-xl border text-xs cursor-pointer transition hover:shadow-sm ${
                     b.status === 'Occupied' 
-                      ? 'bg-rose-950/20 border-rose-500/30 text-rose-200' 
+                      ? 'bg-rose-50/70 border-rose-200 text-rose-900' 
                       : b.status === 'Available'
-                      ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-200'
-                      : 'bg-slate-900 border-white/[0.06] text-slate-300'
+                      ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900'
+                      : 'bg-slate-50 border-slate-200 text-slate-800'
                   }`}
                 >
                   <div className="flex items-center justify-between font-bold">
-                    <span>{b.bedNumber}</span>
-                    <span className="text-[9px] uppercase px-1.5 py-0.5 rounded-full bg-black/40 font-mono">
+                    <span className="font-display">{b.bedNumber}</span>
+                    <span className="text-[9px] uppercase px-1.5 py-0.5 rounded-full bg-white/80 border border-current/20 font-mono">
                       {b.status}
                     </span>
                   </div>
-                  <p className="text-[10px] text-slate-400 mt-1 truncate">
+                  <p className="text-[11px] text-slate-600 mt-1.5 truncate font-medium">
                     {b.status === 'Occupied' ? b.patientName : 'Sanitized & Vacant'}
                   </p>
                 </div>

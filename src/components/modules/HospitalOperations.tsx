@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   BedDouble, 
   Plus, 
@@ -32,14 +32,27 @@ export const HospitalOperations: React.FC = () => {
     ventilatorEquipped: false
   });
 
-  const filteredBeds = beds.filter(b => {
-    return selectedWardFilter === 'ALL' || b.wardType.includes(selectedWardFilter) || b.wardType === selectedWardFilter;
-  });
+  const filteredBeds = useMemo(
+    () => beds.filter(b => selectedWardFilter === 'ALL' || b.wardType.includes(selectedWardFilter) || b.wardType === selectedWardFilter),
+    [beds, selectedWardFilter]
+  );
 
-  const availableCount = beds.filter(b => b.status === 'Available').length;
-  const occupiedCount = beds.filter(b => b.status === 'Occupied').length;
-  const cleaningCount = beds.filter(b => b.status === 'Cleaning' || b.status === 'Maintenance').length;
-  const occupancyRate = beds.length > 0 ? Math.round((occupiedCount / beds.length) * 100) : 0;
+  const { availableCount, occupiedCount, cleaningCount, occupancyRate } = useMemo(() => {
+    let available = 0;
+    let occupied = 0;
+    let cleaning = 0;
+    for (const b of beds) {
+      if (b.status === 'Available') available++;
+      else if (b.status === 'Occupied') occupied++;
+      else if (b.status === 'Cleaning' || b.status === 'Maintenance') cleaning++;
+    }
+    return {
+      availableCount: available,
+      occupiedCount: occupied,
+      cleaningCount: cleaning,
+      occupancyRate: beds.length > 0 ? Math.round((occupied / beds.length) * 100) : 0
+    };
+  }, [beds]);
 
   const handleAddBedSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,60 +90,67 @@ export const HospitalOperations: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <BedDouble className="w-6 h-6 text-sky-600" />
-            <span>Hospital Bed Allocation & Ward Matrix</span>
+      {/* Architectural Workspace Banner */}
+      <div className="workspace-banner workspace-banner-wards p-6 sm:p-7 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-white/15 backdrop-blur-md border border-sky-300/30 text-[11px] font-bold uppercase tracking-wider text-lavender-200">
+            <span>Ward &amp; ICU Operations &bull; {occupancyRate}% Occupancy</span>
+          </div>
+          <h2 className="font-display text-2xl font-extrabold text-white flex items-center gap-2.5 tracking-tight">
+            <BedDouble className="w-6 h-6 text-lavender-300" />
+            <span>Hospital Bed Allocation &amp; Ward Matrix</span>
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-100 max-w-2xl">
             Add beds, name and number your hospital wards, allocate patients, and manage occupancy.
           </p>
         </div>
 
         <button
           onClick={() => setIsAddBedModalOpen(true)}
-          className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition"
+          className="px-4 py-2.5 rounded-xl bg-white hover:bg-lavender-50 text-[#1C103B] font-bold text-xs flex items-center gap-2 shadow-lg transition active:scale-[0.98] flex-shrink-0"
         >
-          <Plus className="w-4 h-4" />
-          <span>+ Add New Bed</span>
+          <Plus className="w-4 h-4 text-[#4C1D95]" />
+          <span>Add New Bed</span>
         </button>
       </div>
 
       {/* Metrics Row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <span className="text-xs font-medium text-slate-500 block">Total Hospital Beds</span>
-          <span className="text-2xl font-bold text-slate-900 font-mono mt-1 block">{beds.length}</span>
+        <div className="relative overflow-hidden lavish-card lavish-card-hover p-4">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#2D1B69] to-[#6D28D9]" />
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-700 block">Total Hospital Beds</span>
+          <span className="font-display text-2xl font-extrabold text-slate-950 font-mono mt-1 block">{beds.length}</span>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <span className="text-xs font-medium text-slate-500 block">Available Beds</span>
-          <span className="text-2xl font-bold text-emerald-600 font-mono mt-1 block">{availableCount}</span>
+        <div className="relative overflow-hidden lavish-card lavish-card-hover p-4">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 block">Available Beds</span>
+          <span className="font-display text-2xl font-extrabold text-emerald-700 font-mono mt-1 block">{availableCount}</span>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <span className="text-xs font-medium text-slate-500 block">Occupied Beds</span>
-          <span className="text-2xl font-bold text-rose-600 font-mono mt-1 block">{occupiedCount}</span>
+        <div className="relative overflow-hidden lavish-card lavish-card-hover p-4">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rose-500 to-orange-500" />
+          <span className="text-xs font-bold uppercase tracking-wider text-rose-800 block">Occupied Beds</span>
+          <span className="font-display text-2xl font-extrabold text-rose-700 font-mono mt-1 block">{occupiedCount}</span>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs">
-          <span className="text-xs font-medium text-slate-500 block">Bed Occupancy Rate</span>
-          <span className="text-2xl font-bold text-sky-600 font-mono mt-1 block">{occupancyRate}%</span>
+        <div className="relative overflow-hidden lavish-card lavish-card-hover p-4">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#2D1B69] to-[#5B21B6]" />
+          <span className="text-xs font-bold uppercase tracking-wider text-[#4C1D95] block">Bed Occupancy Rate</span>
+          <span className="font-display text-2xl font-extrabold text-[#4C1D95] font-mono mt-1 block">{occupancyRate}%</span>
         </div>
       </div>
 
       {/* Ward Filters */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+      <div className="flex flex-wrap items-center gap-1.5 pb-1">
         {['ALL', 'ICU', 'Emergency', 'General', 'Deluxe', 'Pediatric', 'Maternity'].map(ward => (
           <button
             key={ward}
             onClick={() => setSelectedWardFilter(ward)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
               selectedWardFilter === ward
-                ? 'bg-sky-600 text-white font-bold'
-                : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                ? 'btn-zoho-primary text-white shadow-xs'
+                : 'bg-white border border-slate-200/90 text-slate-700 hover:text-[#4C1D95] hover:border-lavender-200 hover:bg-lavender-50/50'
             }`}
           >
             {ward === 'ALL' ? 'All Wards' : ward}
@@ -140,21 +160,14 @@ export const HospitalOperations: React.FC = () => {
 
       {/* Bed Matrix Grid */}
       {filteredBeds.length === 0 ? (
-        <div className="p-12 rounded-xl bg-white border border-slate-200 text-center space-y-3">
-          <div className="w-12 h-12 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center mx-auto">
+        <div className="p-12 lavish-card text-center space-y-2.5">
+          <div className="w-12 h-12 rounded-xl bg-lavender-50 text-[#4C1D95] border border-lavender-200/80 flex items-center justify-center mx-auto">
             <BedDouble className="w-6 h-6" />
           </div>
-          <h3 className="font-bold text-slate-900 text-base">No Beds Added Yet</h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto">
-            Click "+ Add New Bed" to name and create beds for ICU, General Ward, Emergency, or Private Rooms.
+          <h3 className="font-display font-bold text-slate-950 text-base">No Beds Added Yet</h3>
+          <p className="text-xs text-slate-700 max-w-sm mx-auto">
+            Click &quot;Add New Bed&quot; in the header banner above to create beds for ICU, General Ward, Emergency, or Private Rooms.
           </p>
-          <button
-            onClick={() => setIsAddBedModalOpen(true)}
-            className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs inline-flex items-center gap-1.5 shadow-sm transition"
-          >
-            <Plus className="w-4 h-4" />
-            <span>+ Add First Bed</span>
-          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -166,60 +179,70 @@ export const HospitalOperations: React.FC = () => {
             return (
               <div
                 key={bed.id}
-                className={`p-4 rounded-xl border transition flex flex-col justify-between bg-white shadow-xs ${
-                  isOccupied 
-                    ? 'border-rose-200 hover:border-rose-300' 
-                    : isAvailable 
-                    ? 'border-emerald-200 hover:border-emerald-300' 
-                    : 'border-amber-200 hover:border-amber-300'
+                className={`relative overflow-hidden lavish-card lavish-card-hover p-4 flex flex-col justify-between ${
+                  isOccupied
+                    ? 'border-rose-200/90'
+                    : isAvailable
+                    ? 'border-emerald-200/90'
+                    : 'border-amber-200/90'
                 }`}
               >
-                <div>
-                  <div className="flex items-center justify-between">
+                <div
+                  className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${
+                    isOccupied
+                      ? 'from-rose-500 to-orange-400'
+                      : isAvailable
+                      ? 'from-emerald-500 to-teal-400'
+                      : 'from-amber-400 to-orange-400'
+                  }`}
+                />
+                <div className="pt-1">
+                  <div className="flex items-center justify-between gap-2">
                     <div>
-                      <span className="font-bold text-base text-slate-900">{bed.bedNumber}</span>
-                      <p className="text-[11px] text-slate-500">{bed.wardType} • {bed.floor}</p>
+                      <span className="font-display font-bold text-base text-slate-950">{bed.bedNumber}</span>
+                      <p className="text-[11px] font-medium text-slate-700">{bed.wardType} &bull; {bed.floor}</p>
                     </div>
 
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      isOccupied 
-                        ? 'bg-rose-100 text-rose-800' 
-                        : isAvailable 
-                        ? 'bg-emerald-100 text-emerald-800' 
-                        : 'bg-amber-100 text-amber-800'
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
+                      isOccupied
+                        ? 'bg-rose-50 text-rose-800 border-rose-200'
+                        : isAvailable
+                        ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                        : 'bg-amber-50 text-amber-800 border-amber-200'
                     }`}>
-                      {bed.status}
+                      <span className={`w-1.5 h-1.5 rounded-full ${isOccupied ? 'bg-rose-500' : isAvailable ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                      <span>{bed.status}</span>
                     </span>
                   </div>
 
-                  <div className="mt-3 p-2.5 rounded-lg bg-slate-50 border border-slate-100 space-y-1">
+                  <div className="mt-3 p-3 rounded-xl bg-gradient-to-br from-slate-50 to-blue-50/35 border border-slate-200/75 space-y-1.5">
                     {isOccupied ? (
                       <div>
-                        <p className="text-[10px] text-slate-500 uppercase font-semibold">Admitted Patient</p>
-                        <p className="font-bold text-xs text-slate-900">{bed.patientName || 'Patient Admitted'}</p>
+                        <p className="text-[10px] text-slate-600 uppercase font-bold tracking-wider">Admitted Patient</p>
+                        <p className="font-display font-bold text-xs text-slate-950 mt-0.5">{bed.patientName || 'Patient Admitted'}</p>
                       </div>
                     ) : (
                       <div>
-                        <p className="text-[10px] text-slate-500 uppercase font-semibold">Ready for Admission</p>
-                        <p className="text-xs text-emerald-700 font-medium">Clean & Sanitized</p>
+                        <p className="text-[10px] text-slate-600 uppercase font-bold tracking-wider">Ready for Admission</p>
+                        <p className="text-xs text-emerald-800 font-bold mt-0.5">Clean &amp; Sanitized</p>
                       </div>
                     )}
 
-                    <div className="pt-1 flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-200 font-mono">
-                      <span>Rate: ₹{bed.dailyRate}/day</span>
+                    <div className="pt-1.5 flex items-center justify-between text-[11px] text-slate-700 border-t border-slate-200/80 font-mono">
+                      <span className="font-semibold">Rate: ₹{bed.dailyRate}/day</span>
                       <div className="flex items-center gap-1 text-[10px]">
-                        {bed.oxygenEquipped && <span className="text-sky-700 font-semibold">O2</span>}
-                        {bed.ventilatorEquipped && <span className="text-indigo-700 font-semibold">• Vent</span>}
+                        {bed.oxygenEquipped && <span className="text-[#4C1D95] font-bold">O2</span>}
+                        {bed.ventilatorEquipped && <span className="text-indigo-700 font-bold">&bull; Vent</span>}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between gap-1">
+                <div className="mt-3.5 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
                   {isAvailable && (
                     <button
                       onClick={() => setAssignBedModal(bed)}
-                      className="flex-1 py-1 px-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition"
+                      className="flex-1 py-1.5 px-2.5 rounded-xl btn-zoho-primary text-white text-xs font-bold transition"
                     >
                       Admit Patient
                     </button>
@@ -228,16 +251,16 @@ export const HospitalOperations: React.FC = () => {
                   {isOccupied && (
                     <button
                       onClick={() => updateBedStatus(bed.id, 'Cleaning')}
-                      className="flex-1 py-1 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition"
+                      className="flex-1 py-1.5 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold transition"
                     >
-                      Discharge & Sanitize
+                      Discharge &amp; Sanitize
                     </button>
                   )}
 
                   {isCleaning && (
                     <button
                       onClick={() => updateBedStatus(bed.id, 'Available')}
-                      className="flex-1 py-1 px-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition"
+                      className="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:brightness-105 text-white text-xs font-bold transition"
                     >
                       Mark Available
                     </button>
@@ -245,7 +268,7 @@ export const HospitalOperations: React.FC = () => {
 
                   <button
                     onClick={() => removeBed(bed.id)}
-                    className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition"
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-rose-700 hover:bg-rose-50 transition"
                     title="Delete Bed"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -259,199 +282,191 @@ export const HospitalOperations: React.FC = () => {
 
       {/* Add Bed Modal */}
       {isAddBedModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-sky-50 text-sky-600">
-                  <BedDouble className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#2D1B69] via-[#6D28D9] to-[#0D9488]" />
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-lavender-50 text-[#4C1D95] border border-lavender-200/80">
+                    <BedDouble className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-bold text-slate-950 text-base">Add Hospital Bed</h3>
+                    <p className="text-xs font-medium text-slate-700">Name bed and assign to a ward</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-slate-900 text-base">Add Hospital Bed</h3>
-                  <p className="text-xs text-slate-500">Name bed and assign to a ward</p>
-                </div>
-              </div>
-              <button onClick={() => setIsAddBedModalOpen(false)} className="text-slate-400 hover:text-slate-700 p-1">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleAddBedSubmit} className="space-y-3">
-              <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">
-                  Bed Name / Number *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. ICU-01, Deluxe-204, Ward A-Bed 3"
-                  value={bedForm.bedNumber}
-                  onChange={e => setBedForm({ ...bedForm, bedNumber: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
-                />
+                <button onClick={() => setIsAddBedModalOpen(false)} className="text-slate-600 hover:text-slate-950 hover:bg-slate-100 rounded-lg p-1.5">
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <form onSubmit={handleAddBedSubmit} className="space-y-3.5">
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
-                    Ward Type *
-                  </label>
-                  <select
-                    value={bedForm.wardType}
-                    onChange={e => setBedForm({ ...bedForm, wardType: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
-                  >
-                    {STANDARD_WARDS.map(w => (
-                      <option key={w} value={w}>{w}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
-                    Floor / Room
+                  <label className="text-xs font-bold text-slate-800 block mb-1">
+                    Bed Name / Number *
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Floor 2, Room 204"
-                    value={bedForm.floor}
-                    onChange={e => setBedForm({ ...bedForm, floor: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
+                    required
+                    placeholder="e.g. ICU-01, Deluxe-204, Ward A-Bed 3"
+                    value={bedForm.bedNumber}
+                    onChange={e => setBedForm({ ...bedForm, bedNumber: e.target.value })}
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">
-                  Daily Charge (₹/Day) *
-                </label>
-                <input
-                  type="number"
-                  required
-                  min="0"
-                  step="100"
-                  placeholder="e.g. 2500"
-                  value={bedForm.dailyRate}
-                  onChange={e => setBedForm({ ...bedForm, dailyRate: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs font-mono text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
-                />
-              </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-slate-800 block mb-1">
+                      Ward Type *
+                    </label>
+                    <select
+                      value={bedForm.wardType}
+                      onChange={e => setBedForm({ ...bedForm, wardType: e.target.value })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                    >
+                      {STANDARD_WARDS.map(w => (
+                        <option key={w} value={w}>{w}</option>
+                      ))}
+                    </select>
+                  </div>
 
-              <div className="grid grid-cols-2 gap-3 pt-1">
-                <label className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-800 cursor-pointer">
+                  <div>
+                    <label className="text-xs font-bold text-slate-800 block mb-1">
+                      Floor / Room
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Floor 2, Room 204"
+                      value={bedForm.floor}
+                      onChange={e => setBedForm({ ...bedForm, floor: e.target.value })}
+                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-800 block mb-1">
+                    Daily Charge (₹/Day) *
+                  </label>
                   <input
-                    type="checkbox"
-                    checked={bedForm.oxygenEquipped}
-                    onChange={e => setBedForm({ ...bedForm, oxygenEquipped: e.target.checked })}
-                    className="rounded text-sky-600 focus:ring-0"
+                    type="number"
+                    required
+                    min="0"
+                    step="100"
+                    placeholder="e.g. 2500"
+                    value={bedForm.dailyRate}
+                    onChange={e => setBedForm({ ...bedForm, dailyRate: e.target.value })}
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-mono font-bold text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
                   />
-                  <span>Central O2 Pipeline</span>
-                </label>
+                </div>
 
-                <label className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-800 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={bedForm.ventilatorEquipped}
-                    onChange={e => setBedForm({ ...bedForm, ventilatorEquipped: e.target.checked })}
-                    className="rounded text-sky-600 focus:ring-0"
-                  />
-                  <span>Ventilator Hookup</span>
-                </label>
-              </div>
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-900 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={bedForm.oxygenEquipped}
+                      onChange={e => setBedForm({ ...bedForm, oxygenEquipped: e.target.checked })}
+                      className="rounded accent-[#5B21B6]"
+                    />
+                    <span>Central O2 Pipeline</span>
+                  </label>
 
-              <div className="pt-2 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsAddBedModalOpen(false)}
-                  className="px-4 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-sm transition"
-                >
-                  Save & Add Bed
-                </button>
-              </div>
-            </form>
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-900 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={bedForm.ventilatorEquipped}
+                      onChange={e => setBedForm({ ...bedForm, ventilatorEquipped: e.target.checked })}
+                      className="rounded accent-[#5B21B6]"
+                    />
+                    <span>Ventilator Hookup</span>
+                  </label>
+                </div>
+
+                <div className="pt-2 flex justify-end">
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl btn-zoho-primary text-white font-bold text-xs transition active:scale-[0.98]"
+                  >
+                    Save &amp; Add Bed
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
 
       {/* Assign Patient to Bed Modal */}
       {assignBedModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-sky-50 text-sky-600">
-                  <UserCheck className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#2D1B69] via-[#6D28D9] to-[#0D9488]" />
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-lavender-50 text-[#4C1D95] border border-lavender-200/80">
+                    <UserCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-bold text-slate-950 text-base">Admit Patient to {assignBedModal.bedNumber}</h3>
+                    <p className="text-xs font-medium text-slate-700">{assignBedModal.wardType}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-slate-900 text-base">Admit Patient to {assignBedModal.bedNumber}</h3>
-                  <p className="text-xs text-slate-500">{assignBedModal.wardType}</p>
-                </div>
+                <button onClick={() => setAssignBedModal(null)} className="text-slate-600 hover:text-slate-950 hover:bg-slate-100 rounded-lg p-1.5">
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <button onClick={() => setAssignBedModal(null)} className="text-slate-400 hover:text-slate-700 p-1">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
 
-            <form onSubmit={handleAssignPatientSubmit} className="space-y-3">
-              <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">
-                  Patient Name *
-                </label>
-                {patients.length > 0 ? (
-                  <div className="space-y-2">
-                    <select
-                      value={selectedPatientForBed}
-                      onChange={e => setSelectedPatientForBed(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
-                    >
-                      <option value="">-- Choose Registered Patient --</option>
-                      {patients.map(p => (
-                        <option key={p.id} value={p.name}>{p.name} ({p.gender}, {p.age}y)</option>
-                      ))}
-                    </select>
-                    <p className="text-[11px] text-slate-400">or type a new patient name below:</p>
+              <form onSubmit={handleAssignPatientSubmit} className="space-y-3.5">
+                <div>
+                  <label className="text-xs font-bold text-slate-800 block mb-1">
+                    Patient Name *
+                  </label>
+                  {patients.length > 0 ? (
+                    <div className="space-y-2">
+                      <select
+                        value={selectedPatientForBed}
+                        onChange={e => setSelectedPatientForBed(e.target.value)}
+                        className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      >
+                        <option value="">-- Choose Registered Patient --</option>
+                        {patients.map(p => (
+                          <option key={p.id} value={p.name}>{p.name} ({p.gender}, {p.age}y)</option>
+                        ))}
+                      </select>
+                      <p className="text-[11px] font-medium text-slate-600">or type a new patient name below:</p>
+                      <input
+                        type="text"
+                        placeholder="Type patient name..."
+                        value={selectedPatientForBed}
+                        onChange={e => setSelectedPatientForBed(e.target.value)}
+                        className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
+                      />
+                    </div>
+                  ) : (
                     <input
                       type="text"
-                      placeholder="Type patient name..."
+                      required
+                      placeholder="Enter patient name for admission"
                       value={selectedPatientForBed}
                       onChange={e => setSelectedPatientForBed(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
+                      className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300/80 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white transition"
                     />
-                  </div>
-                ) : (
-                  <input
-                    type="text"
-                    required
-                    placeholder="Enter patient name for admission"
-                    value={selectedPatientForBed}
-                    onChange={e => setSelectedPatientForBed(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
-                  />
-                )}
-              </div>
+                  )}
+                </div>
 
-              <div className="pt-2 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setAssignBedModal(null)}
-                  className="px-4 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-sm transition"
-                >
-                  Confirm Bed Admission
-                </button>
-              </div>
-            </form>
+                <div className="pt-2 flex justify-end">
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl btn-zoho-primary text-white font-bold text-xs transition active:scale-[0.98]"
+                  >
+                    Confirm Bed Admission
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}

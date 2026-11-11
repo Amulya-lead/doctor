@@ -706,7 +706,7 @@ export const fetchTenantsFromDb = async (): Promise<Tenant[] | null> => {
       .from('tenants')
       .select('id,name,type,logo,tagline,license_number,abdm_facility_id,nabh_accredited,theme_color,branches')
       .order('created_at', { ascending: true })
-      .limit(100);
+      .limit(1000);
 
     if (error) throw error;
     if (!data || data.length === 0) return null;
@@ -740,6 +740,15 @@ export const upsertTenantInDb = (tenant: Tenant) => {
     nabh_accredited: tenant.nabhAccredited,
     theme_color: tenant.themeColor,
     branches: tenant.branches
+  });
+};
+
+export const deleteTenantFromDb = (tenantId: string) => {
+  memoryCache.delete('tenants_all');
+  backgroundQueue.enqueue(async () => {
+    const client = getSupabaseClient();
+    if (!client) return;
+    await client.from('tenants').delete().eq('id', tenantId);
   });
 };
 

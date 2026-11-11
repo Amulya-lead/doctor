@@ -289,69 +289,65 @@ export const LandingShowcase: React.FC<LandingShowcaseProps> = ({ onLaunchOS }) 
         </div>
       </section>
 
-      {/* 4. PRICING & SUBSCRIPTION ROADMAP */}
+      {/* 4. MULTI-HOSPITAL SCALE ARCHITECTURE */}
       <section className="space-y-8">
         <div className="text-center space-y-2">
           <span className="text-xs font-mono font-bold uppercase tracking-widest text-vital-amber">
-            SaaS Commercialization Model
+            Multi-Hospital Clinical Architecture
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Transparent Pricing Designed for Scale
+            Built for Clinics to Multi-City Hospital Groups
           </h2>
           <p className="text-sm text-slate-400 max-w-2xl mx-auto">
-            From single-doctor family clinics to multi-city hospital chains.
+            Unified hospital operations adapted for primary care centers, specialty institutes, and multi-hospital groups.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-            <h3 className="font-bold text-white text-base">Starter Clinic</h3>
-            <p className="text-2xl font-extrabold text-white font-mono">₹1,999<span className="text-xs font-normal text-slate-400">/mo</span></p>
-            <p className="text-xs text-slate-400">Perfect for independent clinics & general practitioners.</p>
+            <h3 className="font-bold text-white text-base">Specialty Clinics</h3>
+            <p className="text-xs text-slate-400">Tailored for independent outpatient centers &amp; general practitioners.</p>
             <ul className="text-xs text-slate-300 space-y-2 font-mono">
-              <li>✓ Up to 3 Doctors</li>
-              <li>✓ OPD & Digital Rx</li>
-              <li>✓ WhatsApp Reminders</li>
+              <li>✓ Physician Consultation Queue</li>
+              <li>✓ OPD &amp; Digital Rx</li>
+              <li>✓ Appointment Reminders</li>
               <li>✓ ABHA Verification</li>
             </ul>
           </div>
 
           <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-            <h3 className="font-bold text-white text-base">Growth Care</h3>
-            <p className="text-2xl font-extrabold text-brand-300 font-mono">₹7,999<span className="text-xs font-normal text-slate-400">/mo</span></p>
-            <p className="text-xs text-slate-400">For multi-specialty polyclinics & daycare centers.</p>
+            <h3 className="font-bold text-white text-base">Diagnostic Centers</h3>
+            <p className="text-xs text-slate-400">For integrated polyclinics &amp; NABL testing facilities.</p>
             <ul className="text-xs text-slate-300 space-y-2 font-mono">
-              <li>✓ Up to 15 Doctors</li>
+              <li>✓ Barcoded Sample Pipeline</li>
               <li>✓ In-house Pharmacy</li>
-              <li>✓ Mini LIMS Diagnostics</li>
+              <li>✓ Pathology LIMS Desk</li>
               <li>✓ Cashless UPI Billing</li>
             </ul>
           </div>
 
           <div className="p-6 rounded-2xl bg-gradient-to-b from-brand-950/40 via-slate-900 to-obsidian-900 border border-brand-500/50 space-y-4 shadow-xl shadow-brand-500/10">
             <div className="flex justify-between items-center">
-              <h3 className="font-bold text-white text-base">Hospital Pro</h3>
-              <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-brand-500 text-obsidian-950 uppercase">Popular</span>
+              <h3 className="font-bold text-white text-base">Multi-Specialty</h3>
+              <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-brand-500 text-obsidian-950 uppercase">Core Hub</span>
             </div>
-            <p className="text-2xl font-extrabold text-vital-emerald font-mono">₹29,999<span className="text-xs font-normal text-slate-400">/mo</span></p>
-            <p className="text-xs text-slate-400">For 50 to 200 bed hospitals requiring complete operations.</p>
+            <p className="text-xs text-slate-400">For multi-department hospitals requiring end-to-end coordination.</p>
             <ul className="text-xs text-slate-300 space-y-2 font-mono">
-              <li>✓ Full Ward & ICU Matrix</li>
+              <li>✓ Full Ward &amp; ICU Matrix</li>
               <li>✓ Operation Theatre Suite</li>
               <li>✓ TPA Cashless Insurance Desk</li>
-              <li>✓ Biometric HR & Payroll</li>
+              <li>✓ Staff Roster &amp; Payroll</li>
             </ul>
           </div>
 
           <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-            <h3 className="font-bold text-white text-base">Enterprise Network</h3>
-            <p className="text-2xl font-extrabold text-vital-violet font-mono">Custom</p>
-            <p className="text-xs text-slate-400">For hospital chains & large diagnostic networks.</p>
+            <h3 className="font-bold text-white text-base">Hospital Groups</h3>
+            <p className="text-xs text-slate-400">For accredited multi-branch medical networks &amp; chains.</p>
             <ul className="text-xs text-slate-300 space-y-2 font-mono">
-              <li>✓ Unlimited Branches</li>
-              <li>✓ Dedicated S3 Object Vault</li>
-              <li>✓ Custom HL7/FHIR Bridges</li>
-              <li>✓ 99.99% Enterprise SLA</li>
+              <li>✓ Instant Hospital Switcher</li>
+              <li>✓ Isolated Record Vaults</li>
+              <li>✓ HL7 / FHIR Analyzer Sync</li>
+              <li>✓ 99.99% Clinical Uptime</li>
             </ul>
           </div>
         </div>

@@ -37,11 +37,25 @@ export default {
           800: '#171f2e',
           750: '#1e293b',
           700: '#283548',
+        },
+        lavender: {
+          50: '#f7f5ff',
+          100: '#efeafe',
+          200: '#e2d8fe',
+          300: '#cbb8fc',
+          400: '#b18df8',
+          500: '#8b5cf6',
+          600: '#6d28d9',
+          700: '#5b21b6',
+          800: '#4c1d95',
+          900: '#2d1b69',
+          950: '#1c103b',
         }
       },
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        display: ['Outfit', '"DM Sans"', 'system-ui', 'sans-serif'],
+        sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
       },
       animation: {
         'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

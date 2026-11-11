@@ -36,6 +36,13 @@ interface PatientPortalProps {
   onNavigateHome?: () => void;
 }
 
+function getPortalInitials(name: string): string {
+  const words = name.replace(/^(Dr\.|Mr\.|Ms\.|Mrs\.)\s+/i, '').trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return 'DR';
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[1][0]).toUpperCase();
+}
+
 export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) => {
   const { 
     tenants, 
@@ -230,45 +237,45 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col justify-between">
+    <div className="min-h-screen bg-[#F5F8FC] text-slate-900 flex flex-col justify-between">
       {/* 1. Patient Portal Top Navigation Bar */}
-      <header className="sticky top-0 z-40 w-full bg-white border-b border-slate-200 shadow-xs">
+      <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-[0_4px_20px_-10px_rgba(15,23,42,0.1)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           {/* Logo & Facility */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-sky-600 flex items-center justify-center text-white shadow-xs">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#2D1B69] via-[#4C1D95] to-[#6D28D9] flex items-center justify-center text-white shadow-sm shadow-blue-500/25">
               <Activity className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-lg text-slate-900 tracking-tight">
-                  Hospital<span className="text-sky-600">OS</span>
+                <span className="font-display font-extrabold text-lg text-slate-950 tracking-tight">
+                  Hospital<span className="text-[#4C1D95]">OS</span>
                 </span>
-                <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <span className="text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full bg-lavender-50 text-[#4C1D95] border border-lavender-200/80">
                   Patient Portal
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 hidden md:block">
-                Active Hospital: <span className="font-semibold text-slate-700">{currentTenant.name}</span>
+              <p className="text-[11px] text-slate-600 hidden md:block">
+                Active Hospital: <span className="font-semibold text-slate-900">{currentTenant.name}</span>
               </p>
             </div>
           </div>
 
           {/* User Badge & Sign Out */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs">
-              <div className="w-6 h-6 rounded-lg bg-sky-600 text-white flex items-center justify-center font-bold text-xs">
+            <div className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white flex items-center justify-center font-bold text-xs">
                 {currentUser.name[0] || 'P'}
               </div>
               <div className="text-left">
-                <p className="font-bold text-slate-900 text-xs leading-none">{currentUser.name}</p>
-                <p className="text-[10px] text-slate-500 leading-none mt-0.5">Patient ID: {currentPatientRecord.id}</p>
+                <p className="font-bold text-slate-950 text-xs leading-none">{currentUser.name}</p>
+                <p className="text-[10px] text-slate-600 leading-none mt-0.5 font-mono">ID: {currentPatientRecord.id}</p>
               </div>
             </div>
 
             <button
               onClick={handleLogout}
-              className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 text-slate-600 font-semibold text-xs flex items-center gap-1.5 transition active:scale-95 shadow-xs"
+              className="px-3.5 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-rose-50 hover:border-rose-200 hover:text-rose-700 text-slate-700 font-semibold text-xs flex items-center gap-1.5 transition-all duration-150 active:scale-[0.98] shadow-2xs"
               title="Sign Out to Public View"
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -278,52 +285,52 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
         </div>
 
         {/* 2. Portal Navigation Tabs Bar */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-100 flex items-center gap-1 sm:gap-4 overflow-x-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-100 flex items-center gap-1 sm:gap-4 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab('book')}
-            className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition whitespace-nowrap ${
+            className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition-all duration-150 whitespace-nowrap ${
               activeTab === 'book'
-                ? 'border-sky-600 text-sky-700 bg-sky-50/50'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+                ? 'border-[#4C1D95] text-[#4C1D95] bg-lavender-50/60'
+                : 'border-transparent text-slate-600 hover:text-slate-950'
             }`}
           >
-            <Stethoscope className="w-4 h-4 text-sky-600" />
-            <span>1. Book Consultation (Hospitals &amp; Doctors)</span>
+            <Stethoscope className="w-4 h-4" />
+            <span>1. Book Consultation</span>
           </button>
 
           <button
             onClick={() => setActiveTab('history')}
-            className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition whitespace-nowrap ${
+            className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition-all duration-150 whitespace-nowrap ${
               activeTab === 'history'
-                ? 'border-sky-600 text-sky-700 bg-sky-50/50'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+                ? 'border-[#4C1D95] text-[#4C1D95] bg-lavender-50/60'
+                : 'border-transparent text-slate-600 hover:text-slate-950'
             }`}
           >
-            <Receipt className="w-4 h-4 text-sky-600" />
+            <Receipt className="w-4 h-4" />
             <span>2. My Consultations ({patientConsultations.length})</span>
           </button>
 
           <button
             onClick={() => setActiveTab('profile')}
-            className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition whitespace-nowrap ${
+            className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition-all duration-150 whitespace-nowrap ${
               activeTab === 'profile'
-                ? 'border-sky-600 text-sky-700 bg-sky-50/50'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+                ? 'border-[#4C1D95] text-[#4C1D95] bg-lavender-50/60'
+                : 'border-transparent text-slate-600 hover:text-slate-950'
             }`}
           >
-            <User className="w-4 h-4 text-sky-600" />
-            <span>3. My Profile &amp; ABHA Health Card</span>
+            <User className="w-4 h-4" />
+            <span>3. My Profile &amp; Health Records</span>
           </button>
 
           <button
             onClick={() => setActiveTab('settings')}
-            className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition whitespace-nowrap ${
+            className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition-all duration-150 whitespace-nowrap ${
               activeTab === 'settings'
-                ? 'border-sky-600 text-sky-700 bg-sky-50/50'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+                ? 'border-[#4C1D95] text-[#4C1D95] bg-lavender-50/60'
+                : 'border-transparent text-slate-600 hover:text-slate-950'
             }`}
           >
-            <SettingsIcon className="w-4 h-4 text-sky-600" />
+            <SettingsIcon className="w-4 h-4" />
             <span>4. Settings</span>
           </button>
         </div>
@@ -385,12 +392,12 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
             <div className="space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-sky-100 text-sky-800 flex items-center justify-center text-xs font-bold">1</span>
+                  <h3 className="font-display text-lg font-bold text-slate-950 flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-md bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white flex items-center justify-center text-xs font-bold shadow-xs">1</span>
                     <span>Select Hospital Facility</span>
                   </h3>
-                  <p className="text-xs text-slate-500">
-                    Choose the hospital campus where you wish to book your clinical consultation.
+                  <p className="text-xs text-slate-600">
+                    Choose the accredited hospital where you wish to book your clinical consultation.
                   </p>
                 </div>
 
@@ -405,7 +412,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
                       setHospitalPage(1);
                     }}
                     placeholder={`Search across ${tenants.length} hospitals by name or license...`}
-                    className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 shadow-2xs"
+                    className="w-full bg-white border border-slate-300 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-500 focus:outline-none focus:border-[#5B21B6] focus:ring-2 focus:ring-[#5B21B6]/15 transition"
                   />
                   {hospitalSearch && (
                     <button
@@ -419,9 +426,9 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
               </div>
 
               {paginatedHospitals.length === 0 ? (
-                <div className="p-8 rounded-2xl bg-white border border-slate-200 text-center space-y-2">
+                <div className="p-8 rounded-xl bg-white border border-slate-200 text-center space-y-2">
                   <p className="text-xs font-bold text-slate-700">No matching hospital found</p>
-                  <p className="text-xs text-slate-400">Try searching with a different name or license number.</p>
+                  <p className="text-xs text-slate-500">Try searching with a different name or license number.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -431,32 +438,34 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
                       <div
                         key={t.id}
                         onClick={() => setCurrentTenantId(t.id)}
-                        className={`p-4 rounded-2xl border-2 cursor-pointer transition flex flex-col justify-between space-y-3 ${
+                        className={`p-4 rounded-xl border cursor-pointer transition-all duration-200 flex flex-col justify-between space-y-3 ${
                           isSelected
-                            ? 'bg-sky-50/60 border-sky-600 shadow-xs'
-                            : 'bg-white border-slate-200 hover:border-slate-300'
+                            ? 'bg-lavender-50/60 border-[#5B21B6] ring-2 ring-[#5B21B6]/15 shadow-sm'
+                            : 'bg-white border-slate-200 hover:border-lavender-300 hover:shadow-sm hover:-translate-y-0.5'
                         }`}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex items-center gap-2.5 truncate">
-                            <span className="text-2xl flex-shrink-0">{t.logo}</span>
+                            <span className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white font-display font-bold text-xs flex items-center justify-center flex-shrink-0">
+                              {t.name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase()}
+                            </span>
                             <div className="truncate">
-                              <h4 className="font-bold text-slate-900 text-sm leading-tight truncate">{t.name}</h4>
-                              <p className="text-[11px] text-slate-500 capitalize">{t.type} Campus</p>
+                              <h4 className="font-display font-bold text-slate-950 text-sm leading-tight truncate">{t.name}</h4>
+                              <p className="text-[11px] text-slate-600 capitalize">{t.type} Facility</p>
                             </div>
                           </div>
                           {isSelected && (
-                            <span className="w-5 h-5 rounded-full bg-sky-600 text-white flex items-center justify-center flex-shrink-0">
+                            <span className="w-5 h-5 rounded-full bg-[#4C1D95] text-white flex items-center justify-center flex-shrink-0">
                               <Check className="w-3.5 h-3.5" />
                             </span>
                           )}
                         </div>
 
-                        <p className="text-xs text-slate-600 line-clamp-2">{t.tagline}</p>
+                        <p className="text-xs text-slate-700 line-clamp-2">{t.tagline}</p>
 
-                        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 font-mono">
                           <span>Lic: {t.licenseNumber}</span>
-                          <span className={`font-sans font-bold ${isSelected ? 'text-sky-700' : 'text-slate-400'}`}>
+                          <span className={`font-sans font-bold ${isSelected ? 'text-[#4C1D95]' : 'text-slate-500'}`}>
                             {isSelected ? '✓ Selected' : 'Click to Select'}
                           </span>
                         </div>
@@ -502,7 +511,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-sky-100 text-sky-800 flex items-center justify-center text-xs font-bold">2</span>
+                    <span className="w-6 h-6 rounded-full bg-lavender-100 text-[#4C1D95] flex items-center justify-center text-xs font-bold">2</span>
                     <span>Select Doctor According to Requirement</span>
                   </h3>
                   <p className="text-xs text-slate-500">
@@ -518,7 +527,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
                     value={searchDoctor}
                     onChange={(e) => setSearchDoctor(e.target.value)}
                     placeholder="Search doctor or specialty..."
-                    className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 shadow-2xs"
+                    className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#5B21B6] shadow-2xs"
                   />
                 </div>
               </div>
@@ -529,10 +538,10 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
                   <button
                     key={dept}
                     onClick={() => setSelectedDept(dept)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-150 ${
                       selectedDept === dept
-                        ? 'bg-sky-600 text-white shadow-2xs'
-                        : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+                        ? 'btn-zoho-primary text-white shadow-sm'
+                        : 'bg-white hover:bg-lavender-50/80 text-slate-700 hover:text-[#4C1D95] border border-slate-200/90'
                     }`}
                   >
                     {dept === 'ALL' ? 'All Specialties' : dept}
@@ -542,64 +551,72 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
 
               {/* Doctors Grid (Sliced Pagination for large rosters) */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {paginatedDoctors.map(doc => (
-                  <div
-                    key={doc.id}
-                    className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md transition flex flex-col justify-between space-y-4"
-                  >
-                    <div className="flex items-start gap-3.5">
-                      <div className="relative">
-                        <div className="w-13 h-13 rounded-2xl bg-sky-50 text-sky-700 flex items-center justify-center text-2xl border border-sky-100 flex-shrink-0">
-                          {doc.avatar || '👨‍⚕️'}
-                        </div>
-                        <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white" />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-slate-900 text-sm truncate">{doc.name}</h4>
-                        <p className="text-xs font-semibold text-sky-700 truncate">{doc.specialization}</p>
-                        <p className="text-[11px] text-slate-500 truncate">{doc.qualification}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">
-                            <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
-                            <span>{doc.rating}</span>
-                          </span>
-                          <span className="text-[10px] text-slate-400 font-medium">
-                            &bull; {doc.department}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1 text-xs text-slate-600">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400 font-medium">OPD Timing:</span>
-                        <span className="font-semibold text-slate-800">{doc.timing}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400 font-medium">Chamber:</span>
-                        <span className="font-semibold text-slate-800">{doc.currentRoom}</span>
-                      </div>
-                      <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
-                        <span className="text-slate-500 font-medium">Consultation Fee:</span>
-                        <span className="font-bold text-sm text-slate-900 font-mono">₹{doc.consultationFee}</span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => handleOpenBookingModal(doc)}
-                      className="w-full py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition active:scale-95"
+                {paginatedDoctors.map((doc, idx) => {
+                  const badgeThemes = [
+                    'from-[#2D1B69] to-[#6D28D9] shadow-lavender-700/25',
+                    'from-[#0D9488] to-[#10B981] shadow-teal-500/25',
+                    'from-[#4C1D95] to-[#7C3AED] shadow-lavender-700/25'
+                  ];
+                  const badgeTheme = badgeThemes[idx % badgeThemes.length];
+                  return (
+                    <div
+                      key={doc.id}
+                      className="lavish-card lavish-card-hover p-5 flex flex-col justify-between space-y-4"
                     >
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span>Book Consultation (₹{doc.consultationFee})</span>
-                    </button>
-                  </div>
-                ))}
+                      <div className="flex items-start gap-3.5">
+                        <div className="relative flex-shrink-0">
+                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${badgeTheme} text-white flex items-center justify-center font-display font-bold text-sm shadow-sm`}>
+                            {getPortalInitials(doc.name)}
+                          </div>
+                          <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white" />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-display font-bold text-slate-950 text-sm truncate">{doc.name}</h4>
+                          <p className="text-xs font-bold text-[#4C1D95] truncate">{doc.specialization}</p>
+                          <p className="text-[11px] font-medium text-slate-700 truncate">{doc.qualification}</p>
+                          <div className="flex items-center gap-2 mt-1.5">
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-200/80 px-1.5 py-0.5 rounded">
+                              <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                              <span>{doc.rating}</span>
+                            </span>
+                            <span className="text-[11px] text-slate-700 font-semibold truncate">
+                              &bull; {doc.department}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-gradient-to-br from-slate-50 to-blue-50/40 border border-slate-200/75 space-y-1.5 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-600 font-semibold">OPD Timing</span>
+                          <span className="font-bold text-slate-900">{doc.timing}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-600 font-semibold">Chamber</span>
+                          <span className="font-bold text-slate-900">{doc.currentRoom}</span>
+                        </div>
+                        <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/80">
+                          <span className="text-slate-700 font-semibold">Consultation Fee</span>
+                          <span className="font-bold text-sm text-slate-950 font-mono">₹{doc.consultationFee}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleOpenBookingModal(doc)}
+                        className="w-full py-2.5 rounded-xl btn-zoho-primary text-white font-bold text-xs flex items-center justify-center gap-2 active:scale-[0.98]"
+                      >
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>Book Consultation (₹{doc.consultationFee})</span>
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Sliced Doctor Pagination */}
               {totalDoctorPages > 1 && (
-                <div className="flex items-center justify-between pt-2 text-xs text-slate-500">
+                <div className="flex items-center justify-between pt-2 text-xs text-slate-700 font-medium">
                   <span>
                     Showing {((doctorPage - 1) * DOCTORS_PER_PAGE) + 1}–{Math.min(doctorPage * DOCTORS_PER_PAGE, filteredDoctors.length)} of {filteredDoctors.length} doctors
                   </span>
@@ -607,18 +624,18 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
                     <button
                       onClick={() => setDoctorPage(p => Math.max(1, p - 1))}
                       disabled={doctorPage === 1}
-                      className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition"
+                      className="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 transition text-slate-800"
                       title="Previous Page"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
-                    <span className="px-2 font-semibold text-slate-700">
+                    <span className="px-2.5 font-bold text-slate-900">
                       Page {doctorPage} of {totalDoctorPages}
                     </span>
                     <button
                       onClick={() => setDoctorPage(p => Math.min(totalDoctorPages, p + 1))}
                       disabled={doctorPage === totalDoctorPages}
-                      className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition"
+                      className="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 transition text-slate-800"
                       title="Next Page"
                     >
                       <ChevronRight className="w-4 h-4" />
@@ -633,20 +650,20 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
         {/* ================= TAB 2: MY CONSULTATIONS ("What all consulted so far") ================= */}
         {activeTab === 'history' && (
           <div className="space-y-5 animate-in fade-in duration-150">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200/90">
               <div>
-                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                  <Receipt className="w-5 h-5 text-sky-600" />
+                <h3 className="font-display text-xl font-bold text-slate-950 flex items-center gap-2">
+                  <Receipt className="w-5 h-5 text-[#4C1D95]" />
                   <span>My Consultations &amp; Medical History</span>
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-700 mt-0.5 font-medium">
                   Complete record of all doctor consultations booked by {currentUser.name} across our hospital network.
                 </p>
               </div>
 
               <button
                 onClick={() => setActiveTab('book')}
-                className="px-3.5 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs flex items-center gap-1.5 transition active:scale-95 shadow-xs self-start sm:self-auto"
+                className="px-4 py-2 rounded-lg btn-zoho-primary text-white font-bold text-xs flex items-center gap-1.5 active:scale-[0.98] self-start sm:self-auto"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Book New Consultation</span>
@@ -654,20 +671,14 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
             </div>
 
             {patientConsultations.length === 0 ? (
-              <div className="p-12 rounded-2xl bg-white border border-slate-200 text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center mx-auto">
+              <div className="p-12 rounded-2xl lavish-card text-center space-y-2.5">
+                <div className="w-12 h-12 rounded-xl bg-lavender-50 text-[#4C1D95] border border-lavender-200/80 flex items-center justify-center mx-auto">
                   <Stethoscope className="w-6 h-6" />
                 </div>
-                <h4 className="font-bold text-slate-900 text-sm">No Consultations Booked Yet</h4>
-                <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  You haven't booked any doctor consultations so far. Pick a hospital and specialist to book your first appointment.
+                <h4 className="font-display font-bold text-slate-950 text-base">No Consultations Booked Yet</h4>
+                <p className="text-xs text-slate-700 max-w-sm mx-auto">
+                  You haven&apos;t booked any doctor consultations so far. Click &quot;Book New Consultation&quot; above to schedule your first appointment.
                 </p>
-                <button
-                  onClick={() => setActiveTab('book')}
-                  className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-xs transition"
-                >
-                  Book Your First Consultation
-                </button>
               </div>
             ) : (
               <div className="space-y-4">
@@ -677,49 +688,49 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
                     return (
                       <div
                         key={inv.id}
-                        className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md transition space-y-3.5 flex flex-col justify-between"
+                        className="lavish-card lavish-card-hover p-5 space-y-3.5 flex flex-col justify-between"
                       >
-                        <div className="space-y-2">
+                        <div className="space-y-2.5">
                           <div className="flex items-center justify-between">
-                            <span className="font-mono font-bold text-xs text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-100">
+                            <span className="font-mono font-bold text-xs text-[#4C1D95] bg-lavender-50 px-2.5 py-0.5 rounded-md border border-lavender-200/80">
                               {inv.id}
                             </span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                            <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
                               isPaid
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                : 'bg-amber-50 text-amber-700 border border-amber-200'
+                                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                : 'bg-amber-50 text-amber-800 border border-amber-200'
                             }`}>
-                              {isPaid ? `✓ Paid (${inv.paymentMethod})` : 'Pending at Cashier Desk'}
+                              {isPaid ? `Paid (${inv.paymentMethod})` : 'Pending at Cashier'}
                             </span>
                           </div>
 
                           <div>
-                            <h4 className="font-bold text-slate-900 text-base">{inv.patientName}</h4>
-                            <p className="text-xs font-semibold text-sky-700 mt-0.5">
+                            <h4 className="font-display font-bold text-slate-950 text-base">{inv.patientName}</h4>
+                            <p className="text-xs font-bold text-[#4C1D95] mt-0.5">
                               {inv.items[0]?.description || inv.type}
                             </p>
-                            <p className="text-[11px] text-slate-500 mt-0.5">
-                              Hospital: <span className="font-semibold text-slate-700">{currentTenant.name}</span>
+                            <p className="text-[11px] text-slate-700 mt-0.5 font-medium">
+                              Hospital: <span className="font-bold text-slate-900">{currentTenant.name}</span>
                             </p>
                           </div>
 
-                          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs space-y-1 text-slate-600">
+                          <div className="p-3 rounded-xl bg-gradient-to-br from-slate-50 to-blue-50/40 border border-slate-200/75 text-xs space-y-1.5">
                             <div className="flex items-center justify-between">
-                              <span className="text-slate-400 font-medium">Consultation Date:</span>
-                              <span className="font-mono font-semibold text-slate-800">{inv.invoiceDate}</span>
+                              <span className="text-slate-600 font-semibold">Consultation Date</span>
+                              <span className="font-mono font-bold text-slate-900">{inv.invoiceDate}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                              <span className="text-slate-400 font-medium">Total Billed:</span>
-                              <span className="font-mono font-bold text-slate-900">₹{inv.totalAmount.toLocaleString('en-IN')}</span>
+                              <span className="text-slate-600 font-semibold">Total Billed</span>
+                              <span className="font-mono font-bold text-slate-950">₹{inv.totalAmount.toLocaleString('en-IN')}</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="space-y-2 pt-2 border-t border-slate-100">
+                        <div className="space-y-2 pt-2.5 border-t border-slate-100">
                           {!isPaid && (
                             <button
                               onClick={() => payInvoice(inv.id, 'UPI')}
-                              className="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95"
+                              className="w-full py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:brightness-105 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-[0.98]"
                             >
                               <Check className="w-3.5 h-3.5" />
                               <span>Pay Now via UPI (₹{inv.totalAmount})</span>
@@ -728,9 +739,9 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
 
                           <button
                             onClick={() => setViewPassInvoice(inv)}
-                            className="w-full py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95 shadow-2xs"
+                            className="w-full py-2 rounded-xl border border-slate-300 bg-white hover:bg-lavender-50/70 hover:border-[#5B21B6]/40 text-slate-900 font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-[0.98]"
                           >
-                            <FileText className="w-3.5 h-3.5 text-sky-600" />
+                            <FileText className="w-3.5 h-3.5 text-[#4C1D95]" />
                             <span>View Digital Pass &amp; Receipt</span>
                           </button>
                         </div>
@@ -741,7 +752,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
 
                 {/* Consultations Pagination */}
                 {totalConsultationPages > 1 && (
-                  <div className="flex items-center justify-between pt-2 text-xs text-slate-500">
+                  <div className="flex items-center justify-between pt-2 text-xs text-slate-700 font-medium">
                     <span>
                       Showing {((consultationPage - 1) * CONSULTATIONS_PER_PAGE) + 1}–{Math.min(consultationPage * CONSULTATIONS_PER_PAGE, patientConsultations.length)} of {patientConsultations.length} records
                     </span>
@@ -749,17 +760,17 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
                       <button
                         onClick={() => setConsultationPage(p => Math.max(1, p - 1))}
                         disabled={consultationPage === 1}
-                        className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition"
+                        className="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 transition text-slate-800"
                       >
                         <ChevronLeft className="w-4 h-4" />
                       </button>
-                      <span className="px-2 font-semibold text-slate-700">
+                      <span className="px-2.5 font-bold text-slate-900">
                         Page {consultationPage} of {totalConsultationPages}
                       </span>
                       <button
                         onClick={() => setConsultationPage(p => Math.min(totalConsultationPages, p + 1))}
                         disabled={consultationPage === totalConsultationPages}
-                        className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition"
+                        className="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-40 transition text-slate-800"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </button>
@@ -781,99 +792,99 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
               </div>
             )}
 
-            {/* ABHA Digital Health Card Banner */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-sky-600 via-sky-700 to-sky-900 text-white shadow-md space-y-4">
+            {/* Digital Health Record Banner */}
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-[#1C103B] via-[#2D1B69] to-[#5B21B6] text-white shadow-lg space-y-4 border border-white/10">
               <div className="flex items-start justify-between">
                 <div>
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-sky-200 block">
-                    Ayushman Bharat Digital Health Card
+                  <span className="text-[11px] uppercase font-bold tracking-widest text-lavender-200 block">
+                    Unified Digital Health Profile
                   </span>
-                  <h3 className="text-xl font-bold mt-0.5">{profileForm.name}</h3>
+                  <h3 className="font-display text-xl font-bold mt-0.5 text-white">{profileForm.name}</h3>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-xs flex items-center justify-center text-white border border-white/20">
+                <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-emerald-300 border border-white/20">
                   <ShieldCheck className="w-6 h-6" />
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-white/20 font-mono space-y-1">
-                <span className="text-[10px] text-sky-200 uppercase tracking-widest">14-Digit ABHA ID</span>
-                <p className="text-lg font-bold tracking-widest">{currentPatientRecord.abhaId || '91-4521-8890-1234'}</p>
-                <p className="text-xs text-sky-200">{currentPatientRecord.abhaAddress || 'patient@abdm'}</p>
+              <div className="pt-2.5 border-t border-white/15 font-mono space-y-1">
+                <span className="text-[10px] text-lavender-200 uppercase tracking-widest">Health Record ID</span>
+                <p className="text-lg font-bold tracking-widest text-white">{currentPatientRecord.abhaId || '91-4521-8890-1234'}</p>
+                <p className="text-xs text-lavender-100">{currentPatientRecord.abhaAddress || 'patient@hospitalos'}</p>
               </div>
 
-              <div className="pt-2 border-t border-white/20 grid grid-cols-3 gap-2 text-xs">
+              <div className="pt-2.5 border-t border-white/15 grid grid-cols-3 gap-2 text-xs">
                 <div>
-                  <span className="text-[10px] text-sky-200 uppercase block">Gender / Age</span>
-                  <span className="font-bold">{profileForm.gender} &bull; {profileForm.age} Yrs</span>
+                  <span className="text-[10px] text-lavender-200 uppercase block">Gender / Age</span>
+                  <span className="font-bold text-white">{profileForm.gender} &bull; {profileForm.age} Yrs</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-sky-200 uppercase block">Blood Group</span>
-                  <span className="font-bold">{profileForm.bloodGroup}</span>
+                  <span className="text-[10px] text-lavender-200 uppercase block">Blood Group</span>
+                  <span className="font-bold text-white">{profileForm.bloodGroup}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-sky-200 uppercase block">Facility</span>
-                  <span className="font-bold truncate">{currentTenant.name}</span>
+                  <span className="text-[10px] text-lavender-200 uppercase block">Primary Hospital</span>
+                  <span className="font-bold truncate block text-white">{currentTenant.name}</span>
                 </div>
               </div>
             </div>
 
             {/* Profile Form */}
-            <form onSubmit={handleSaveProfile} className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-xs">
-              <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100">
+            <form onSubmit={handleSaveProfile} className="lavish-card p-6 space-y-4">
+              <h4 className="font-display text-sm font-bold text-slate-950 uppercase tracking-wider pb-2 border-b border-slate-100">
                 Edit Patient Personal Details
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Full Name</label>
+                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">Full Name</label>
                   <input
                     type="text"
                     required
                     value={profileForm.name}
                     onChange={e => setProfileForm({ ...profileForm, name: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
+                    className="w-full bg-slate-50 border border-slate-300/80 rounded-xl px-3.5 py-2.5 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:ring-2 focus:ring-[#5B21B6]/15 focus:bg-white transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Phone Number</label>
+                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">Phone Number</label>
                   <input
                     type="tel"
                     required
                     value={profileForm.phone}
                     onChange={e => setProfileForm({ ...profileForm, phone: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
+                    className="w-full bg-slate-50 border border-slate-300/80 rounded-xl px-3.5 py-2.5 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:ring-2 focus:ring-[#5B21B6]/15 focus:bg-white transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Email Address</label>
+                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">Email Address</label>
                   <input
                     type="email"
                     required
                     value={profileForm.email}
                     onChange={e => setProfileForm({ ...profileForm, email: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
+                    className="w-full bg-slate-50 border border-slate-300/80 rounded-xl px-3.5 py-2.5 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:ring-2 focus:ring-[#5B21B6]/15 focus:bg-white transition"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Age</label>
+                    <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">Age</label>
                     <input
                       type="number"
                       value={profileForm.age}
                       onChange={e => setProfileForm({ ...profileForm, age: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
+                      className="w-full bg-slate-50 border border-slate-300/80 rounded-xl px-3.5 py-2.5 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:ring-2 focus:ring-[#5B21B6]/15 focus:bg-white transition"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Blood Group</label>
+                    <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">Blood Group</label>
                     <select
                       value={profileForm.bloodGroup}
                       onChange={e => setProfileForm({ ...profileForm, bloodGroup: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
+                      className="w-full bg-slate-50 border border-slate-300/80 rounded-xl px-3.5 py-2.5 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:ring-2 focus:ring-[#5B21B6]/15 focus:bg-white transition"
                     >
                       {['A+ Positive', 'A- Negative', 'B+ Positive', 'B- Negative', 'O+ Positive', 'O- Negative', 'AB+ Positive', 'AB- Negative'].map(b => (
                         <option key={b} value={b}>{b}</option>
@@ -883,22 +894,22 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Emergency Contact Name</label>
+                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">Emergency Contact Name</label>
                   <input
                     type="text"
                     value={profileForm.emergencyContactName}
                     onChange={e => setProfileForm({ ...profileForm, emergencyContactName: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
+                    className="w-full bg-slate-50 border border-slate-300/80 rounded-xl px-3.5 py-2.5 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:ring-2 focus:ring-[#5B21B6]/15 focus:bg-white transition"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Emergency Contact Phone</label>
+                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">Emergency Contact Phone</label>
                   <input
                     type="tel"
                     value={profileForm.emergencyContactPhone}
                     onChange={e => setProfileForm({ ...profileForm, emergencyContactPhone: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
+                    className="w-full bg-slate-50 border border-slate-300/80 rounded-xl px-3.5 py-2.5 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:ring-2 focus:ring-[#5B21B6]/15 focus:bg-white transition"
                   />
                 </div>
               </div>
@@ -906,7 +917,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
               <div className="pt-2 flex justify-end">
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider shadow-xs transition active:scale-95"
+                  className="px-6 py-2.5 rounded-xl btn-zoho-primary text-white font-bold text-xs uppercase tracking-wider transition active:scale-[0.98]"
                 >
                   Save Profile Changes
                 </button>
@@ -918,62 +929,56 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
         {/* ================= TAB 4: SETTINGS ================= */}
         {activeTab === 'settings' && (
           <div className="space-y-6 max-w-3xl mx-auto animate-in fade-in duration-150">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5 shadow-xs">
-              <h3 className="text-base font-bold text-slate-900 pb-2 border-b border-slate-100 flex items-center gap-2">
-                <SettingsIcon className="w-4 h-4 text-sky-600" />
+            <div className="lavish-card p-6 space-y-5">
+              <h3 className="font-display text-base font-bold text-slate-950 pb-2.5 border-b border-slate-100 flex items-center gap-2">
+                <SettingsIcon className="w-4 h-4 text-[#4C1D95]" />
                 <span>Patient Account &amp; Notification Settings</span>
               </h3>
 
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+              <div className="space-y-3.5">
+                <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50/90 border border-slate-200/75">
                   <div>
-                    <h5 className="font-bold text-slate-900 text-xs">SMS Appointment Reminders</h5>
-                    <p className="text-[11px] text-slate-500">Receive SMS token alerts on your phone prior to consultation slot.</p>
+                    <h5 className="font-bold text-slate-950 text-xs">SMS Appointment Reminders</h5>
+                    <p className="text-[11px] text-slate-700 mt-0.5">Receive SMS token alerts on your phone prior to consultation slot.</p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.smsAlerts}
                     onChange={e => setSettings({ ...settings, smsAlerts: e.target.checked })}
-                    className="w-4 h-4 text-sky-600 rounded border-slate-300"
+                    className="w-4 h-4 accent-[#5B21B6] rounded border-slate-300"
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50/90 border border-slate-200/75">
                   <div>
-                    <h5 className="font-bold text-slate-900 text-xs">WhatsApp Digital Consultation Pass</h5>
-                    <p className="text-[11px] text-slate-500">Receive instant digital QR token pass on WhatsApp after booking.</p>
+                    <h5 className="font-bold text-slate-950 text-xs">WhatsApp Digital Consultation Pass</h5>
+                    <p className="text-[11px] text-slate-700 mt-0.5">Receive instant digital QR token pass on WhatsApp after booking.</p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.whatsappPass}
                     onChange={e => setSettings({ ...settings, whatsappPass: e.target.checked })}
-                    className="w-4 h-4 text-sky-600 rounded border-slate-300"
+                    className="w-4 h-4 accent-[#5B21B6] rounded border-slate-300"
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50/90 border border-slate-200/75">
                   <div>
-                    <h5 className="font-bold text-slate-900 text-xs">ABHA Digital Health Record Sync</h5>
-                    <p className="text-[11px] text-slate-500">Automatically sync hospital doctor consultations to your official ABHA locker.</p>
+                    <h5 className="font-bold text-slate-950 text-xs">Cross-Hospital Digital Health Sync</h5>
+                    <p className="text-[11px] text-slate-700 mt-0.5">Automatically synchronize consultations and prescriptions across partner hospitals.</p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.abhaSync}
                     onChange={e => setSettings({ ...settings, abhaSync: e.target.checked })}
-                    className="w-4 h-4 text-sky-600 rounded border-slate-300"
+                    className="w-4 h-4 accent-[#5B21B6] rounded border-slate-300"
                   />
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-xs text-slate-500">Logged in as {currentUser.name} ({currentUser.email})</span>
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold text-xs flex items-center gap-1.5 transition"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Log Out of Patient Portal</span>
-                </button>
+              <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <span className="text-xs font-medium text-slate-700">Logged in as <strong className="text-slate-950">{currentUser.name}</strong> ({currentUser.email})</span>
+                <span className="text-[11px] text-slate-500 font-medium">Use &quot;Sign Out&quot; in the top header bar whenever you want to exit.</span>
               </div>
             </div>
           </div>
@@ -982,206 +987,207 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
 
       {/* Booking Modal */}
       {isBookingModalOpen && selectedDoctorForBooking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-          <div className="w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-sky-50 text-sky-600">
-                  <Calendar className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#2D1B69] via-[#6D28D9] to-[#0D9488]" />
+            <div className="p-6 space-y-4 overflow-y-auto">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-lavender-50 text-[#4C1D95] border border-lavender-200/80">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-bold text-slate-950 text-base">Confirm Doctor Consultation</h3>
+                    <p className="text-xs font-medium text-slate-700">{currentTenant.name}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsBookingModalOpen(false)}
+                  className="p-1.5 rounded-lg text-slate-600 hover:text-slate-950 hover:bg-slate-100"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Doctor Info Chip */}
+              <div className="p-3.5 rounded-xl bg-gradient-to-r from-slate-50 to-blue-50/50 border border-slate-200/80 flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white font-display font-bold text-sm flex items-center justify-center flex-shrink-0 shadow-xs">
+                  {getPortalInitials(selectedDoctorForBooking.name)}
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-base">Confirm Doctor Consultation</h3>
-                  <p className="text-xs text-slate-500">{currentTenant.name}</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => setIsBookingModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Doctor Info Chip */}
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3">
-              <span className="text-2xl">{selectedDoctorForBooking.avatar || '👨‍⚕️'}</span>
-              <div>
-                <h4 className="font-bold text-slate-900 text-xs">{selectedDoctorForBooking.name}</h4>
-                <p className="text-[11px] text-sky-700">{selectedDoctorForBooking.specialization} &bull; {selectedDoctorForBooking.department}</p>
-                <p className="text-[10px] text-slate-500">Chamber: {selectedDoctorForBooking.currentRoom}</p>
-              </div>
-            </div>
-
-            <form onSubmit={handleConfirmBooking} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 block">Consultation Date *</label>
-                  <input
-                    type="date"
-                    required
-                    value={appointmentDate}
-                    onChange={e => setAppointmentDate(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 block">Preferred Time Slot *</label>
-                  <select
-                    value={appointmentSlot}
-                    onChange={e => setAppointmentSlot(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
-                  >
-                    <option value="09:30 AM">09:30 AM (Morning)</option>
-                    <option value="10:30 AM">10:30 AM (Morning)</option>
-                    <option value="11:45 AM">11:45 AM (Morning)</option>
-                    <option value="02:30 PM">02:30 PM (Afternoon)</option>
-                    <option value="04:00 PM">04:00 PM (Evening)</option>
-                    <option value="05:30 PM">05:30 PM (Evening)</option>
-                  </select>
+                  <h4 className="font-display font-bold text-slate-950 text-xs">{selectedDoctorForBooking.name}</h4>
+                  <p className="text-[11px] font-bold text-[#4C1D95]">{selectedDoctorForBooking.specialization} &bull; {selectedDoctorForBooking.department}</p>
+                  <p className="text-[11px] font-medium text-slate-700">Chamber: {selectedDoctorForBooking.currentRoom}</p>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700 block">Symptoms / Reason for Consultation</label>
-                <input
-                  type="text"
-                  value={healthSymptoms}
-                  onChange={e => setHealthSymptoms(e.target.value)}
-                  placeholder="e.g. Chest discomfort, high blood pressure, routine checkup..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 focus:bg-white"
-                />
-              </div>
-
-              {/* Payment Section */}
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-xs font-bold text-slate-900 block">Pay Consultation Fee Now?</span>
-                    <span className="text-[11px] text-slate-500">Pay via UPI or settle later at hospital cashier desk</span>
+              <form onSubmit={handleConfirmBooking} className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-800 block">Consultation Date *</label>
+                    <input
+                      type="date"
+                      required
+                      value={appointmentDate}
+                      onChange={e => setAppointmentDate(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-300/80 rounded-xl px-3 py-2 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white"
+                    />
                   </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-800 block">Preferred Time Slot *</label>
+                    <select
+                      value={appointmentSlot}
+                      onChange={e => setAppointmentSlot(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-300/80 rounded-xl px-3 py-2 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white"
+                    >
+                      <option value="09:30 AM">09:30 AM (Morning)</option>
+                      <option value="10:30 AM">10:30 AM (Morning)</option>
+                      <option value="11:45 AM">11:45 AM (Morning)</option>
+                      <option value="02:30 PM">02:30 PM (Afternoon)</option>
+                      <option value="04:00 PM">04:00 PM (Evening)</option>
+                      <option value="05:30 PM">05:30 PM (Evening)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-800 block">Symptoms / Reason for Consultation</label>
                   <input
-                    type="checkbox"
-                    checked={payNow}
-                    onChange={e => setPayNow(e.target.checked)}
-                    className="w-4 h-4 text-sky-600 rounded border-slate-300"
+                    type="text"
+                    value={healthSymptoms}
+                    onChange={e => setHealthSymptoms(e.target.value)}
+                    placeholder="e.g. Chest discomfort, high blood pressure, routine checkup..."
+                    className="w-full bg-slate-50 border border-slate-300/80 rounded-xl px-3 py-2 text-xs font-medium text-slate-950 focus:outline-none focus:border-[#5B21B6] focus:bg-white"
                   />
                 </div>
 
-                {payNow && (
-                  <div className="pt-2 border-t border-slate-200 flex items-center justify-between gap-2">
-                    <span className="text-xs text-slate-600 font-medium">Payment Mode:</span>
-                    <div className="flex items-center gap-1.5">
-                      {(['UPI', 'Cash', 'Credit/Debit Card'] as const).map(mode => (
-                        <button
-                          key={mode}
-                          type="button"
-                          onClick={() => setPaymentMethod(mode)}
-                          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                            paymentMethod === mode
-                              ? 'bg-emerald-600 text-white'
-                              : 'bg-white border border-slate-200 text-slate-600'
-                          }`}
-                        >
-                          {mode}
-                        </button>
-                      ))}
+                {/* Payment Section */}
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/90 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-bold text-slate-950 block">Pay Consultation Fee Now?</span>
+                      <span className="text-[11px] text-slate-700">Pay via UPI or settle later at hospital cashier desk</span>
                     </div>
+                    <input
+                      type="checkbox"
+                      checked={payNow}
+                      onChange={e => setPayNow(e.target.checked)}
+                      className="w-4 h-4 accent-[#5B21B6] rounded border-slate-300"
+                    />
                   </div>
-                )}
 
-                <div className="flex items-center justify-between pt-2 border-t border-slate-200 font-mono text-xs">
-                  <span className="text-slate-600">Total Consultation Fee:</span>
-                  <span className="text-base font-bold text-slate-900">₹{selectedDoctorForBooking.consultationFee}</span>
+                  {payNow && (
+                    <div className="pt-2 border-t border-slate-200 flex items-center justify-between gap-2">
+                      <span className="text-xs text-slate-700 font-semibold">Payment Mode:</span>
+                      <div className="flex items-center gap-1.5">
+                        {(['UPI', 'Cash', 'Credit/Debit Card'] as const).map(mode => (
+                          <button
+                            key={mode}
+                            type="button"
+                            onClick={() => setPaymentMethod(mode)}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
+                              paymentMethod === mode
+                                ? 'bg-emerald-600 text-white shadow-xs'
+                                : 'bg-white border border-slate-300 text-slate-700'
+                            }`}
+                          >
+                            {mode}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-200 font-mono text-xs">
+                    <span className="text-slate-700 font-semibold">Total Consultation Fee:</span>
+                    <span className="text-base font-bold text-slate-950">₹{selectedDoctorForBooking.consultationFee}</span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="pt-2 flex justify-end gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setIsBookingModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-xs transition active:scale-95"
-                >
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Confirm Consultation Booking</span>
-                </button>
-              </div>
-            </form>
+                <div className="pt-2 flex justify-end">
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 rounded-xl btn-zoho-primary text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition active:scale-[0.98]"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Confirm Consultation Booking</span>
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
 
       {/* Digital Pass & Receipt Modal */}
       {viewPassInvoice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-sky-600 text-white flex items-center justify-center font-bold text-xs">
-                  <Activity className="w-4 h-4" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden">
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#2D1B69] via-[#6D28D9] to-[#0D9488]" />
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#2D1B69] to-[#6D28D9] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                    <Activity className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-display font-bold text-slate-950 text-sm">Official Consultation Pass</h4>
+                    <p className="text-[11px] font-medium text-slate-700">{currentTenant.name}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-slate-900 text-sm">Official Consultation Pass</h4>
-                  <p className="text-[10px] text-slate-500">{currentTenant.name}</p>
+                <button
+                  onClick={() => setViewPassInvoice(null)}
+                  className="p-1.5 rounded-lg text-slate-600 hover:text-slate-950 hover:bg-slate-100"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-4 rounded-xl bg-gradient-to-br from-slate-50 to-blue-50/40 border border-slate-200 space-y-3 font-mono text-xs">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                  <span className="text-slate-600 font-sans font-semibold">Token / Invoice:</span>
+                  <span className="font-bold text-[#4C1D95]">{viewPassInvoice.id}</span>
+                </div>
+
+                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                  <span className="text-slate-600 font-sans font-semibold">Patient Name:</span>
+                  <span className="font-bold text-slate-950 font-sans">{viewPassInvoice.patientName}</span>
+                </div>
+
+                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                  <span className="text-slate-600 font-sans font-semibold">Service:</span>
+                  <span className="font-semibold text-slate-900 font-sans text-right">{viewPassInvoice.items[0]?.description || viewPassInvoice.type}</span>
+                </div>
+
+                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                  <span className="text-slate-600 font-sans font-semibold">Date:</span>
+                  <span className="font-semibold text-slate-900">{viewPassInvoice.invoiceDate}</span>
+                </div>
+
+                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                  <span className="text-slate-600 font-sans font-semibold">Status:</span>
+                  <span className={`font-sans font-bold px-2.5 py-0.5 rounded-full text-[10px] ${
+                    viewPassInvoice.status === 'Paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    {viewPassInvoice.status === 'Paid' ? `PAID (${viewPassInvoice.paymentMethod})` : 'PENDING AT CASHIER'}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between pt-1 text-sm font-bold">
+                  <span className="text-slate-800 font-sans">Total Fee:</span>
+                  <span className="text-slate-950">₹{viewPassInvoice.totalAmount.toLocaleString('en-IN')}</span>
                 </div>
               </div>
-              <button
-                onClick={() => setViewPassInvoice(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 font-mono text-xs">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                <span className="text-slate-500 font-sans">Token / Invoice:</span>
-                <span className="font-bold text-sky-800">{viewPassInvoice.id}</span>
+              <div className="pt-2 flex justify-end gap-2">
+                <button
+                  onClick={() => setViewPassInvoice(null)}
+                  className="w-full py-2.5 rounded-xl btn-zoho-primary text-white font-bold text-xs uppercase tracking-wider"
+                >
+                  Close Pass
+                </button>
               </div>
-
-              <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                <span className="text-slate-500 font-sans">Patient Name:</span>
-                <span className="font-bold text-slate-900 font-sans">{viewPassInvoice.patientName}</span>
-              </div>
-
-              <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                <span className="text-slate-500 font-sans">Service:</span>
-                <span className="font-semibold text-slate-800 font-sans text-right">{viewPassInvoice.items[0]?.description || viewPassInvoice.type}</span>
-              </div>
-
-              <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                <span className="text-slate-500 font-sans">Date:</span>
-                <span className="text-slate-800">{viewPassInvoice.invoiceDate}</span>
-              </div>
-
-              <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                <span className="text-slate-500 font-sans">Status:</span>
-                <span className={`font-sans font-bold px-2 py-0.5 rounded text-[10px] ${
-                  viewPassInvoice.status === 'Paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-                }`}>
-                  {viewPassInvoice.status === 'Paid' ? `PAID (${viewPassInvoice.paymentMethod})` : 'PENDING AT CASHIER'}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between pt-1 text-sm font-bold">
-                <span className="text-slate-700 font-sans">Total Fee:</span>
-                <span className="text-slate-900">₹{viewPassInvoice.totalAmount.toLocaleString('en-IN')}</span>
-              </div>
-            </div>
-
-            <div className="pt-2 flex justify-end gap-2">
-              <button
-                onClick={() => setViewPassInvoice(null)}
-                className="w-full py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider"
-              >
-                Close Pass
-              </button>
             </div>
           </div>
         </div>
@@ -1189,9 +1195,9 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
 
       {/* Footer */}
       <footer className="w-full bg-white border-t border-slate-200 py-4 mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-          <p>{currentTenant.name} &bull; License: {currentTenant.licenseNumber}</p>
-          <p className="text-[11px] text-slate-400">All consultations automatically synchronized with Hospital Admin Desks</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-700 font-medium">
+          <p>{currentTenant.name} &bull; License: <span className="font-mono text-slate-900">{currentTenant.licenseNumber}</span></p>
+          <p className="text-[11px] text-slate-600">All consultations automatically synchronized with Hospital Admin Desks</p>
         </div>
       </footer>
     </div>

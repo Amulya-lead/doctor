@@ -77,7 +77,7 @@ export const ClusterScalabilityDesk: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <Server className="w-6 h-6 text-sky-600" />
+            <Server className="w-6 h-6 text-[#5B21B6]" />
             <span>High-Concurrency & Cloud Scalability Engine</span>
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -98,7 +98,7 @@ export const ClusterScalabilityDesk: React.FC = () => {
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
             <span>Target Concurrency</span>
-            <Network className="w-4 h-4 text-sky-600" />
+            <Network className="w-4 h-4 text-[#5B21B6]" />
           </div>
           <p className="text-2xl font-bold text-slate-900 font-mono mt-1">10,000</p>
           <p className="text-[11px] text-emerald-600 font-medium mt-0.5">Concurrent Non-blocking Users</p>
@@ -145,7 +145,7 @@ export const ClusterScalabilityDesk: React.FC = () => {
               onClick={handleRun100QueriesTest}
               disabled={isRunning100Test}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-1.5 shadow-sm transition ${
-                isRunning100Test ? 'bg-sky-400 cursor-not-allowed' : 'bg-sky-600 hover:bg-sky-700'
+                isRunning100Test ? 'bg-lavender-400 cursor-not-allowed' : 'btn-zoho-primary'
               }`}
             >
               <Play className="w-3.5 h-3.5" />
@@ -169,7 +169,7 @@ export const ClusterScalabilityDesk: React.FC = () => {
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Calculated Throughput:</span>
-                <span className="font-bold text-sky-700">{test100Result.requestsPerSecond.toLocaleString()} queries / sec</span>
+                <span className="font-bold text-[#4C1D95]">{test100Result.requestsPerSecond.toLocaleString()} queries / sec</span>
               </div>
               <div className="flex justify-between text-slate-600 pt-1 border-t border-slate-200">
                 <span>Error Rate / Busy Dropouts:</span>
@@ -237,7 +237,7 @@ export const ClusterScalabilityDesk: React.FC = () => {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-            <Layers className="w-4 h-4 text-sky-600" />
+            <Layers className="w-4 h-4 text-[#5B21B6]" />
             <span>Autonomous Microservices Cluster & Load Balancer Topology</span>
           </h3>
           <span className="text-xs text-slate-500">Auto-Scaling: 5 to 50 Pods via Kubernetes HPA</span>
@@ -259,7 +259,7 @@ export const ClusterScalabilityDesk: React.FC = () => {
               {microservices.map((svc, i) => (
                 <tr key={i} className="hover:bg-slate-50">
                   <td className="p-3 font-medium text-slate-900 flex items-center gap-2">
-                    <Server className="w-3.5 h-3.5 text-sky-600" />
+                    <Server className="w-3.5 h-3.5 text-[#5B21B6]" />
                     <span>{svc.name}</span>
                   </td>
                   <td className="p-3 font-mono font-bold text-slate-800">{svc.replicas} Pods</td>
@@ -281,7 +281,7 @@ export const ClusterScalabilityDesk: React.FC = () => {
       {/* Architecture Explanation Card */}
       <div className="p-5 rounded-xl bg-white border border-slate-200 shadow-xs space-y-3">
         <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
-          <ShieldCheck className="w-4 h-4 text-sky-600" />
+          <ShieldCheck className="w-4 h-4 text-[#5B21B6]" />
           <span>Why This Architecture Never Crashes Under 10,000 Concurrent Users</span>
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-600">

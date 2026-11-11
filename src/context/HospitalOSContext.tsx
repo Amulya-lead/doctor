@@ -44,6 +44,7 @@ import {
   upsertInvoiceInDb,
   fetchTenantsFromDb,
   upsertTenantInDb,
+  deleteTenantFromDb,
   recordSystemEventInDb
 } from '../lib/supabase';
 
@@ -310,13 +311,18 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return ROLE_DEFAULT_MODULES[currentRole] || 'admin_payroll';
   });
 
-  // Persistent Hospitals state
+  // Persistent Hospitals state (merges stored custom hospitals with defaults)
   const [tenants, setTenants] = useState<Tenant[]>(() => {
     try {
       const stored = localStorage.getItem('hospital_tenants');
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length >= INITIAL_TENANTS.length) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const byId = new Map<string, Tenant>();
+          for (const t of INITIAL_TENANTS) byId.set(t.id, t);
+          for (const t of parsed) byId.set(t.id, t);
+          return Array.from(byId.values());
+        }
       }
       return INITIAL_TENANTS;
     } catch {
@@ -446,7 +452,12 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         localStorage.setItem('hospital_sync_ts_tenants', String(Date.now()));
 
         if (dbTenants && dbTenants.length > 0) {
-          setTenants(dbTenants);
+          setTenants(prev => {
+            const merged = new Map<string, Tenant>();
+            for (const t of prev) merged.set(t.id, t);
+            for (const t of dbTenants) merged.set(t.id, t);
+            return Array.from(merged.values());
+          });
         }
       } catch (err: any) {
         if (isMounted) {
@@ -793,12 +804,25 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       abdmFacilityId: tenantData.abdmFacilityId || `IN-HFR-${Date.now().toString().slice(-6)}`,
       nabhAccredited: tenantData.nabhAccredited ?? true,
       themeColor: '#0284c7',
-      branches: [
-        { id: `br-${newId}`, name: `${tenantData.name || 'Main'} Campus`, city: 'City Center', beds: 0, activeDoctors: 0 }
-      ],
-      currentBranchId: `br-${newId}`
+      branches:
+        tenantData.branches && tenantData.branches.length > 0
+          ? tenantData.branches
+          : [
+              { id: `br-${newId}`, name: `${tenantData.name || 'Main'} Medical Center`, city: 'City Center', beds: 0, activeDoctors: 0 }
+            ],
+      currentBranchId:
+        tenantData.branches && tenantData.branches.length > 0
+          ? tenantData.branches[0].id
+          : `br-${newId}`
     };
-    setTenants(prev => [...prev, newTenant]);
+    setTenants(prev => {
+      const next = [...prev, newTenant];
+      try {
+        localStorage.setItem('hospital_tenants', JSON.stringify(next));
+        localStorage.removeItem('hospital_sync_ts_tenants');
+      } catch {}
+      return next;
+    });
     setCurrentTenantId(newId);
     upsertTenantInDb(newTenant);
     addSystemEvent({
@@ -812,7 +836,15 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const removeTenant = (tenantId: string) => {
     if (tenants.length <= 1) return;
-    setTenants(prev => prev.filter(t => t.id !== tenantId));
+    setTenants(prev => {
+      const next = prev.filter(t => t.id !== tenantId);
+      try {
+        localStorage.setItem('hospital_tenants', JSON.stringify(next));
+        localStorage.removeItem('hospital_sync_ts_tenants');
+      } catch {}
+      return next;
+    });
+    deleteTenantFromDb(tenantId);
     if (currentTenantId === tenantId) {
       const remaining = tenants.filter(t => t.id !== tenantId);
       if (remaining.length > 0) setCurrentTenantId(remaining[0].id);
