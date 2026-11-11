@@ -1,19 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { HospitalOSProvider, useHospitalOS } from './context/HospitalOSContext';
 import { Navbar } from './components/layout/Navbar';
 import { Sidebar } from './components/layout/Sidebar';
 import { HomePage } from './components/home/HomePage';
 import { LoginPage } from './components/auth/LoginPage';
-import { PatientManagement } from './components/modules/PatientManagement';
-import { DoctorManagement } from './components/modules/DoctorManagement';
-import { LaboratoryLIMS } from './components/modules/LaboratoryLIMS';
-import { PharmacyManagement } from './components/modules/PharmacyManagement';
-import { HospitalOperations } from './components/modules/HospitalOperations';
-import { BillingFinancials } from './components/modules/BillingFinancials';
-import { AdminPayrollPortal } from './components/modules/AdminPayrollPortal';
-import { InsuranceClaims } from './components/modules/InsuranceClaims';
-import { ABDMHub } from './components/modules/ABDMHub';
-import { PatientPortal } from './components/modules/PatientPortal';
+
+const PatientManagement = React.lazy(() => import('./components/modules/PatientManagement').then(m => ({ default: m.PatientManagement })));
+const DoctorManagement = React.lazy(() => import('./components/modules/DoctorManagement').then(m => ({ default: m.DoctorManagement })));
+const LaboratoryLIMS = React.lazy(() => import('./components/modules/LaboratoryLIMS').then(m => ({ default: m.LaboratoryLIMS })));
+const PharmacyManagement = React.lazy(() => import('./components/modules/PharmacyManagement').then(m => ({ default: m.PharmacyManagement })));
+const HospitalOperations = React.lazy(() => import('./components/modules/HospitalOperations').then(m => ({ default: m.HospitalOperations })));
+const BillingFinancials = React.lazy(() => import('./components/modules/BillingFinancials').then(m => ({ default: m.BillingFinancials })));
+const AdminPayrollPortal = React.lazy(() => import('./components/modules/AdminPayrollPortal').then(m => ({ default: m.AdminPayrollPortal })));
+const InsuranceClaims = React.lazy(() => import('./components/modules/InsuranceClaims').then(m => ({ default: m.InsuranceClaims })));
+const ABDMHub = React.lazy(() => import('./components/modules/ABDMHub').then(m => ({ default: m.ABDMHub })));
+const PatientPortal = React.lazy(() => import('./components/modules/PatientPortal').then(m => ({ default: m.PatientPortal })));
+
+const ModuleLoader = () => (
+  <div className="flex items-center justify-center min-h-[320px] text-slate-500 text-sm font-medium">
+    Loading workspace module...
+  </div>
+);
 
 type AppView = 'home' | 'login' | 'os';
 
@@ -47,12 +54,14 @@ const MainAppContent: React.FC = () => {
   // If user is logged in as a Patient / Normal User -> Render dedicated Patient Consultation Portal!
   if (isAuthenticated && currentRole === 'patient') {
     return (
-      <PatientPortal 
-        onNavigateHome={() => {
-          logout();
-          setCurrentView('home');
-        }} 
-      />
+      <Suspense fallback={<ModuleLoader />}>
+        <PatientPortal 
+          onNavigateHome={() => {
+            logout();
+            setCurrentView('home');
+          }} 
+        />
+      </Suspense>
     );
   }
 
@@ -113,7 +122,9 @@ const MainAppContent: React.FC = () => {
       <div className="flex-1 flex overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50">
-          {renderActiveModule()}
+          <Suspense fallback={<ModuleLoader />}>
+            {renderActiveModule()}
+          </Suspense>
         </main>
       </div>
     </div>

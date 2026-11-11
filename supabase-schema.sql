@@ -92,6 +92,8 @@ CREATE TABLE IF NOT EXISTS public.patients (
     insurance_policy_no TEXT DEFAULT '',
     total_billed NUMERIC(12,2) DEFAULT 0,
     pending_balance NUMERIC(12,2) DEFAULT 0,
+    discharge_date TEXT DEFAULT '',
+    discharge_summary TEXT DEFAULT '',
     created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

@@ -78,8 +78,9 @@ interface CacheEntry<T> {
 
 const memoryCache = new Map<string, CacheEntry<any>>();
 const inFlightRequests = new Map<string, Promise<any>>();
-const CACHE_TTL_MS = 60 * 1000; // 60 seconds fresh cache
-const CACHE_STALE_TTL_MS = 120 * 1000; // Up to 120 seconds for Stale-While-Revalidate
+const MAX_CACHE_ENTRIES = 30; // Strict memory bound for multi-tenant usage
+const CACHE_TTL_MS = 120 * 1000; // 2 minutes fresh cache
+const CACHE_STALE_TTL_MS = 300 * 1000; // Up to 5 minutes Stale-While-Revalidate
 
 function getFromCache<T>(key: string): { data: T; isStale: boolean } | null {
   const entry = memoryCache.get(key);
@@ -89,6 +90,9 @@ function getFromCache<T>(key: string): { data: T; isStale: boolean } | null {
     memoryCache.delete(key);
     return null;
   }
+  // LRU touch: move to end of Map
+  memoryCache.delete(key);
+  memoryCache.set(key, entry);
   return {
     data: entry.data,
     isStale: age > CACHE_TTL_MS
@@ -96,7 +100,24 @@ function getFromCache<T>(key: string): { data: T; isStale: boolean } | null {
 }
 
 function setInCache<T>(key: string, data: T): void {
+  if (memoryCache.has(key)) {
+    memoryCache.delete(key);
+  } else if (memoryCache.size >= MAX_CACHE_ENTRIES) {
+    // Evict oldest LRU entry to keep memory strictly bounded
+    const oldestKey = memoryCache.keys().next().value;
+    if (oldestKey !== undefined) {
+      memoryCache.delete(oldestKey);
+    }
+  }
   memoryCache.set(key, { data, timestamp: Date.now() });
+}
+
+function invalidateCachePrefix(prefix: string): void {
+  for (const key of memoryCache.keys()) {
+    if (key.startsWith(prefix)) {
+      memoryCache.delete(key);
+    }
+  }
 }
 
 // Enterprise Write Buffer & Backpressure Queue (Max 2 concurrent, auto-retry with exponential backoff)
@@ -137,23 +158,81 @@ class BackgroundSyncQueue {
       if (isRateLimitOrNetwork && item.retries < item.maxRetries) {
         item.retries++;
         const backoffDelay = Math.min(1000 * Math.pow(2, item.retries), 6000) + Math.random() * 200;
-        console.warn(`[SyncQueue] Rate-limit/network backpressure. Retrying in ${Math.round(backoffDelay)}ms (Attempt ${item.retries}/${item.maxRetries})...`);
+        console.warn(`[SyncQueue] Backpressure retry in ${Math.round(backoffDelay)}ms (${item.retries}/${item.maxRetries})...`);
         setTimeout(() => {
           this.queue.push(item);
           this.processNext();
         }, backoffDelay);
       } else {
-        console.warn('[SyncQueue] Gracefully absorbed sync error (optimistic local state preserved):', err?.message || err);
+        console.warn('[SyncQueue] Gracefully absorbed sync error (local state preserved):', err?.message || err);
       }
     } finally {
       this.activeCount--;
-      // 80ms rate smoothing delay between tasks prevents bursts that trigger HTTP 429
       setTimeout(() => this.processNext(), 80);
     }
   }
 }
 
 const backgroundQueue = new BackgroundSyncQueue();
+
+// Micro-Batched Write Coalescing Engine:
+// Deduplicates rapid updates to the same record ID within 250ms and flushes up to 25 rows in 1 HTTP call.
+class BatchWriteBuffer {
+  private buffers = new Map<string, Map<string, any>>();
+  private timers = new Map<string, ReturnType<typeof setTimeout>>();
+  private readonly flushDelayMs = 250;
+  private readonly maxBatchSize = 25;
+
+  enqueueRow(table: string, rowId: string, payload: Record<string, any>) {
+    let tableMap = this.buffers.get(table);
+    if (!tableMap) {
+      tableMap = new Map<string, any>();
+      this.buffers.set(table, tableMap);
+    }
+    // Coalesce: latest payload overwrites older pending update for same ID
+    tableMap.set(rowId, payload);
+
+    if (tableMap.size >= this.maxBatchSize) {
+      this.flushTable(table);
+      return;
+    }
+
+    if (!this.timers.has(table)) {
+      const timer = setTimeout(() => {
+        this.timers.delete(table);
+        this.flushTable(table);
+      }, this.flushDelayMs);
+      this.timers.set(table, timer);
+    }
+  }
+
+  flushTable(table: string) {
+    const existingTimer = this.timers.get(table);
+    if (existingTimer) {
+      clearTimeout(existingTimer);
+      this.timers.delete(table);
+    }
+
+    const tableMap = this.buffers.get(table);
+    if (!tableMap || tableMap.size === 0) return;
+
+    const rows = Array.from(tableMap.values());
+    tableMap.clear();
+
+    // Split into chunks of maxBatchSize and push through rate-smoothed queue
+    for (let i = 0; i < rows.length; i += this.maxBatchSize) {
+      const chunk = rows.slice(i, i + this.maxBatchSize);
+      backgroundQueue.enqueue(async () => {
+        const client = getSupabaseClient();
+        if (!client) return;
+        const { error } = await client.from(table).upsert(chunk);
+        if (error) throw error;
+      });
+    }
+  }
+}
+
+const batchWriter = new BatchWriteBuffer();
 
 // Execute read requests with Stale-While-Revalidate (SWR) caching & in-flight deduplication
 async function executeCachedFetch<T>(
@@ -162,9 +241,7 @@ async function executeCachedFetch<T>(
 ): Promise<T | null> {
   const cached = getFromCache<T>(cacheKey);
   
-  // If we have a fresh or stale cache entry, return it immediately to avoid UI blocking
   if (cached !== null) {
-    // If it's stale (older than 60s), revalidate silently in the background
     if (cached.isStale && !inFlightRequests.has(cacheKey)) {
       const refreshPromise = (async () => {
         try {
@@ -173,7 +250,7 @@ async function executeCachedFetch<T>(
             setInCache(cacheKey, freshData);
           }
         } catch {
-          // Keep using cached data on failure
+          // Keep cached data on transient network failure
         } finally {
           inFlightRequests.delete(cacheKey);
         }
@@ -183,7 +260,6 @@ async function executeCachedFetch<T>(
     return cached.data;
   }
 
-  // If already in flight, reuse the pending promise
   if (inFlightRequests.has(cacheKey)) {
     return inFlightRequests.get(cacheKey) as Promise<T | null>;
   }
@@ -247,7 +323,7 @@ export const fetchPatientsFromDb = async (tenantId?: string): Promise<Patient[] 
 
     let query = client
       .from('patients')
-      .select('*')
+      .select('id,abha_id,abha_address,name,age,gender,blood_group,phone,email,emergency_contact,allergies,chronic_conditions,status,assigned_doctor_id,assigned_doctor_name,assigned_bed,ward,vitals,registration_date,recent_diagnosis,insurance_provider,insurance_policy_no,total_billed,pending_balance')
       .order('created_at', { ascending: false })
       .limit(100);
 
@@ -292,53 +368,52 @@ export const fetchPatientsFromDb = async (tenantId?: string): Promise<Patient[] 
       insurancePolicyNo: row.insurance_policy_no || '',
       totalBilled: Number(row.total_billed) || 0,
       pendingBalance: Number(row.pending_balance) || 0,
-      dischargeDate: row.discharge_date || '',
-      dischargeSummary: row.discharge_summary || ''
+      dischargeDate: row.discharge_date || row.vitals?.dischargeDate || '',
+      dischargeSummary: row.discharge_summary || row.vitals?.dischargeSummary || ''
     }));
   });
 };
 
 export const upsertPatientInDb = (patient: Patient, tenantId = 'hosp-default') => {
-  // Invalidate cache immediately so new patient appears
-  memoryCache.delete(`patients_${tenantId}`);
-  memoryCache.delete('patients_all');
+  invalidateCachePrefix('patients_');
 
-  backgroundQueue.enqueue(async () => {
-    const client = getSupabaseClient();
-    if (!client) return;
-
-    await client.from('patients').upsert({
-      id: patient.id,
-      tenant_id: tenantId,
-      abha_id: patient.abhaId,
-      abha_address: patient.abhaAddress,
-      name: patient.name,
-      age: patient.age,
-      gender: patient.gender,
-      blood_group: patient.bloodGroup,
-      phone: patient.phone,
-      email: patient.email,
-      emergency_contact: patient.emergencyContact,
-      allergies: patient.allergies,
-      chronic_conditions: patient.chronicConditions,
-      status: patient.status,
-      assigned_doctor_id: patient.assignedDoctorId,
-      assigned_doctor_name: patient.assignedDoctorName,
-      assigned_bed: patient.assignedBed,
-      ward: patient.ward,
-      vitals: patient.vitals,
-      registration_date: patient.registrationDate,
-      recent_diagnosis: patient.recentDiagnosis,
-      insurance_provider: patient.insuranceProvider,
-      insurance_policy_no: patient.insurancePolicyNo,
-      total_billed: patient.totalBilled,
-      pending_balance: patient.pendingBalance
-    });
+  batchWriter.enqueueRow('patients', patient.id, {
+    id: patient.id,
+    tenant_id: tenantId,
+    abha_id: patient.abhaId,
+    abha_address: patient.abhaAddress,
+    name: patient.name,
+    age: patient.age,
+    gender: patient.gender,
+    blood_group: patient.bloodGroup,
+    phone: patient.phone,
+    email: patient.email,
+    emergency_contact: patient.emergencyContact,
+    allergies: patient.allergies,
+    chronic_conditions: patient.chronicConditions,
+    status: patient.status,
+    assigned_doctor_id: patient.assignedDoctorId,
+    assigned_doctor_name: patient.assignedDoctorName,
+    assigned_bed: patient.assignedBed || '',
+    ward: patient.ward || '',
+    vitals: {
+      ...patient.vitals,
+      ...(patient.dischargeDate ? { dischargeDate: patient.dischargeDate } : {}),
+      ...(patient.dischargeSummary ? { dischargeSummary: patient.dischargeSummary } : {})
+    },
+    registration_date: patient.registrationDate,
+    recent_diagnosis: patient.status === 'Discharged' && patient.dischargeSummary
+      ? patient.dischargeSummary
+      : patient.recentDiagnosis,
+    insurance_provider: patient.insuranceProvider,
+    insurance_policy_no: patient.insurancePolicyNo,
+    total_billed: patient.totalBilled,
+    pending_balance: patient.pendingBalance
   });
 };
 
 export const deletePatientInDb = (patientId: string) => {
-  memoryCache.clear();
+  invalidateCachePrefix('patients_');
   backgroundQueue.enqueue(async () => {
     const client = getSupabaseClient();
     if (!client) return;
@@ -356,7 +431,7 @@ export const fetchStaffFromDb = async (tenantId?: string): Promise<StaffEmployee
 
     let query = client
       .from('staff')
-      .select('*')
+      .select('id,name,designation,department,role,phone,email,joining_date,shift,attendance_status,base_salary,incentives,bonuses,deductions,salary_status,last_disbursed_date,bonus_reason,deduction_reason')
       .order('created_at', { ascending: false })
       .limit(100);
 
@@ -392,39 +467,33 @@ export const fetchStaffFromDb = async (tenantId?: string): Promise<StaffEmployee
 };
 
 export const upsertStaffInDb = (staff: StaffEmployee, tenantId = 'hosp-default') => {
-  memoryCache.delete(`staff_${tenantId}`);
-  memoryCache.delete('staff_all');
+  invalidateCachePrefix('staff_');
 
-  backgroundQueue.enqueue(async () => {
-    const client = getSupabaseClient();
-    if (!client) return;
-
-    await client.from('staff').upsert({
-      id: staff.id,
-      tenant_id: tenantId,
-      name: staff.name,
-      designation: staff.designation,
-      department: staff.department,
-      role: staff.role,
-      phone: staff.phone,
-      email: staff.email,
-      joining_date: staff.joiningDate,
-      shift: staff.shift,
-      attendance_status: staff.attendanceStatus,
-      base_salary: staff.baseSalary,
-      incentives: staff.incentives,
-      bonuses: staff.bonuses,
-      deductions: staff.deductions,
-      salary_status: staff.salaryStatus,
-      last_disbursed_date: staff.lastDisbursedDate,
-      bonus_reason: staff.bonusReason,
-      deduction_reason: staff.deductionReason
-    });
+  batchWriter.enqueueRow('staff', staff.id, {
+    id: staff.id,
+    tenant_id: tenantId,
+    name: staff.name,
+    designation: staff.designation,
+    department: staff.department,
+    role: staff.role,
+    phone: staff.phone,
+    email: staff.email,
+    joining_date: staff.joiningDate,
+    shift: staff.shift,
+    attendance_status: staff.attendanceStatus,
+    base_salary: staff.baseSalary,
+    incentives: staff.incentives,
+    bonuses: staff.bonuses,
+    deductions: staff.deductions,
+    salary_status: staff.salaryStatus,
+    last_disbursed_date: staff.lastDisbursedDate,
+    bonus_reason: staff.bonusReason,
+    deduction_reason: staff.deductionReason
   });
 };
 
 export const deleteStaffInDb = (staffId: string) => {
-  memoryCache.clear();
+  invalidateCachePrefix('staff_');
   backgroundQueue.enqueue(async () => {
     const client = getSupabaseClient();
     if (!client) return;
@@ -442,7 +511,7 @@ export const fetchBedsFromDb = async (tenantId?: string): Promise<Bed[] | null> 
 
     let query = client
       .from('beds')
-      .select('*')
+      .select('id,bed_number,ward_type,floor,status,patient_id,patient_name,admitted_at,oxygen_equipped,ventilator_equipped,daily_rate')
       .order('bed_number', { ascending: true })
       .limit(100);
 
@@ -471,32 +540,26 @@ export const fetchBedsFromDb = async (tenantId?: string): Promise<Bed[] | null> 
 };
 
 export const upsertBedInDb = (bed: Bed, tenantId = 'hosp-default') => {
-  memoryCache.delete(`beds_${tenantId}`);
-  memoryCache.delete('beds_all');
+  invalidateCachePrefix('beds_');
 
-  backgroundQueue.enqueue(async () => {
-    const client = getSupabaseClient();
-    if (!client) return;
-
-    await client.from('beds').upsert({
-      id: bed.id,
-      tenant_id: tenantId,
-      bed_number: bed.bedNumber,
-      ward_type: bed.wardType,
-      floor: bed.floor,
-      status: bed.status,
-      patient_id: bed.patientId || null,
-      patient_name: bed.patientName || null,
-      admitted_at: bed.admittedAt || null,
-      oxygen_equipped: bed.oxygenEquipped,
-      ventilator_equipped: bed.ventilatorEquipped,
-      daily_rate: bed.dailyRate
-    });
+  batchWriter.enqueueRow('beds', bed.id, {
+    id: bed.id,
+    tenant_id: tenantId,
+    bed_number: bed.bedNumber,
+    ward_type: bed.wardType,
+    floor: bed.floor,
+    status: bed.status,
+    patient_id: bed.patientId || null,
+    patient_name: bed.patientName || null,
+    admitted_at: bed.admittedAt || null,
+    oxygen_equipped: bed.oxygenEquipped,
+    ventilator_equipped: bed.ventilatorEquipped,
+    daily_rate: bed.dailyRate
   });
 };
 
 export const deleteBedInDb = (bedId: string) => {
-  memoryCache.clear();
+  invalidateCachePrefix('beds_');
   backgroundQueue.enqueue(async () => {
     const client = getSupabaseClient();
     if (!client) return;
@@ -512,7 +575,7 @@ export const fetchPharmacyFromDb = async (): Promise<PharmacyItem[] | null> => {
 
     const { data, error } = await client
       .from('pharmacy_items')
-      .select('*')
+      .select('id,name,generic_name,category,batch_no,stock_qty,reorder_level,unit_price,mrp,expiry_date,supplier,rack_location,requires_prescription')
       .order('name', { ascending: true })
       .limit(100);
 
@@ -539,26 +602,21 @@ export const fetchPharmacyFromDb = async (): Promise<PharmacyItem[] | null> => {
 
 export const upsertPharmacyInDb = (item: PharmacyItem, tenantId = 'hosp-default') => {
   memoryCache.delete('pharmacy_all');
-  backgroundQueue.enqueue(async () => {
-    const client = getSupabaseClient();
-    if (!client) return;
-
-    await client.from('pharmacy_items').upsert({
-      id: item.id,
-      tenant_id: tenantId,
-      name: item.name,
-      generic_name: item.genericName,
-      category: item.category,
-      batch_no: item.batchNo,
-      stock_qty: item.stockQty,
-      reorder_level: item.reorderLevel,
-      unit_price: item.unitPrice,
-      mrp: item.mrp,
-      expiry_date: item.expiryDate,
-      supplier: item.supplier,
-      rack_location: item.rackLocation,
-      requires_prescription: item.requiresPrescription
-    });
+  batchWriter.enqueueRow('pharmacy_items', item.id, {
+    id: item.id,
+    tenant_id: tenantId,
+    name: item.name,
+    generic_name: item.genericName,
+    category: item.category,
+    batch_no: item.batchNo,
+    stock_qty: item.stockQty,
+    reorder_level: item.reorderLevel,
+    unit_price: item.unitPrice,
+    mrp: item.mrp,
+    expiry_date: item.expiryDate,
+    supplier: item.supplier,
+    rack_location: item.rackLocation,
+    requires_prescription: item.requiresPrescription
   });
 };
 
@@ -581,7 +639,7 @@ export const fetchInvoicesFromDb = async (tenantId?: string): Promise<BillingInv
 
     let query = client
       .from('invoices')
-      .select('*')
+      .select('id,patient_id,patient_name,abha_id,invoice_date,type,items,subtotal,tax_amount,discount,total_amount,paid_amount,payment_method,status,insurance_claim_status,transaction_ref')
       .order('created_at', { ascending: false })
       .limit(100);
 
@@ -615,32 +673,26 @@ export const fetchInvoicesFromDb = async (tenantId?: string): Promise<BillingInv
 };
 
 export const upsertInvoiceInDb = (invoice: BillingInvoice, tenantId = 'hosp-default') => {
-  memoryCache.delete(`invoices_${tenantId}`);
-  memoryCache.delete('invoices_all');
+  invalidateCachePrefix('invoices_');
 
-  backgroundQueue.enqueue(async () => {
-    const client = getSupabaseClient();
-    if (!client) return;
-
-    await client.from('invoices').upsert({
-      id: invoice.id,
-      tenant_id: tenantId,
-      patient_id: invoice.patientId,
-      patient_name: invoice.patientName,
-      abha_id: invoice.abhaId,
-      invoice_date: invoice.invoiceDate,
-      type: invoice.type,
-      items: invoice.items,
-      subtotal: invoice.subtotal,
-      tax_amount: invoice.taxAmount,
-      discount: invoice.discount,
-      total_amount: invoice.totalAmount,
-      paid_amount: invoice.paidAmount,
-      payment_method: invoice.paymentMethod,
-      status: invoice.status,
-      insurance_claim_status: invoice.insuranceClaimStatus || null,
-      transaction_ref: invoice.transactionRef || null
-    });
+  batchWriter.enqueueRow('invoices', invoice.id, {
+    id: invoice.id,
+    tenant_id: tenantId,
+    patient_id: invoice.patientId,
+    patient_name: invoice.patientName,
+    abha_id: invoice.abhaId,
+    invoice_date: invoice.invoiceDate,
+    type: invoice.type,
+    items: invoice.items,
+    subtotal: invoice.subtotal,
+    tax_amount: invoice.taxAmount,
+    discount: invoice.discount,
+    total_amount: invoice.totalAmount,
+    paid_amount: invoice.paidAmount,
+    payment_method: invoice.paymentMethod,
+    status: invoice.status,
+    insurance_claim_status: invoice.insuranceClaimStatus || null,
+    transaction_ref: invoice.transactionRef || null
   });
 };
 
@@ -652,7 +704,7 @@ export const fetchTenantsFromDb = async (): Promise<Tenant[] | null> => {
 
     const { data, error } = await client
       .from('tenants')
-      .select('*')
+      .select('id,name,type,logo,tagline,license_number,abdm_facility_id,nabh_accredited,theme_color,branches')
       .order('created_at', { ascending: true })
       .limit(100);
 
@@ -677,27 +729,31 @@ export const fetchTenantsFromDb = async (): Promise<Tenant[] | null> => {
 
 export const upsertTenantInDb = (tenant: Tenant) => {
   memoryCache.delete('tenants_all');
-  backgroundQueue.enqueue(async () => {
-    const client = getSupabaseClient();
-    if (!client) return;
-
-    await client.from('tenants').upsert({
-      id: tenant.id,
-      name: tenant.name,
-      type: tenant.type,
-      logo: tenant.logo,
-      tagline: tenant.tagline,
-      license_number: tenant.licenseNumber,
-      abdm_facility_id: tenant.abdmFacilityId,
-      nabh_accredited: tenant.nabhAccredited,
-      theme_color: tenant.themeColor,
-      branches: tenant.branches
-    });
+  batchWriter.enqueueRow('tenants', tenant.id, {
+    id: tenant.id,
+    name: tenant.name,
+    type: tenant.type,
+    logo: tenant.logo,
+    tagline: tenant.tagline,
+    license_number: tenant.licenseNumber,
+    abdm_facility_id: tenant.abdmFacilityId,
+    nabh_accredited: tenant.nabhAccredited,
+    theme_color: tenant.themeColor,
+    branches: tenant.branches
   });
 };
 
-// --- System Events ---
+// --- System Events (High-Signal Audit Persistence Only to Minimize DB Storage & Requests) ---
 export const recordSystemEventInDb = (event: SystemEventLog, tenantId = 'hosp-default') => {
+  const isHighSignalAudit = 
+    event.severity === 'critical' || 
+    event.severity === 'warning' || 
+    event.module === 'SECURITY' || 
+    event.module === 'BILLING';
+
+  // Skip routine UI info notifications from remote DB writes to conserve Supabase free-tier storage & request quota
+  if (!isHighSignalAudit) return;
+
   backgroundQueue.enqueue(async () => {
     const client = getSupabaseClient();
     if (!client) return;

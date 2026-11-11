@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Tenant, 
   Patient, 
@@ -16,7 +16,6 @@ import {
 import { 
   INITIAL_TENANTS, 
   INITIAL_PATIENTS, 
-  INITIAL_DOCTORS, 
   INITIAL_LAB_TESTS, 
   INITIAL_PHARMACY_ITEMS, 
   INITIAL_BEDS, 
@@ -388,7 +387,6 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   });
 
-  const [doctors, setDoctors] = useState<Doctor[]>(INITIAL_DOCTORS);
   const [labTests, setLabTests] = useState<LabTestOrder[]>(INITIAL_LAB_TESTS);
   const [invoices, setInvoices] = useState<BillingInvoice[]>(() => {
     try {
@@ -408,12 +406,13 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   // Supabase State
   const [isSupabaseConnected, setIsSupabaseConnected] = useState<boolean>(false);
   const [supabaseStatus, setSupabaseStatus] = useState<'connected' | 'checking' | 'disconnected' | 'needs_key'>('checking');
-  const [supabaseMessage, setSupabaseMessage] = useState<string>('Initializing Supabase connection...');
+  const [supabaseMessage, setSupabaseMessage] = useState<string>('Initializing cloud connection...');
+  const hydratedTablesRef = useRef<Set<string>>(new Set());
 
-  // Auto-connect to Supabase on startup
+  // 1. Lightweight Startup Sync: Only fetch hospital directory (`tenants`) on public load (0-1 query instead of 7!)
   useEffect(() => {
     let isMounted = true;
-    const initSupabase = async () => {
+    const initPublicDirectory = async () => {
       const config = getSupabaseConfig();
       if (!config.anonKey) {
         if (isMounted) {
@@ -424,55 +423,94 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         return;
       }
 
-      setSupabaseStatus('checking');
-      const test = await testSupabaseConnection();
-      if (!isMounted) return;
+      // Skip redundant network ping if tenants were synced recently within 2 minutes
+      const lastTenantsSync = Number(localStorage.getItem('hospital_sync_ts_tenants') || 0);
+      if (Date.now() - lastTenantsSync < 120_000 && tenants.length > 0) {
+        if (isMounted) {
+          setIsSupabaseConnected(true);
+          setSupabaseStatus('connected');
+          setSupabaseMessage('Cloud cache active (0-latency mode)');
+          hydratedTablesRef.current.add('tenants');
+        }
+        return;
+      }
 
-      if (test.success) {
+      setSupabaseStatus('checking');
+      try {
+        const dbTenants = await fetchTenantsFromDb();
+        if (!isMounted) return;
+
         setIsSupabaseConnected(true);
         setSupabaseStatus('connected');
-        setSupabaseMessage(test.message);
+        setSupabaseMessage('Connected to cloud database (low-request mode)');
+        hydratedTablesRef.current.add('tenants');
+        localStorage.setItem('hospital_sync_ts_tenants', String(Date.now()));
 
-        // Fetch live records from Supabase tables
-        try {
-          const [dbPatients, dbStaff, dbBeds, dbPharmacy, dbInvoices, dbTenants] = await Promise.all([
-            fetchPatientsFromDb(),
-            fetchStaffFromDb(),
-            fetchBedsFromDb(),
-            fetchPharmacyFromDb(),
-            fetchInvoicesFromDb(),
-            fetchTenantsFromDb()
-          ]);
-
-          if (isMounted) {
-            if (dbPatients && dbPatients.length > 0) {
-              setPatients(dbPatients);
-            } else if (patients.length > 0) {
-              // Cloud table is empty, auto-push existing patients to Supabase
-              for (const p of patients) {
-                upsertPatientInDb(p, currentTenantId);
-              }
-            }
-
-            if (dbStaff && dbStaff.length > 0) setStaff(dbStaff);
-            if (dbBeds && dbBeds.length > 0) setBeds(dbBeds);
-            if (dbPharmacy && dbPharmacy.length > 0) setPharmacyItems(dbPharmacy);
-            if (dbInvoices && dbInvoices.length > 0) setInvoices(dbInvoices);
-            if (dbTenants && dbTenants.length > 0) setTenants(dbTenants);
-          }
-        } catch (e) {
-          console.warn('Initial Supabase table pull warning:', e);
+        if (dbTenants && dbTenants.length > 0) {
+          setTenants(dbTenants);
         }
-      } else {
-        setIsSupabaseConnected(false);
-        setSupabaseStatus('disconnected');
-        setSupabaseMessage(test.message);
+      } catch (err: any) {
+        if (isMounted) {
+          setIsSupabaseConnected(false);
+          setSupabaseStatus('disconnected');
+          setSupabaseMessage(`Offline cache active (${err?.message || 'Network unreachable'})`);
+        }
       }
     };
 
-    initSupabase();
+    initPublicDirectory();
     return () => { isMounted = false; };
   }, []);
+
+  // 2. Role-Aware Staggered Cloud Hydration (Only loads tables required for active role, max 2 concurrent)
+  useEffect(() => {
+    if (!isAuthenticated || !isSupabaseConnected) return;
+    let isMounted = true;
+
+    const hydrateForRole = async () => {
+      try {
+        const neededTables: string[] =
+          currentRole === 'patient'
+            ? ['staff', 'patients', 'invoices']
+            : ['patients', 'staff', 'invoices', 'beds', 'pharmacy'];
+
+        const toFetch = neededTables.filter(t => !hydratedTablesRef.current.has(t));
+        if (toFetch.length === 0) return;
+
+        // Fetch smoothly in pairs (max 2 concurrent requests to protect free-tier concurrency)
+        for (let i = 0; i < toFetch.length; i += 2) {
+          if (!isMounted) return;
+          const batch = toFetch.slice(i, i + 2);
+          await Promise.all(
+            batch.map(async (table) => {
+              if (table === 'patients') {
+                const res = await fetchPatientsFromDb();
+                if (isMounted && res && res.length > 0) setPatients(res);
+              } else if (table === 'staff') {
+                const res = await fetchStaffFromDb();
+                if (isMounted && res && res.length > 0) setStaff(res);
+              } else if (table === 'invoices') {
+                const res = await fetchInvoicesFromDb();
+                if (isMounted && res && res.length > 0) setInvoices(res);
+              } else if (table === 'beds') {
+                const res = await fetchBedsFromDb();
+                if (isMounted && res && res.length > 0) setBeds(res);
+              } else if (table === 'pharmacy') {
+                const res = await fetchPharmacyFromDb();
+                if (isMounted && res && res.length > 0) setPharmacyItems(res);
+              }
+              hydratedTablesRef.current.add(table);
+            })
+          );
+        }
+      } catch (e) {
+        console.warn('Background role hydration warning (using local cache):', e);
+      }
+    };
+
+    hydrateForRole();
+    return () => { isMounted = false; };
+  }, [isAuthenticated, currentRole, isSupabaseConnected]);
 
   const connectSupabaseKey = async (key: string, url?: string): Promise<boolean> => {
     setSupabaseAnonKey(key, url);
@@ -482,23 +520,7 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setIsSupabaseConnected(true);
       setSupabaseStatus('connected');
       setSupabaseMessage(test.message);
-
-      try {
-        const [dbPatients, dbStaff, dbBeds, dbPharmacy, dbInvoices] = await Promise.all([
-          fetchPatientsFromDb(),
-          fetchStaffFromDb(),
-          fetchBedsFromDb(),
-          fetchPharmacyFromDb(),
-          fetchInvoicesFromDb()
-        ]);
-        if (dbPatients && dbPatients.length > 0) setPatients(dbPatients);
-        if (dbStaff && dbStaff.length > 0) setStaff(dbStaff);
-        if (dbBeds && dbBeds.length > 0) setBeds(dbBeds);
-        if (dbPharmacy && dbPharmacy.length > 0) setPharmacyItems(dbPharmacy);
-        if (dbInvoices && dbInvoices.length > 0) setInvoices(dbInvoices);
-      } catch (e) {
-        console.warn('Supabase fetch error:', e);
-      }
+      hydratedTablesRef.current.clear();
       return true;
     } else {
       setIsSupabaseConnected(false);
@@ -509,12 +531,12 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   const syncAllToSupabase = async () => {
-    for (const t of tenants) await upsertTenantInDb(t);
-    for (const s of staff) await upsertStaffInDb(s, currentTenantId);
-    for (const b of beds) await upsertBedInDb(b, currentTenantId);
-    for (const p of patients) await upsertPatientInDb(p, currentTenantId);
-    for (const item of pharmacyItems) await upsertPharmacyInDb(item, currentTenantId);
-    for (const inv of invoices) await upsertInvoiceInDb(inv, currentTenantId);
+    for (const t of tenants) upsertTenantInDb(t);
+    for (const s of staff) upsertStaffInDb(s, currentTenantId);
+    for (const b of beds) upsertBedInDb(b, currentTenantId);
+    for (const p of patients) upsertPatientInDb(p, currentTenantId);
+    for (const item of pharmacyItems) upsertPharmacyInDb(item, currentTenantId);
+    for (const inv of invoices) upsertInvoiceInDb(inv, currentTenantId);
   };
 
   const clearAllMockData = () => {
@@ -539,23 +561,65 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     });
   };
 
-  // Sync state to LocalStorage
+  // Per-slice Debounced LocalStorage Persistence (Avoids blocking UI thread & JSON thrashing)
   useEffect(() => {
     localStorage.setItem('hospital_auth', isAuthenticated ? 'true' : 'false');
     localStorage.setItem('hospital_role', currentRole);
     localStorage.setItem('hospital_tenant_id', currentTenantId);
-    localStorage.setItem('hospital_tenants', JSON.stringify(tenants));
-    localStorage.setItem('hospital_staff', JSON.stringify(staff));
-    localStorage.setItem('hospital_beds', JSON.stringify(beds));
-    localStorage.setItem('hospital_patients', JSON.stringify(patients));
-    localStorage.setItem('hospital_pharmacy', JSON.stringify(pharmacyItems));
-    localStorage.setItem('hospital_invoices', JSON.stringify(invoices));
-  }, [isAuthenticated, currentRole, currentTenantId, tenants, staff, beds, patients, pharmacyItems, invoices]);
+  }, [isAuthenticated, currentRole, currentTenantId]);
 
-  // Sync doctors from staff who have role === 'doctor'
   useEffect(() => {
+    const t = setTimeout(() => {
+      try { localStorage.setItem('hospital_tenants', JSON.stringify(tenants)); } catch {}
+    }, 600);
+    return () => clearTimeout(t);
+  }, [tenants]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try { localStorage.setItem('hospital_staff', JSON.stringify(staff)); } catch {}
+    }, 600);
+    return () => clearTimeout(t);
+  }, [staff]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try { localStorage.setItem('hospital_beds', JSON.stringify(beds)); } catch {}
+    }, 600);
+    return () => clearTimeout(t);
+  }, [beds]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try { localStorage.setItem('hospital_patients', JSON.stringify(patients)); } catch {}
+    }, 600);
+    return () => clearTimeout(t);
+  }, [patients]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try { localStorage.setItem('hospital_pharmacy', JSON.stringify(pharmacyItems)); } catch {}
+    }, 600);
+    return () => clearTimeout(t);
+  }, [pharmacyItems]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try { localStorage.setItem('hospital_invoices', JSON.stringify(invoices)); } catch {}
+    }, 600);
+    return () => clearTimeout(t);
+  }, [invoices]);
+
+  // Memoized doctors derived cleanly from staff & patients (zero duplicate state or extra render passes)
+  const doctors: Doctor[] = useMemo(() => {
+    const patientCountByDoc = new Map<string, number>();
+    for (const p of patients) {
+      if (p.assignedDoctorName) {
+        patientCountByDoc.set(p.assignedDoctorName, (patientCountByDoc.get(p.assignedDoctorName) || 0) + 1);
+      }
+    }
     const doctorStaff = staff.filter(s => s.role === 'doctor');
-    const syncdDoctors: Doctor[] = doctorStaff.map(s => ({
+    return doctorStaff.map(s => ({
       id: s.id,
       name: s.name,
       specialization: s.designation,
@@ -567,12 +631,11 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       availableDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
       timing: s.shift,
       currentRoom: 'OPD Suite 1',
-      todayAppointmentsCount: patients.filter(p => p.assignedDoctorName === s.name).length,
+      todayAppointmentsCount: patientCountByDoc.get(s.name) || 0,
       rating: 4.9,
       avatar: '👨‍⚕️',
       status: 'Available'
     }));
-    setDoctors(syncdDoctors);
   }, [staff, patients]);
 
   const currentTenant = tenants.find(t => t.id === currentTenantId) || tenants[0] || INITIAL_TENANTS[0];
@@ -666,21 +729,46 @@ export const HospitalOSProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setIsAuthenticated(false);
   };
 
-  // Derived Operational Metrics
-  const metrics: OperationalMetrics = {
-    totalPatientsToday: patients.length,
-    opdCount: patients.filter(p => p.status === 'Outpatient').length,
-    ipdAdmissions: patients.filter(p => p.status === 'Admitted' || p.status === 'In Emergency').length,
-    activeDoctors: staff.filter(s => s.role === 'doctor').length,
-    bedOccupancyRate: beds.length > 0 ? Math.round((beds.filter(b => b.status === 'Occupied').length / beds.length) * 100) : 0,
-    availableBeds: beds.filter(b => b.status === 'Available').length,
-    totalBeds: beds.length,
-    totalRevenueToday: invoices.reduce((acc, curr) => acc + (Number(curr.paidAmount) || 0), 0),
-    pendingClaimsAmount: invoices.filter(i => i.status !== 'Paid').reduce((acc, curr) => acc + ((Number(curr.totalAmount) || 0) - (Number(curr.paidAmount) || 0)), 0),
-    criticalLabAlerts: labTests.filter(l => l.criticalAlert).length,
-    pendingPrescriptions: pharmacyItems.filter(p => p.stockQty <= p.reorderLevel).length,
-    activeOtSurgeries: 0
-  };
+  // Derived Operational Metrics (Memoized single-pass loops for low CPU & memory overhead)
+  const metrics: OperationalMetrics = useMemo(() => {
+    let opdCount = 0;
+    let ipdAdmissions = 0;
+    for (const p of patients) {
+      if (p.status === 'Outpatient') opdCount++;
+      else if (p.status === 'Admitted' || p.status === 'In Emergency') ipdAdmissions++;
+    }
+
+    let occupiedBeds = 0;
+    let availableBeds = 0;
+    for (const b of beds) {
+      if (b.status === 'Occupied') occupiedBeds++;
+      else if (b.status === 'Available') availableBeds++;
+    }
+
+    let totalRevenueToday = 0;
+    let pendingClaimsAmount = 0;
+    for (const inv of invoices) {
+      const paid = Number(inv.paidAmount) || 0;
+      const total = Number(inv.totalAmount) || 0;
+      totalRevenueToday += paid;
+      if (inv.status !== 'Paid') pendingClaimsAmount += Math.max(0, total - paid);
+    }
+
+    return {
+      totalPatientsToday: patients.length,
+      opdCount,
+      ipdAdmissions,
+      activeDoctors: staff.filter(s => s.role === 'doctor').length,
+      bedOccupancyRate: beds.length > 0 ? Math.round((occupiedBeds / beds.length) * 100) : 0,
+      availableBeds,
+      totalBeds: beds.length,
+      totalRevenueToday,
+      pendingClaimsAmount,
+      criticalLabAlerts: labTests.filter(l => l.criticalAlert).length,
+      pendingPrescriptions: pharmacyItems.filter(p => p.stockQty <= p.reorderLevel).length,
+      activeOtSurgeries: 0
+    };
+  }, [patients, staff, beds, invoices, labTests, pharmacyItems]);
 
   const addSystemEvent = (eventData: Omit<SystemEventLog, 'id' | 'timestamp'>) => {
     const timeStr = new Date().toTimeString().split(' ')[0];
