@@ -97,27 +97,39 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 text-slate-800 glide-enter">
+    <div className="relative min-h-screen flex flex-col justify-between p-4 sm:p-6 text-slate-800 glide-enter overflow-hidden">
+      {/* Full-Viewport Architectural Hospital Background */}
+      <img
+        src="/images/hospital-hero.jpg"
+        alt="Modern luxury medical center atrium"
+        aria-hidden="true"
+        className="fixed inset-0 w-full h-full object-cover object-center pointer-events-none select-none"
+      />
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 bg-gradient-to-br from-slate-950/82 via-sky-950/72 to-teal-950/80 backdrop-blur-[2px] pointer-events-none"
+      />
+
       {/* Top Header */}
-      <div className="max-w-4xl w-full mx-auto flex items-center justify-between pb-4">
+      <div className="relative z-10 max-w-4xl w-full mx-auto flex items-center justify-between pb-4">
         <button
           onClick={onNavigateHome}
-          className="flex items-center gap-2.5 group text-slate-700 hover:text-slate-900 focus:outline-none"
+          className="flex items-center gap-2.5 group text-white focus:outline-none"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center text-white shadow-sm shadow-sky-500/25 group-hover:scale-105 transition-transform duration-200">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-400 via-cyan-500 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-sky-500/30 group-hover:scale-105 transition-transform duration-200">
             <Activity className="w-5 h-5" />
           </div>
           <div>
-            <span className="font-extrabold text-lg text-slate-900 tracking-tight">
-              Hospital<span className="text-sky-600">OS</span>
+            <span className="font-extrabold text-lg text-white tracking-tight">
+              Hospital<span className="text-cyan-300">OS</span>
             </span>
-            <span className="hidden sm:inline text-xs text-slate-400 ml-2 font-medium">Healthcare Portal</span>
+            <span className="hidden sm:inline text-xs text-cyan-100/75 ml-2 font-medium">Healthcare Portal</span>
           </div>
         </button>
 
         <button
           onClick={onNavigateHome}
-          className="px-3.5 py-1.5 rounded-xl border border-slate-200/90 bg-white/90 hover:bg-slate-50 text-xs font-semibold text-slate-700 hover:text-slate-900 flex items-center gap-1.5 transition-all duration-200 shadow-xs active:scale-95"
+          className="px-3.5 py-1.5 rounded-xl border border-white/25 bg-white/15 backdrop-blur-md hover:bg-white/25 text-xs font-semibold text-white flex items-center gap-1.5 transition-all duration-200 shadow-xs active:scale-95"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Home</span>
@@ -125,7 +137,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       </div>
 
       {/* Main Login Card */}
-      <div className="max-w-lg w-full mx-auto my-auto bg-white/95 backdrop-blur-xl rounded-3xl border border-slate-200/90 shadow-[0_24px_64px_-16px_rgba(15,23,42,0.12)] p-6 sm:p-8 space-y-6">
+      <div className="relative z-10 max-w-lg w-full mx-auto my-auto overflow-hidden bg-white/95 backdrop-blur-2xl rounded-3xl border border-white/75 shadow-[0_32px_80px_-16px_rgba(2,132,199,0.4)] p-6 sm:p-8 space-y-6">
+        <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-sky-500 via-teal-400 to-indigo-500" />
         
         {/* Dual Mode Sliding Switcher Tabs */}
         <div className="relative grid grid-cols-2 p-1 rounded-2xl bg-slate-100/90 border border-slate-200/80">
@@ -173,9 +186,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         {/* ================= USER / PATIENT LOGIN TAB ================= */}
         {activeTab === 'user' && (
           <div className="space-y-5 animate-in fade-in duration-150">
-            <div className="text-center space-y-1">
-              <div className="w-11 h-11 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center mx-auto border border-sky-100 shadow-xs">
-                <HeartPulse className="w-5 h-5" />
+            <div className="text-center space-y-1.5">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500 to-teal-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-sky-500/25">
+                <HeartPulse className="w-6 h-6" />
               </div>
               <h2 className="text-xl font-bold text-slate-900">Patient &amp; User Sign In</h2>
               <p className="text-xs text-slate-500">
@@ -250,9 +263,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         {/* ================= ADMIN LOGIN TAB ================= */}
         {activeTab === 'admin' && (
           <div className="space-y-5 animate-in fade-in duration-150">
-            <div className="text-center space-y-1">
-              <div className="w-11 h-11 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mx-auto border border-amber-200 shadow-xs">
-                <KeyRound className="w-5 h-5" />
+            <div className="text-center space-y-1.5">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-amber-500/25">
+                <KeyRound className="w-6 h-6" />
               </div>
               <h2 className="text-xl font-bold text-slate-900">Hospital Admin Login</h2>
               <p className="text-xs text-slate-500">
@@ -347,8 +360,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       </div>
 
       {/* Footer */}
-      <div className="max-w-4xl w-full mx-auto text-center pt-4">
-        <p className="text-[11px] text-slate-400">
+      <div className="relative z-10 max-w-4xl w-full mx-auto text-center pt-4">
+        <p className="text-[11px] text-cyan-100/80 font-medium">
           {currentTenant.name} &bull; License: {currentTenant.licenseNumber}
         </p>
       </div>

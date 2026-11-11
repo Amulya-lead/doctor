@@ -101,7 +101,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigateHome, onNavigateLogin,
   };
 
   return (
-    <header ref={headerRef} className="sticky top-0 z-40 w-full border-b border-slate-200/80 lavish-glass shadow-[0_4px_24px_-8px_rgba(15,23,42,0.06)] transition-all">
+    <header ref={headerRef} className="sticky top-0 z-40 w-full border-b border-slate-200/80 lavish-glass shadow-[0_4px_24px_-8px_rgba(15,23,42,0.08)] transition-all">
+      <div className="h-0.5 w-full bg-gradient-to-r from-sky-500 via-teal-400 to-indigo-500" />
       {/* Emergency Alert Banner */}
       {emergencyAlert && (
         <div className="bg-gradient-to-r from-rose-600 via-red-600 to-rose-600 text-white px-4 py-2 flex items-center justify-between text-xs sm:text-sm font-semibold tracking-wide animate-in fade-in">

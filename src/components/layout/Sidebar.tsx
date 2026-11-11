@@ -28,6 +28,49 @@ interface SidebarProps {
   onCloseMobile?: () => void;
 }
 
+const DESK_ICON_ACCENTS: Partial<Record<NavigationModule, { active: string; idle: string; card: string }>> = {
+  admin_payroll: {
+    active: 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-emerald-500/25',
+    idle: 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100',
+    card: 'from-emerald-50 via-teal-50/50 to-white border-emerald-200/90 text-emerald-950'
+  },
+  doctors: {
+    active: 'bg-gradient-to-br from-sky-500 to-cyan-600 text-white shadow-sky-500/25',
+    idle: 'bg-sky-50 text-sky-600 group-hover:bg-sky-100',
+    card: 'from-sky-50 via-cyan-50/50 to-white border-sky-200/90 text-sky-950'
+  },
+  patients: {
+    active: 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-teal-500/25',
+    idle: 'bg-teal-50 text-teal-600 group-hover:bg-teal-100',
+    card: 'from-teal-50 via-cyan-50/50 to-white border-teal-200/90 text-teal-950'
+  },
+  operations: {
+    active: 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-indigo-500/25',
+    idle: 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100',
+    card: 'from-indigo-50 via-violet-50/50 to-white border-indigo-200/90 text-indigo-950'
+  },
+  pharmacy: {
+    active: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-amber-500/25',
+    idle: 'bg-amber-50 text-amber-600 group-hover:bg-amber-100',
+    card: 'from-amber-50 via-orange-50/50 to-white border-amber-200/90 text-amber-950'
+  },
+  lims: {
+    active: 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-cyan-500/25',
+    idle: 'bg-cyan-50 text-cyan-600 group-hover:bg-cyan-100',
+    card: 'from-cyan-50 via-sky-50/50 to-white border-cyan-200/90 text-cyan-950'
+  },
+  billing: {
+    active: 'bg-gradient-to-br from-emerald-600 to-green-600 text-white shadow-emerald-500/25',
+    idle: 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100',
+    card: 'from-emerald-50 via-green-50/50 to-white border-emerald-200/90 text-emerald-950'
+  },
+  insurance: {
+    active: 'bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-violet-500/25',
+    idle: 'bg-violet-50 text-violet-600 group-hover:bg-violet-100',
+    card: 'from-violet-50 via-purple-50/50 to-white border-violet-200/90 text-violet-950'
+  }
+};
+
 export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMobile }) => {
   const { activeModule, setActiveModule, metrics, currentRole, getAllowedModulesForRole, currentUser } = useHospitalOS();
 
@@ -151,6 +194,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
             {visibleNavItems.map(item => {
               const Icon = item.icon;
               const isActive = activeModule === item.id;
+              const accent = DESK_ICON_ACCENTS[item.id] || {
+                active: 'bg-sky-600 text-white shadow-sky-600/25',
+                idle: 'bg-slate-100/80 text-slate-500 group-hover:bg-sky-50 group-hover:text-sky-600',
+                card: 'from-sky-50 via-cyan-50/60 to-white border-sky-200/90 text-sky-950'
+              };
 
               return (
                 <button
@@ -161,16 +209,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
                   }}
                   className={`group w-full text-left px-3 py-2.5 rounded-xl flex items-center justify-between transition-all duration-200 text-xs ${
                     isActive
-                      ? 'bg-gradient-to-r from-sky-50 via-cyan-50/60 to-white text-sky-950 font-bold border border-sky-200/90 shadow-sm shadow-sky-500/5'
+                      ? `bg-gradient-to-r ${accent.card} font-bold border shadow-sm`
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50/90 border border-transparent hover:translate-x-0.5'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div
-                      className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
-                        isActive
-                          ? 'bg-sky-600 text-white shadow-xs shadow-sky-600/25'
-                          : 'bg-slate-100/80 text-slate-500 group-hover:bg-sky-50 group-hover:text-sky-600'
+                      className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                        isActive ? `${accent.active} shadow-sm` : accent.idle
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
