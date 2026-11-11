@@ -60,6 +60,13 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
 
   // Active Navigation Tab: 'book' | 'history' | 'profile' | 'settings'
   const [activeTab, setActiveTab] = useState<'book' | 'history' | 'profile' | 'settings'>('book');
+  const [tabDirection, setTabDirection] = useState<'next' | 'prev'>('next');
+
+  const switchTab = (next: 'book' | 'history' | 'profile' | 'settings') => {
+    const order = ['book', 'history', 'profile', 'settings'];
+    setTabDirection(order.indexOf(next) >= order.indexOf(activeTab) ? 'next' : 'prev');
+    setActiveTab(next);
+  };
 
   // Doctor Search & Filters
   const [searchDoctor, setSearchDoctor] = useState('');
@@ -287,7 +294,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
         {/* 2. Portal Navigation Tabs Bar */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-100 flex items-center gap-1 sm:gap-4 overflow-x-auto no-scrollbar">
           <button
-            onClick={() => setActiveTab('book')}
+            onClick={() => switchTab('book')}
             className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition-all duration-150 whitespace-nowrap ${
               activeTab === 'book'
                 ? 'border-[#4C1D95] text-[#4C1D95] bg-lavender-50/60'
@@ -299,7 +306,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
           </button>
 
           <button
-            onClick={() => setActiveTab('history')}
+            onClick={() => switchTab('history')}
             className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition-all duration-150 whitespace-nowrap ${
               activeTab === 'history'
                 ? 'border-[#4C1D95] text-[#4C1D95] bg-lavender-50/60'
@@ -311,7 +318,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
           </button>
 
           <button
-            onClick={() => setActiveTab('profile')}
+            onClick={() => switchTab('profile')}
             className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition-all duration-150 whitespace-nowrap ${
               activeTab === 'profile'
                 ? 'border-[#4C1D95] text-[#4C1D95] bg-lavender-50/60'
@@ -323,7 +330,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
           </button>
 
           <button
-            onClick={() => setActiveTab('settings')}
+            onClick={() => switchTab('settings')}
             className={`py-3 px-3 sm:px-4 text-xs font-bold flex items-center gap-2 border-b-2 transition-all duration-150 whitespace-nowrap ${
               activeTab === 'settings'
                 ? 'border-[#4C1D95] text-[#4C1D95] bg-lavender-50/60'
@@ -387,7 +394,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
 
         {/* ================= TAB 1: BOOK CONSULTATION ================= */}
         {activeTab === 'book' && (
-          <div className="space-y-8 animate-in fade-in duration-150">
+          <div key="book" className={`space-y-8 ${tabDirection === 'next' ? 'zoho-slide-next' : 'zoho-slide-prev'}`}>
             {/* Step 1: Hospital Selection (Scalable for 1,000 Hospitals) */}
             <div className="space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -649,7 +656,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
 
         {/* ================= TAB 2: MY CONSULTATIONS ("What all consulted so far") ================= */}
         {activeTab === 'history' && (
-          <div className="space-y-5 animate-in fade-in duration-150">
+          <div key="history" className={`space-y-5 ${tabDirection === 'next' ? 'zoho-slide-next' : 'zoho-slide-prev'}`}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200/90">
               <div>
                 <h3 className="font-display text-xl font-bold text-slate-950 flex items-center gap-2">
@@ -784,7 +791,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
 
         {/* ================= TAB 3: MY PROFILE ================= */}
         {activeTab === 'profile' && (
-          <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-150">
+          <div key="profile" className={`space-y-6 max-w-4xl mx-auto ${tabDirection === 'next' ? 'zoho-slide-next' : 'zoho-slide-prev'}`}>
             {profileSavedToast && (
               <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -928,7 +935,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ onNavigateHome }) 
 
         {/* ================= TAB 4: SETTINGS ================= */}
         {activeTab === 'settings' && (
-          <div className="space-y-6 max-w-3xl mx-auto animate-in fade-in duration-150">
+          <div key="settings" className={`space-y-6 max-w-3xl mx-auto ${tabDirection === 'next' ? 'zoho-slide-next' : 'zoho-slide-prev'}`}>
             <div className="lavish-card p-6 space-y-5">
               <h3 className="font-display text-base font-bold text-slate-950 pb-2.5 border-b border-slate-100 flex items-center gap-2">
                 <SettingsIcon className="w-4 h-4 text-[#4C1D95]" />

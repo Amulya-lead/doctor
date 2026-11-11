@@ -7,7 +7,8 @@
     --bg-primary: #f8fafc;
     --card-surface: #ffffff;
     --border-subtle: rgba(226, 232, 240, 0.85);
-    --glide-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --glide-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --zoho-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   }
 
   html {
@@ -18,26 +19,27 @@
   }
 
   body {
-    background-color: #f4f1fc;
+    background-color: #faf8ff;
     background-image:
-      radial-gradient(at 0% 0%, rgba(76, 29, 149, 0.12) 0px, transparent 48%),
-      radial-gradient(at 100% 0%, rgba(13, 148, 136, 0.10) 0px, transparent 44%),
-      radial-gradient(at 50% 100%, rgba(91, 33, 182, 0.10) 0px, transparent 50%),
-      radial-gradient(rgba(45, 27, 105, 0.045) 1px, transparent 1px);
+      radial-gradient(at 0% 0%, rgba(76, 29, 149, 0.085) 0px, transparent 48%),
+      radial-gradient(at 100% 0%, rgba(13, 148, 136, 0.065) 0px, transparent 44%),
+      radial-gradient(at 50% 100%, rgba(91, 33, 182, 0.07) 0px, transparent 50%),
+      radial-gradient(rgba(45, 27, 105, 0.032) 1px, transparent 1px);
     background-size: 100% 100%, 100% 100%, 100% 100%, 24px 24px;
     background-attachment: fixed;
-    color: #091326;
-    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    color: #0f172a;
+    font-family: 'Inter', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
-    letter-spacing: -0.008em;
+    letter-spacing: -0.011em;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
   .font-display {
-    font-family: 'Outfit', 'DM Sans', system-ui, -apple-system, sans-serif;
-    letter-spacing: -0.025em;
-    font-feature-settings: 'cv02', 'ss01';
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.028em;
+    font-feature-settings: 'ss01', 'ss02';
   }
 }
 
@@ -57,11 +59,11 @@
   background: rgba(100, 116, 139, 0.7);
 }
 
-/* Smooth GPU-Accelerated Keyframes */
+/* Smooth GPU-Accelerated Zoho-Inspired Keyframes */
 @keyframes glideUp {
   from {
     opacity: 0;
-    transform: translate3d(0, 10px, 0) scale(0.992);
+    transform: translate3d(0, 16px, 0) scale(0.985);
   }
   to {
     opacity: 1;
@@ -69,10 +71,50 @@
   }
 }
 
+@keyframes zohoSlideNext {
+  from {
+    opacity: 0;
+    transform: translate3d(44px, 0, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes zohoSlidePrev {
+  from {
+    opacity: 0;
+    transform: translate3d(-44px, 0, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes zohoMarquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes zohoProgressFill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 @keyframes fadeInSmooth {
   from {
     opacity: 0;
-    transform: translate3d(0, 4px, 0);
+    transform: translate3d(0, 6px, 0);
   }
   to {
     opacity: 1;
@@ -91,26 +133,128 @@
 
 /* Module & View Glide Utility */
 .glide-enter {
-  animation: glideUp 0.42s var(--glide-ease) both;
+  animation: glideUp 0.48s var(--glide-ease) both;
+}
+
+.zoho-slide-next {
+  animation: zohoSlideNext 0.48s var(--glide-ease) both;
+}
+
+.zoho-slide-prev {
+  animation: zohoSlidePrev 0.48s var(--glide-ease) both;
+}
+
+.zoho-hero-reveal {
+  animation: glideUp 0.65s var(--glide-ease) var(--hero-delay, 0ms) both;
 }
 
 .stagger-item {
-  animation: glideUp 0.55s var(--glide-ease) var(--stagger-delay, 0ms) both;
+  animation: glideUp 0.56s var(--glide-ease) var(--stagger-delay, 0ms) both;
 }
 
-/* Smooth Scroll Reveal Wrapper */
+/* Smooth Scroll Reveal Wrapper & Cascading Stagger Children */
 .scroll-reveal {
   opacity: 0;
-  transform: translate3d(0, 22px, 0);
+  transform: translate3d(0, 28px, 0);
   transition:
-    opacity 0.65s var(--glide-ease),
-    transform 0.65s var(--glide-ease);
+    opacity 0.72s var(--glide-ease),
+    transform 0.72s var(--glide-ease);
   will-change: opacity, transform;
 }
 
 .scroll-reveal.is-visible {
   opacity: 1;
   transform: translate3d(0, 0, 0);
+}
+
+.zoho-stagger {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0) scale(0.98);
+  transition:
+    opacity 0.62s var(--glide-ease),
+    transform 0.62s var(--glide-ease);
+  transition-delay: calc(var(--stagger-i, 0) * 85ms);
+}
+
+.scroll-reveal.is-visible .zoho-stagger {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.zoho-slide-left {
+  opacity: 0;
+  transform: translate3d(-32px, 0, 0);
+  transition:
+    opacity 0.7s var(--glide-ease),
+    transform 0.7s var(--glide-ease);
+}
+
+.zoho-slide-right {
+  opacity: 0;
+  transform: translate3d(32px, 0, 0);
+  transition:
+    opacity 0.7s var(--glide-ease) 100ms,
+    transform 0.7s var(--glide-ease) 100ms;
+}
+
+.scroll-reveal.is-visible .zoho-slide-left,
+.scroll-reveal.is-visible .zoho-slide-right {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Seamless Marquee Compliance Ribbon */
+.zoho-marquee-mask {
+  mask-image: linear-gradient(90deg, transparent 0%, #000 7%, #000 93%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 7%, #000 93%, transparent 100%);
+}
+
+.zoho-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: zohoMarquee 32s linear infinite;
+}
+
+.zoho-marquee-mask:hover .zoho-marquee-track {
+  animation-play-state: paused;
+}
+
+/* Auto-Advancing Feature Tab Progress Sweep */
+.zoho-tab-progress {
+  transform-origin: left center;
+  animation: zohoProgressFill 5.5s linear both;
+}
+
+.zoho-tab-progress.is-paused {
+  animation-play-state: paused;
+}
+
+/* Bigin / Zoho Animated Connected Track Line Draw */
+.zoho-track-line {
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.95s var(--glide-ease) 160ms;
+}
+
+.scroll-reveal.is-visible .zoho-track-line {
+  transform: scaleX(1);
+}
+
+/* Smooth CSS-Grid Zero-Jank Accordion (Bigin / Zoho FAQ Pattern) */
+.zoho-accordion-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.36s var(--glide-ease), opacity 0.28s ease;
+  opacity: 0;
+}
+
+.zoho-accordion-body.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.zoho-accordion-inner {
+  overflow: hidden;
 }
 
 /* Polyfill for animate-in / fade-in classes used across components */
@@ -148,24 +292,43 @@
   -webkit-backdrop-filter: blur(18px) saturate(165%);
 }
 
-/* Crisp Royal Dark-Lavender Graded Action Button */
+/* Crisp Royal Dark-Lavender Graded Action Button with Magnetic Sheen */
 .btn-zoho-primary {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(135deg, #2d1b69 0%, #4c1d95 52%, #6d28d9 100%);
   box-shadow: 0 8px 22px -6px rgba(76, 29, 149, 0.44);
   transition:
-    transform 0.22s var(--glide-ease),
-    box-shadow 0.22s var(--glide-ease),
-    filter 0.2s ease;
+    transform 0.28s var(--glide-ease),
+    box-shadow 0.28s var(--glide-ease),
+    filter 0.22s ease;
+}
+
+.btn-zoho-primary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.24) 50%, transparent 80%);
+  transform: skewX(-18deg);
+  transition: left 0.55s var(--glide-ease);
+  pointer-events: none;
+}
+
+.btn-zoho-primary:hover::after {
+  left: 145%;
 }
 
 .btn-zoho-primary:hover {
   filter: brightness(1.09);
-  transform: translate3d(0, -1px, 0);
-  box-shadow: 0 12px 26px -6px rgba(76, 29, 149, 0.56);
+  transform: translate3d(0, -2px, 0);
+  box-shadow: 0 14px 28px -6px rgba(76, 29, 149, 0.58);
 }
 
 .btn-zoho-primary:active {
-  transform: scale(0.985);
+  transform: scale(0.98);
 }
 
 /* Role-Distinct Zoho Architectural Mesh & Grid Banners (Zero Repeated Photos) */
@@ -333,17 +496,28 @@ textarea {
 @media (prefers-reduced-motion: reduce) {
   .glide-enter,
   .stagger-item,
+  .zoho-slide-next,
+  .zoho-slide-prev,
+  .zoho-hero-reveal,
+  .zoho-marquee-track,
+  .zoho-tab-progress,
   .kenburns-subtle,
   .animate-in.fade-in,
   .workspace-banner,
   .skeleton-shimmer {
     animation: none !important;
   }
-  .workspace-banner::after {
+  .workspace-banner::after,
+  .btn-zoho-primary::after {
     transition: none !important;
     transform: none !important;
   }
-  .scroll-reveal {
+  .scroll-reveal,
+  .zoho-stagger,
+  .zoho-slide-left,
+  .zoho-slide-right,
+  .zoho-track-line,
+  .zoho-accordion-body {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;

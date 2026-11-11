@@ -71,7 +71,7 @@ export const DoctorManagement: React.FC = () => {
       {/* Architectural Photographic Banner */}
       <div className="workspace-banner p-6 sm:p-7 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-sky-300/30 text-[11px] font-bold uppercase tracking-wider text-lavender-200">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-lavender-300/35 text-[11px] font-bold uppercase tracking-wider text-lavender-200">
             <span>OPD Clinical Directory &bull; {doctorList.length} Consultants</span>
           </div>
           <h2 className="font-display text-2xl font-extrabold text-white flex items-center gap-2.5 tracking-tight">

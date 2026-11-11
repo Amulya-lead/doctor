@@ -109,7 +109,7 @@ export const PharmacyManagement: React.FC = () => {
       {/* Architectural Workspace Banner */}
       <div className="workspace-banner workspace-banner-pharmacy p-6 sm:p-7 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-white/15 backdrop-blur-md border border-sky-300/30 text-[11px] font-bold uppercase tracking-wider text-lavender-200">
+          <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-white/15 backdrop-blur-md border border-lavender-300/35 text-[11px] font-bold uppercase tracking-wider text-lavender-200">
             <span>Dispensary &amp; Inventory &bull; {pharmacyItems.length} SKUs</span>
           </div>
           <h2 className="font-display text-2xl font-extrabold text-white flex items-center gap-2.5 tracking-tight">
@@ -186,7 +186,7 @@ export const PharmacyManagement: React.FC = () => {
       <div className="lavish-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-gradient-to-r from-[#F6F9FE] to-[#EEF4FB] border-b border-slate-200/90 text-slate-800 font-bold uppercase text-[11px] tracking-wider">
+            <thead className="bg-gradient-to-r from-[#F7F5FF] to-[#F1ECFE] border-b border-slate-200/90 text-slate-800 font-bold uppercase text-[11px] tracking-wider">
               <tr>
                 <th className="py-3.5 px-4 whitespace-nowrap">Medicine &amp; Generic Name</th>
                 <th className="py-3.5 px-4 whitespace-nowrap">Category</th>

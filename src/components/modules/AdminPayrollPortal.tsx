@@ -411,21 +411,33 @@ export const AdminPayrollPortal: React.FC = () => {
             )}
           </div>
 
-          {/* Status Filter Segmented Switch */}
-          <div className="inline-flex items-center gap-1 bg-slate-100 border border-slate-200/80 p-1 rounded-xl self-start sm:self-auto">
+          {/* Bigin-Style Sliding Status Filter Switch */}
+          <div className="relative grid grid-cols-3 bg-lavender-50 border border-lavender-200/80 p-1 rounded-xl self-start sm:self-auto min-w-[270px]">
+            <div
+              aria-hidden="true"
+              className="absolute top-1 bottom-1 left-1 w-[calc(33.333%-0.25rem)] rounded-lg bg-white shadow-xs transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+              style={{
+                transform:
+                  statusFilter === 'ALL'
+                    ? 'translateX(0%)'
+                    : statusFilter === 'Paid'
+                      ? 'translateX(100%)'
+                      : 'translateX(200%)'
+              }}
+            />
             {(['ALL', 'Paid', 'Pending'] as const).map(status => {
               const count = status === 'ALL' ? staff.length : status === 'Paid' ? paidCount : pendingCount;
               return (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(status)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 flex items-center gap-1.5 ${
+                  className={`relative z-10 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors duration-200 flex items-center justify-center gap-1.5 ${
                     statusFilter === status
-                      ? 'bg-white text-[#4C1D95] shadow-xs'
+                      ? 'text-[#4C1D95]'
                       : 'text-slate-700 hover:text-slate-950'
                   }`}
                 >
-                  <span>{status === 'ALL' ? 'All Staff' : status}</span>
+                  <span>{status === 'ALL' ? 'All' : status}</span>
                   <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
                     statusFilter === status ? 'bg-lavender-50 text-[#4C1D95]' : 'bg-slate-200/70 text-slate-700'
                   }`}>
@@ -473,7 +485,7 @@ export const AdminPayrollPortal: React.FC = () => {
           <div className="lavish-card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-gradient-to-r from-[#F6F9FE] to-[#EEF4FB] border-b border-slate-200/90 text-slate-800 font-bold uppercase text-[11px] tracking-wider">
+                <thead className="bg-gradient-to-r from-[#F7F5FF] to-[#F1ECFE] border-b border-slate-200/90 text-slate-800 font-bold uppercase text-[11px] tracking-wider">
                   <tr>
                     <th className="py-3.5 px-4 whitespace-nowrap">Staff Member</th>
                     <th className="py-3.5 px-4 whitespace-nowrap">Department</th>

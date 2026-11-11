@@ -179,7 +179,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
         {/* ================= USER / PATIENT LOGIN TAB ================= */}
         {activeTab === 'user' && (
-          <div className="space-y-5 animate-in fade-in duration-150">
+          <div className="space-y-5 zoho-slide-prev">
             <div className="text-center space-y-1.5">
               <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#2D1B69] to-[#5B21B6] text-white flex items-center justify-center mx-auto shadow-sm shadow-purple-900/25">
                 <HeartPulse className="w-5 h-5" />
@@ -256,7 +256,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
         {/* ================= ADMIN LOGIN TAB ================= */}
         {activeTab === 'admin' && (
-          <div className="space-y-5 animate-in fade-in duration-150">
+          <div className="space-y-5 zoho-slide-next">
             <div className="text-center space-y-1.5">
               <div className="w-11 h-11 rounded-xl bg-lavender-50 border border-lavender-200 text-[#2D1B69] flex items-center justify-center mx-auto">
                 <KeyRound className="w-5 h-5" />

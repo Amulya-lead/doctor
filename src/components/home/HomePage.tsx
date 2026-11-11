@@ -15,7 +15,12 @@ import {
   Clock,
   CalendarCheck,
   ArrowRight,
+  ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  Pause,
+  Play,
+  MinusCircle,
   PhoneCall,
   FileCheck2,
   Pill,
@@ -326,6 +331,89 @@ const FACILITY_ARCHITECTURES = [
   }
 ];
 
+const CLINICAL_COMPARE_ROWS: Record<
+  'clinical' | 'governance',
+  { capability: string; legacy: string; hospitalOS: string }[]
+> = {
+  clinical: [
+    {
+      capability: 'Multi-Hospital Patient Continuity',
+      legacy: 'Disconnected silos per facility',
+      hospitalOS: 'Unified live longitudinal EMR'
+    },
+    {
+      capability: 'OPD Booking, Queue & Token Pass',
+      legacy: 'Manual paper slips & phone desks',
+      hospitalOS: 'Instant self-service slots & pass'
+    },
+    {
+      capability: 'LIMS Specimen Barcoding & Reports',
+      legacy: 'Delayed manual analyzer uploads',
+      hospitalOS: 'Color-coded tubes + auto flags'
+    },
+    {
+      capability: 'Ward & ICU Bed Allocation',
+      legacy: 'Static whiteboard tracking',
+      hospitalOS: 'Real-time 24/7 telemetry grid'
+    },
+    {
+      capability: 'Pharmacy & Billing Reconciliation',
+      legacy: 'Separate third-party cashier',
+      hospitalOS: 'One-click dispensing + UPI ledger'
+    }
+  ],
+  governance: [
+    {
+      capability: 'Facility Data Isolation',
+      legacy: 'Complex multi-server patches',
+      hospitalOS: 'Strict per-hospital isolation'
+    },
+    {
+      capability: 'Role-Based Staff Separation',
+      legacy: 'Shared logins & over-exposed views',
+      hospitalOS: 'Isolated Doctor, Nurse, Lab & Admin'
+    },
+    {
+      capability: 'Staff Roster & Monthly Payroll',
+      legacy: 'External spreadsheet exports',
+      hospitalOS: 'Native bonuses, deductions & batch pay'
+    },
+    {
+      capability: 'Cashless Insurance & TPA Tracking',
+      legacy: 'Email chains & lost pre-auths',
+      hospitalOS: 'Live claim pipeline & status sync'
+    },
+    {
+      capability: 'NABH & NABL Compliance Audit',
+      legacy: 'Manual binder preparation',
+      hospitalOS: 'Automated timestamped audit logs'
+    }
+  ]
+};
+
+const CLINICAL_FAQS = [
+  {
+    q: 'How are records kept strictly separated across multiple registered hospitals?',
+    a: 'Every hospital and medical center registered in HospitalOS runs in an isolated workspace boundary. Clinicians, beds, pharmacy formulary stock, laboratory tests, and invoices remain scoped to their active hospital while authorized administrators can switch facilities effortlessly.'
+  },
+  {
+    q: 'Can patients book consultations across any accredited partner hospital from one portal?',
+    a: 'Yes. Patients sign in once to browse all registered hospitals, compare NABH/NABL verified departments, select a preferred specialist slot, and immediately receive a digital OPD consultation pass with prescriptions and receipts.'
+  },
+  {
+    q: 'How quickly do OPD, Pathology LIMS, Pharmacy, and Billing desks sync?',
+    a: 'Updates propagate across desks in real time—ordering a diagnostic test surfaces instantly in Pathology LIMS with vacutainer tube barcoding, prescribed medicines adjust pharmacy inventory, and receipts synchronize with cashier & TPA ledgers.'
+  },
+  {
+    q: 'How are staff roles protected inside a hospital workspace?',
+    a: 'Role-isolated views ensure Doctors focus on OPD & assigned charts, Nurses oversee ward vitals & bed handoffs, Pharmacists manage stock dispensing, Lab Technicians approve pathology panels, and Administrators oversee payroll and facility credentials.'
+  },
+  {
+    q: 'Can hospital administrators register a new hospital or multi-branch tower without downtime?',
+    a: 'Yes. Authorized hospital operators can register new hospitals or clinics directly from the top hospital switcher dropdown, configure facility credentials and location branches, and launch full clinical desks immediately.'
+  }
+];
+
 function getInitials(name: string): string {
   const words = name.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return 'HC';
@@ -394,15 +482,100 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [hospitalSearch, setHospitalSearch] = useState('');
   const [hospitalFilter, setHospitalFilter] = useState<'ALL' | 'NABH' | 'MULTI'>('ALL');
   const [activeDeptId, setActiveDeptId] = useState<string>(CLINICAL_DEPARTMENTS[0].id);
+  const [deptDirection, setDeptDirection] = useState<'next' | 'prev'>('next');
   const [activeSuiteId, setActiveSuiteId] = useState<string>(CLINICAL_SUITE_DESKS[0].id);
+  const [suiteDirection, setSuiteDirection] = useState<'next' | 'prev'>('next');
+  const [isSuitePaused, setIsSuitePaused] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState<Tenant | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [parallaxY, setParallaxY] = useState(0);
+  const [activeNavSection, setActiveNavSection] = useState<string>('hospitals');
+  const [compareMode, setCompareMode] = useState<'clinical' | 'governance'>('clinical');
+  const [compareDir, setCompareDir] = useState<'next' | 'prev'>('next');
+  const [openFaqIndexes, setOpenFaqIndexes] = useState<number[]>([0]);
+  const hospitalTrackRef = useRef<HTMLDivElement | null>(null);
+
+  const toggleFaq = (idx: number) => {
+    setOpenFaqIndexes((prev) =>
+      prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
+    );
+  };
+
+  const toggleAllFaqs = () => {
+    setOpenFaqIndexes((prev) =>
+      prev.length === CLINICAL_FAQS.length ? [] : CLINICAL_FAQS.map((_, idx) => idx)
+    );
+  };
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const sectionIds = ['hospitals', 'platform-suite', 'specialties', 'hospital-network'];
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 12);
+      setParallaxY(Math.min(y * 0.14, 72));
+      const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      setScrollProgress(Math.min(Math.max(y / maxScroll, 0), 1));
+
+      let current = sectionIds[0];
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 180) {
+            current = id;
+          }
+        }
+      }
+      setActiveNavSection(current);
+    };
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const selectSuiteTab = (nextId: string, forcedDir?: 'next' | 'prev') => {
+    const prevIdx = CLINICAL_SUITE_DESKS.findIndex((d) => d.id === activeSuiteId);
+    const nextIdx = CLINICAL_SUITE_DESKS.findIndex((d) => d.id === nextId);
+    if (forcedDir) {
+      setSuiteDirection(forcedDir);
+    } else if (nextIdx !== -1 && prevIdx !== -1) {
+      setSuiteDirection(nextIdx >= prevIdx ? 'next' : 'prev');
+    }
+    setActiveSuiteId(nextId);
+  };
+
+  const stepSuiteSlide = (delta: 1 | -1) => {
+    const idx = CLINICAL_SUITE_DESKS.findIndex((d) => d.id === activeSuiteId);
+    const nextIdx = (idx + delta + CLINICAL_SUITE_DESKS.length) % CLINICAL_SUITE_DESKS.length;
+    selectSuiteTab(CLINICAL_SUITE_DESKS[nextIdx].id, delta > 0 ? 'next' : 'prev');
+  };
+
+  useEffect(() => {
+    if (isSuitePaused) return;
+    const timer = window.setInterval(() => {
+      setSuiteDirection('next');
+      setActiveSuiteId((prevId) => {
+        const idx = CLINICAL_SUITE_DESKS.findIndex((d) => d.id === prevId);
+        return CLINICAL_SUITE_DESKS[(idx + 1) % CLINICAL_SUITE_DESKS.length].id;
+      });
+    }, 5500);
+    return () => window.clearInterval(timer);
+  }, [isSuitePaused]);
+
+  const selectDepartment = (nextId: string) => {
+    const prevIdx = CLINICAL_DEPARTMENTS.findIndex((d) => d.id === activeDeptId);
+    const nextIdx = CLINICAL_DEPARTMENTS.findIndex((d) => d.id === nextId);
+    setDeptDirection(nextIdx >= prevIdx ? 'next' : 'prev');
+    setActiveDeptId(nextId);
+  };
+
+  const scrollHospitals = (dir: -1 | 1) => {
+    const track = hospitalTrackRef.current;
+    if (!track) return;
+    const step = Math.max(track.clientWidth * 0.72, 320);
+    track.scrollBy({ left: dir * step, behavior: 'smooth' });
+  };
 
   const scrollToSection = (sectionId: string) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -467,24 +640,33 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
           </div>
 
-          {/* Animated Underline Anchor Nav */}
+          {/* Animated Underline Anchor Nav with Active Section Spy */}
           <nav className="hidden lg:flex items-center gap-8 text-[13px] font-semibold text-slate-700">
             {[
               { id: 'hospitals', label: 'Hospitals' },
               { id: 'platform-suite', label: 'Clinical Suite' },
               { id: 'specialties', label: 'Specialties' },
               { id: 'hospital-network', label: 'Hospital Network' }
-            ].map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => scrollToSection(item.id)}
-                className="group relative py-1.5 hover:text-[#4C1D95] transition-colors"
-              >
-                <span>{item.label}</span>
-                <span className="absolute inset-x-0 -bottom-0.5 h-0.5 bg-gradient-to-r from-[#2D1B69] via-[#5B21B6] to-[#7C3AED] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
-              </button>
-            ))}
+            ].map((item) => {
+              const isNavActive = activeNavSection === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => scrollToSection(item.id)}
+                  className={`group relative py-1.5 transition-colors ${
+                    isNavActive ? 'text-[#4C1D95]' : 'hover:text-[#4C1D95]'
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  <span
+                    className={`absolute inset-x-0 -bottom-0.5 h-0.5 bg-gradient-to-r from-[#2D1B69] via-[#5B21B6] to-[#0D9488] origin-left transition-transform duration-300 ${
+                      isNavActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                    }`}
+                  />
+                </button>
+              );
+            })}
           </nav>
 
           {/* Header Account Actions */}
@@ -523,14 +705,22 @@ export const HomePage: React.FC<HomePageProps> = ({
             )}
           </div>
         </div>
+
+        {/* Zoho-Style Scroll Reading Progress Hairline */}
+        <div
+          aria-hidden="true"
+          className="h-[2.5px] w-full bg-gradient-to-r from-[#2D1B69] via-[#6D28D9] to-[#0D9488] origin-left transition-transform duration-100 ease-out"
+          style={{ transform: `scaleX(${scrollProgress})` }}
+        />
       </header>
 
-      {/* 2. Bright Zoho-Inspired Architectural Hero Stage */}
+      {/* 2. Bright Zoho-Inspired Architectural Hero Stage with Parallax Depth */}
       <section className="relative overflow-hidden bg-[#F7F4FF] border-b border-purple-200/60">
         <img
           src="/images/hospital-network-hero.jpg"
           alt="Sunlit interconnected multi-hospital medical center and gardens"
-          className="absolute inset-0 w-full h-full object-cover object-right kenburns-subtle pointer-events-none select-none"
+          className="absolute inset-0 w-full h-full object-cover object-right pointer-events-none select-none transition-transform duration-150 ease-out will-change-transform"
+          style={{ transform: `translate3d(0, ${parallaxY}px, 0) scale(1.06)` }}
         />
         <div
           aria-hidden="true"
@@ -542,37 +732,49 @@ export const HomePage: React.FC<HomePageProps> = ({
         />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16 sm:pt-20 sm:pb-20 lg:pt-24 lg:pb-24">
-          <div className="max-w-2xl space-y-6 glide-enter">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#4C1D95]/20 text-[#3B1876] text-xs font-bold tracking-wide shadow-xs">
+          <div className="max-w-2xl space-y-6">
+            <div
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#4C1D95]/20 text-[#3B1876] text-xs font-bold tracking-wide shadow-xs zoho-hero-reveal"
+              style={{ '--hero-delay': '0ms' } as React.CSSProperties}
+            >
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Multi-Hospital Network &bull; One Unified Standard</span>
             </div>
 
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.65rem] font-extrabold text-[#140B29] leading-[1.06] tracking-[-0.028em]">
+            <h1
+              className="font-display text-4xl sm:text-5xl lg:text-[3.65rem] font-extrabold text-[#140B29] leading-[1.06] tracking-[-0.028em] zoho-hero-reveal"
+              style={{ '--hero-delay': '90ms' } as React.CSSProperties}
+            >
               Smarter Hospitals.{' '}
               <span className="block bg-gradient-to-r from-[#2D1B69] via-[#5B21B6] to-[#0D9488] bg-clip-text text-transparent">
                 Faster Healing, Everywhere.
               </span>
             </h1>
 
-            <p className="text-base sm:text-[17px] text-slate-700 leading-relaxed max-w-xl font-medium">
+            <p
+              className="text-base sm:text-[17px] text-slate-700 leading-relaxed max-w-xl font-medium zoho-hero-reveal"
+              style={{ '--hero-delay': '180ms' } as React.CSSProperties}
+            >
               Where specialist expertise, instant diagnostics, and calmer patient journeys come together—moving every hospital facility in one connected heartbeat.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 pt-1">
+            <div
+              className="flex flex-wrap items-center gap-3 pt-1 zoho-hero-reveal"
+              style={{ '--hero-delay': '270ms' } as React.CSSProperties}
+            >
               <button
                 type="button"
                 onClick={isAuthenticated ? onLaunchOS : onNavigateUserLogin}
-                className="px-6 py-3.5 rounded-xl btn-zoho-primary text-white font-bold text-sm flex items-center gap-2"
+                className="px-6 py-3.5 rounded-xl btn-zoho-primary text-white font-bold text-sm flex items-center gap-2 group"
               >
                 <span>{isAuthenticated ? 'Open Workspace' : 'Book Consultation'}</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
               </button>
 
               <button
                 type="button"
                 onClick={() => scrollToSection('platform-suite')}
-                className="px-5 py-3.5 rounded-xl bg-white/95 hover:bg-white border border-purple-200/90 hover:border-[#4C1D95]/45 text-[#1F1240] font-bold text-sm backdrop-blur-md shadow-xs transition-all duration-200 active:scale-[0.98]"
+                className="px-5 py-3.5 rounded-xl bg-white/95 hover:bg-white border border-purple-200/90 hover:border-[#4C1D95]/45 text-[#1F1240] font-bold text-sm backdrop-blur-md shadow-xs transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98]"
               >
                 Explore Clinical Suite
               </button>
@@ -588,8 +790,12 @@ export const HomePage: React.FC<HomePageProps> = ({
               { label: 'Clinical Precision', value: '50+ Medical Specialties', accent: 'text-[#6D28D9]' },
               { label: 'Instant Readiness', value: '24/7 Trauma & ICU Sync', accent: 'text-emerald-700' },
               { label: 'Trust Benchmark', value: 'NABH & NABL Accredited', accent: 'text-[#2D1B69]' }
-            ].map((stat) => (
-              <div key={stat.label} className="py-4 px-2 sm:px-5 first:pl-0">
+            ].map((stat, idx) => (
+              <div
+                key={stat.label}
+                className="py-4 px-2 sm:px-5 first:pl-0 transition-transform duration-200 hover:-translate-y-0.5 zoho-hero-reveal"
+                style={{ '--hero-delay': `${320 + idx * 65}ms` } as React.CSSProperties}
+              >
                 <span className={`text-[11px] uppercase tracking-wider font-bold block ${stat.accent}`}>
                   {stat.label}
                 </span>
@@ -602,25 +808,27 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* 2B. Enterprise Trust & Accreditation Marquee Bar */}
-      <div className="bg-[#F8FAFF] border-b border-slate-200/80 py-3.5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-center lg:justify-between gap-3">
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-600">
-            Compliance &amp; Clinical Infrastructure
+      {/* 2B. Seamless Sliding Trust & Accreditation Marquee Ribbon */}
+      <div className="bg-[#FAF8FF] border-b border-lavender-200/70 py-3.5 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#4C1D95] whitespace-nowrap flex-shrink-0">
+            Compliance &amp; Clinical Standards
           </span>
-          <div className="flex flex-wrap items-center justify-center gap-2.5">
-            {TRUST_STANDARDS.map((std) => {
-              const StdIcon = std.icon;
-              return (
-                <div
-                  key={std.label}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[11px] font-bold ${std.color}`}
-                >
-                  <StdIcon className="w-3.5 h-3.5" />
-                  <span>{std.label}</span>
-                </div>
-              );
-            })}
+          <div className="w-full overflow-hidden zoho-marquee-mask">
+            <div className="zoho-marquee-track items-center gap-3">
+              {[...TRUST_STANDARDS, ...TRUST_STANDARDS].map((std, idx) => {
+                const StdIcon = std.icon;
+                return (
+                  <div
+                    key={`${std.label}-${idx}`}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-[11px] font-bold whitespace-nowrap shadow-2xs ${std.color}`}
+                  >
+                    <StdIcon className="w-3.5 h-3.5" />
+                    <span>{std.label}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
@@ -643,17 +851,29 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                {/* Clean Segmented Filter */}
-                <div className="inline-flex items-center p-1 rounded-lg bg-slate-100 border border-slate-200">
+                {/* Bigin-Style Sliding White Pill Segmented Filter */}
+                <div className="relative grid grid-cols-3 p-1 rounded-xl bg-lavender-50 border border-lavender-200/80 min-w-[290px]">
+                  <div
+                    aria-hidden="true"
+                    className="absolute top-1 bottom-1 left-1 w-[calc(33.333%-0.25rem)] rounded-lg bg-white shadow-xs transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                    style={{
+                      transform:
+                        hospitalFilter === 'ALL'
+                          ? 'translateX(0%)'
+                          : hospitalFilter === 'NABH'
+                            ? 'translateX(100%)'
+                            : 'translateX(200%)'
+                    }}
+                  />
                   {(['ALL', 'NABH', 'MULTI'] as const).map((tab) => (
                     <button
                       key={tab}
                       type="button"
                       onClick={() => setHospitalFilter(tab)}
-                      className={`px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all duration-150 ${
+                      className={`relative z-10 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-200 ${
                         hospitalFilter === tab
-                          ? 'bg-white text-[#4C1D95] shadow-xs'
-                          : 'text-slate-700 hover:text-slate-950'
+                          ? 'text-[#4C1D95]'
+                          : 'text-slate-600 hover:text-slate-950'
                       }`}
                     >
                       {tab === 'ALL' ? 'All Hospitals' : tab === 'NABH' ? 'NABH Verified' : 'Multi-Specialty'}
@@ -695,16 +915,48 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {filteredHospitals.map((t, index) => {
-                  const theme = HOSPITAL_EMBLEM_THEMES[index % HOSPITAL_EMBLEM_THEMES.length];
-                  return (
+              <div className="space-y-4">
+                {filteredHospitals.length > 3 && (
+                  <div className="flex items-center justify-end gap-2">
                     <button
                       type="button"
-                      key={t.id}
-                      onClick={() => setSelectedHospital(t)}
-                      className={`group text-left relative overflow-hidden rounded-xl bg-white border border-slate-200/95 p-6 space-y-4 shadow-[0_4px_16px_-6px_rgba(15,23,42,0.06)] hover:-translate-y-1 transition-all duration-200 scalable-card ${theme.hoverBorder}`}
+                      onClick={() => scrollHospitals(-1)}
+                      aria-label="Previous Hospitals"
+                      className="w-9 h-9 rounded-full bg-white border border-lavender-200 hover:border-[#4C1D95] text-slate-700 hover:text-[#4C1D95] flex items-center justify-center shadow-xs transition-all hover:scale-105 active:scale-95"
                     >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => scrollHospitals(1)}
+                      aria-label="Next Hospitals"
+                      className="w-9 h-9 rounded-full bg-white border border-lavender-200 hover:border-[#4C1D95] text-slate-700 hover:text-[#4C1D95] flex items-center justify-center shadow-xs transition-all hover:scale-105 active:scale-95"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                <div
+                  ref={hospitalTrackRef}
+                  className={
+                    filteredHospitals.length > 3
+                      ? 'flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 scroll-smooth'
+                      : 'grid grid-cols-1 md:grid-cols-3 gap-6'
+                  }
+                >
+                  {filteredHospitals.map((t, index) => {
+                    const theme = HOSPITAL_EMBLEM_THEMES[index % HOSPITAL_EMBLEM_THEMES.length];
+                    return (
+                      <button
+                        type="button"
+                        key={t.id}
+                        onClick={() => setSelectedHospital(t)}
+                        style={{ '--stagger-delay': `${Math.min(index, 6) * 70}ms` } as React.CSSProperties}
+                        className={`group text-left relative overflow-hidden rounded-xl bg-white border border-slate-200/95 p-6 space-y-4 shadow-[0_4px_16px_-6px_rgba(15,23,42,0.06)] hover:-translate-y-1.5 transition-all duration-300 scalable-card stagger-item ${theme.hoverBorder} ${
+                          filteredHospitals.length > 3 ? 'flex-shrink-0 w-[86%] sm:w-[47%] lg:w-[calc((100%-3rem)/3)] snap-start' : ''
+                        }`}
+                      >
                       <div className="flex items-start justify-between gap-3">
                         <div className={`w-11 h-11 rounded-lg flex items-center justify-center font-display font-bold text-sm tracking-tight transition-transform duration-200 group-hover:scale-105 ${theme.icon}`}>
                           {getInitials(t.name)}
@@ -739,18 +991,23 @@ export const HomePage: React.FC<HomePageProps> = ({
                     </button>
                   );
                 })}
+                </div>
               </div>
             )}
           </div>
         </section>
 
-        {/* 3B. Connected Clinical Suite Preview */}
+        {/* 3B. Zoho-Style Auto-Advancing & Sliding Clinical Suite Showcase */}
         <RevealBand
           id="platform-suite"
           className="scroll-mt-20 bg-gradient-to-b from-[#F7F4FF] to-white border-b border-purple-200/50 py-14 sm:py-16"
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div
+            onMouseEnter={() => setIsSuitePaused(true)}
+            onMouseLeave={() => setIsSuitePaused(false)}
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8"
+          >
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 zoho-slide-left">
               <div className="max-w-2xl space-y-1.5">
                 <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-[#4C1D95]">
                   <Layers className="w-3.5 h-3.5" />
@@ -763,13 +1020,39 @@ export const HomePage: React.FC<HomePageProps> = ({
                   See how OPD consultations, LIMS diagnostics, pharmacy stock, ICU beds, and billing move in effortless sync—zero paperwork drag.
                 </p>
               </div>
-              <span className="text-xs font-mono font-bold px-3.5 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 shadow-xs self-start md:self-auto">
-                5 Live Clinical Desks
-              </span>
+              <div className="flex items-center gap-2 self-start md:self-auto">
+                <button
+                  type="button"
+                  onClick={() => setIsSuitePaused((p) => !p)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-white border border-lavender-200 text-[#4C1D95] hover:bg-lavender-50 shadow-2xs transition"
+                  title={isSuitePaused ? 'Resume Auto-Slide Tour' : 'Pause Auto-Slide Tour'}
+                >
+                  {isSuitePaused ? <Play className="w-3 h-3 fill-current" /> : <Pause className="w-3 h-3" />}
+                  <span>{isSuitePaused ? 'Resume Tour' : 'Auto-Sliding Live'}</span>
+                </button>
+                <div className="inline-flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => stepSuiteSlide(-1)}
+                    aria-label="Previous Clinical Desk"
+                    className="w-8 h-8 rounded-full bg-white border border-slate-200 hover:border-[#4C1D95] text-slate-700 hover:text-[#4C1D95] flex items-center justify-center transition hover:scale-105 active:scale-95"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => stepSuiteSlide(1)}
+                    aria-label="Next Clinical Desk"
+                    className="w-8 h-8 rounded-full bg-white border border-slate-200 hover:border-[#4C1D95] text-slate-700 hover:text-[#4C1D95] flex items-center justify-center transition hover:scale-105 active:scale-95"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Suite Horizontal Tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            {/* Suite Horizontal Tabs with Animated Progress Timer Underline */}
+            <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-1">
               {CLINICAL_SUITE_DESKS.map((desk) => {
                 const Icon = desk.icon;
                 const isSelected = desk.id === activeSuiteDesk.id;
@@ -777,25 +1060,36 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <button
                     key={desk.id}
                     type="button"
-                    onClick={() => setActiveSuiteId(desk.id)}
-                    className={`px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap inline-flex items-center gap-2 border transition-all duration-200 ${
+                    onClick={() => selectSuiteTab(desk.id)}
+                    className={`relative overflow-hidden px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap inline-flex items-center gap-2 border transition-all duration-300 ${
                       isSelected
-                        ? 'btn-zoho-primary text-white border-transparent shadow-md'
+                        ? 'btn-zoho-primary text-white border-transparent shadow-md scale-[1.02]'
                         : 'bg-white text-slate-700 border-slate-200 hover:border-lavender-300 hover:text-[#4C1D95]'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
                     <span>{desk.label}</span>
+                    {isSelected && (
+                      <span
+                        key={`${desk.id}-progress`}
+                        className={`absolute inset-x-0 bottom-0 h-[3px] bg-gradient-to-r from-emerald-300 via-teal-200 to-white zoho-tab-progress ${
+                          isSuitePaused ? 'is-paused' : ''
+                        }`}
+                      />
+                    )}
                   </button>
                 );
               })}
             </div>
 
-            {/* Interactive Hospital Desk Preview Container */}
-            <div
-              key={activeSuiteDesk.id}
-              className="rounded-2xl bg-white border border-slate-200/95 shadow-[0_22px_50px_-16px_rgba(9,19,38,0.12)] overflow-hidden glide-enter"
-            >
+            {/* Directional Sliding Interactive Hospital Desk Container */}
+            <div className="overflow-hidden rounded-2xl">
+              <div
+                key={activeSuiteDesk.id}
+                className={`rounded-2xl bg-white border border-slate-200/95 shadow-[0_22px_50px_-16px_rgba(28,16,59,0.14)] overflow-hidden ${
+                  suiteDirection === 'next' ? 'zoho-slide-next' : 'zoho-slide-prev'
+                }`}
+              >
               {/* Top Window Bar */}
               <div className="px-4 sm:px-6 py-3 bg-slate-50 border-b border-slate-200/90 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
@@ -854,8 +1148,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                   </div>
                 </div>
 
-                {/* Right Live Mini Interface Replication */}
-                <div className="lg:col-span-7 rounded-xl bg-slate-50/90 border border-slate-200/90 p-4 sm:p-5 space-y-3.5">
+                {/* Right Live Mini Interface Replication with Floating Zoho Telemetry Pill */}
+                <div className="lg:col-span-7 relative rounded-xl bg-slate-50/90 border border-slate-200/90 p-4 sm:p-5 space-y-3.5">
                   {activeSuiteDesk.id === 'patients' && (
                     <>
                       <div className="flex items-center justify-between text-xs font-bold text-slate-800 pb-2 border-b border-slate-200">
@@ -988,19 +1282,51 @@ export const HomePage: React.FC<HomePageProps> = ({
                       )}
                     </>
                   )}
+
+                  {/* Signature Zoho CRM Floating Live Sync Pill */}
+                  <div className="mt-3 pt-2.5 border-t border-slate-200/70 flex items-center justify-between text-[11px]">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-lavender-200/90 shadow-sm animate-float">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                      <span className="font-bold text-[#2D1B69]">Live Hospital Desk Sync</span>
+                    </div>
+                    <span className="font-mono font-semibold text-slate-600">
+                      Isolated &bull; NABH Audit Ready
+                    </span>
+                  </div>
                 </div>
               </div>
+            </div>
+            </div>
+
+            {/* Slide Indicator Dots */}
+            <div className="flex items-center justify-center gap-2 pt-1">
+              {CLINICAL_SUITE_DESKS.map((desk) => {
+                const active = desk.id === activeSuiteDesk.id;
+                return (
+                  <button
+                    key={`${desk.id}-dot`}
+                    type="button"
+                    aria-label={`Jump to ${desk.label}`}
+                    onClick={() => selectSuiteTab(desk.id)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      active
+                        ? 'w-7 bg-gradient-to-r from-[#2D1B69] to-[#6D28D9]'
+                        : 'w-2 bg-lavender-300/80 hover:bg-lavender-400'
+                    }`}
+                  />
+                );
+              })}
             </div>
           </div>
         </RevealBand>
 
-        {/* 4. Interactive Clinical Suite Switcher — Soft Luminous Lavender Mist Surface */}
+        {/* 4. Sticky Split Specialty Switcher — Soft Luminous Lavender Mist Surface */}
         <RevealBand
           id="specialties"
           className="scroll-mt-20 bg-gradient-to-b from-[#F3EEFF] to-[#FAF8FF] border-b border-purple-200/50 py-14 sm:py-16"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-            <div className="max-w-2xl space-y-1.5">
+            <div className="max-w-2xl space-y-1.5 zoho-slide-left">
               <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#4C1D95] block">
                 Centers of Clinical Excellence
               </span>
@@ -1013,8 +1339,8 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Left Interactive Selector */}
-              <div className="lg:col-span-5 space-y-2.5">
+              {/* Left Sticky Interactive Selector */}
+              <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-2.5 zoho-slide-left">
                 {CLINICAL_DEPARTMENTS.map((dept) => {
                   const Icon = dept.icon;
                   const isActive = dept.id === activeDepartment.id;
@@ -1022,15 +1348,15 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <button
                       type="button"
                       key={dept.id}
-                      onClick={() => setActiveDeptId(dept.id)}
-                      className={`w-full text-left rounded-xl p-4 border transition-all duration-200 flex items-center justify-between gap-3 ${
+                      onClick={() => selectDepartment(dept.id)}
+                      className={`w-full text-left rounded-xl p-4 border transition-all duration-300 flex items-center justify-between gap-3 ${
                         isActive
-                          ? `bg-white border-slate-200 border-l-4 ${dept.activeBorder} shadow-[0_10px_28px_-10px_rgba(15,23,42,0.10)]`
-                          : 'bg-white/75 border-slate-200/60 hover:bg-white hover:border-slate-300/80'
+                          ? `bg-white border-lavender-200 border-l-4 ${dept.activeBorder} shadow-[0_12px_30px_-10px_rgba(76,29,149,0.18)] translate-x-1`
+                          : 'bg-white/75 border-slate-200/60 hover:bg-white hover:border-lavender-200 hover:translate-x-0.5'
                       }`}
                     >
                       <div className="flex items-center gap-3.5">
-                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${dept.accentGradient} flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${dept.accentGradient} flex items-center justify-center flex-shrink-0 shadow-sm transition-transform duration-300 ${isActive ? 'scale-105' : ''}`}>
                           <Icon className="w-5 h-5" />
                         </div>
                         <div>
@@ -1042,7 +1368,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                       </div>
                       <ChevronRight
                         className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${
-                          isActive ? `${dept.activeText} translate-x-0.5` : 'text-slate-500'
+                          isActive ? `${dept.activeText} translate-x-1` : 'text-slate-500'
                         }`}
                       />
                     </button>
@@ -1050,11 +1376,14 @@ export const HomePage: React.FC<HomePageProps> = ({
                 })}
               </div>
 
-              {/* Right Active Showcase Card */}
-              <div
-                key={activeDepartment.id}
-                className="lg:col-span-7 relative overflow-hidden rounded-2xl bg-white border border-lavender-200/80 shadow-[0_18px_44px_-16px_rgba(76,29,149,0.16)] glide-enter"
-              >
+              {/* Right Active Showcase Card with Zoho Directional Slide */}
+              <div className="lg:col-span-7 overflow-hidden rounded-2xl zoho-slide-right">
+                <div
+                  key={activeDepartment.id}
+                  className={`relative overflow-hidden rounded-2xl bg-white border border-lavender-200/80 shadow-[0_18px_44px_-16px_rgba(76,29,149,0.16)] ${
+                    deptDirection === 'next' ? 'zoho-slide-next' : 'zoho-slide-prev'
+                  }`}
+                >
                 {/* Signature Zoho Top Color Gradation Accent */}
                 <div className={`h-1.5 w-full bg-gradient-to-r ${activeDepartment.topStrip}`} />
 
@@ -1124,6 +1453,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   </div>
                 </div>
               </div>
+              </div>
             </div>
           </div>
         </RevealBand>
@@ -1131,7 +1461,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* 5. Structured 3-Step Patient Workflow & Unified Care Capabilities */}
         <RevealBand
           id="care-flow"
-          className="scroll-mt-20 bg-gradient-to-b from-white via-[#F6F9FE] to-[#EEF4FB] border-b border-slate-200/80 py-14 sm:py-16"
+          className="scroll-mt-20 bg-gradient-to-b from-white via-[#FAF8FF] to-[#F3EEFF] border-b border-lavender-200/60 py-14 sm:py-16"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -1152,19 +1482,20 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             <div className="relative">
-              {/* Connected Desktop Progression Track */}
+              {/* Connected Desktop Animated Progression Track */}
               <div
                 aria-hidden="true"
-                className="hidden md:block absolute top-11 left-[14%] right-[14%] h-0.5 bg-gradient-to-r from-[#2D1B69]/30 via-[#5B21B6]/40 to-[#0D9488]/30 pointer-events-none"
+                className="zoho-track-line hidden md:block absolute top-11 left-[14%] right-[14%] h-0.5 bg-gradient-to-r from-[#2D1B69]/40 via-[#6D28D9]/55 to-[#0D9488]/45 pointer-events-none"
               />
 
               <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6">
-                {CONSULTATION_STEPS.map((item) => {
+                {CONSULTATION_STEPS.map((item, idx) => {
                   const StepIcon = item.icon;
                   return (
                     <div
                       key={item.step}
-                      className="group rounded-2xl border border-slate-200/95 bg-white hover:border-[#4C1D95]/45 p-6 space-y-4 transition-all duration-200 hover:-translate-y-1 shadow-[0_8px_24px_-14px_rgba(28,16,59,0.09)] hover:shadow-[0_18px_36px_-14px_rgba(76,29,149,0.20)]"
+                      style={{ '--stagger-i': idx } as React.CSSProperties}
+                      className="zoho-stagger group rounded-2xl border border-slate-200/95 bg-white hover:border-[#4C1D95]/45 p-6 space-y-4 transition-all duration-300 hover:-translate-y-1.5 shadow-[0_8px_24px_-14px_rgba(28,16,59,0.09)] hover:shadow-[0_18px_36px_-14px_rgba(76,29,149,0.22)]"
                     >
                       <div className="flex items-center justify-between">
                         <div className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-sm ${item.iconStyle}`}>
@@ -1198,11 +1529,15 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {UNIFIED_CAPABILITIES.map((cap) => {
+                {UNIFIED_CAPABILITIES.map((cap, idx) => {
                   const CapIcon = cap.icon;
                   return (
-                    <div key={cap.title} className="flex items-start gap-3.5">
-                      <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${cap.accent} flex items-center justify-center flex-shrink-0 shadow-xs`}>
+                    <div
+                      key={cap.title}
+                      style={{ '--stagger-i': idx + 2 } as React.CSSProperties}
+                      className="zoho-stagger flex items-start gap-3.5 group"
+                    >
+                      <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${cap.accent} flex items-center justify-center flex-shrink-0 shadow-xs transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3`}>
                         <CapIcon className="w-4 h-4" />
                       </div>
                       <div>
@@ -1212,6 +1547,112 @@ export const HomePage: React.FC<HomePageProps> = ({
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          </div>
+        </RevealBand>
+
+        {/* 5B. Bigin-Inspired Interactive Clinical Benchmark Comparison Matrix */}
+        <RevealBand
+          id="network-compare"
+          className="scroll-mt-20 bg-[#FAF8FF] border-b border-lavender-200/60 py-14 sm:py-16"
+        >
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-9">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
+              <div className="max-w-2xl space-y-1.5 zoho-slide-left">
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#4C1D95] block">
+                  Designed Without Software Bloat
+                </span>
+                <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-950">
+                  Unified Clinical OS vs. Fragmented Legacy Tools
+                </h2>
+                <p className="text-sm text-slate-700">
+                  See why modern hospitals move off disconnected spreadsheets and clunky legacy portals onto a single unified workspace.
+                </p>
+              </div>
+
+              {/* Sliding Pill Mode Toggle (Clinical vs Governance) */}
+              <div className="relative grid grid-cols-2 p-1 rounded-xl bg-lavender-100/80 border border-lavender-200 min-w-[280px] self-start md:self-auto zoho-slide-right">
+                <div
+                  aria-hidden="true"
+                  className={`absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] rounded-lg bg-white shadow-xs transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    compareMode === 'governance' ? 'translate-x-full' : 'translate-x-0'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCompareDir('prev');
+                    setCompareMode('clinical');
+                  }}
+                  className={`relative z-10 px-3.5 py-2 rounded-lg text-xs font-bold transition-colors ${
+                    compareMode === 'clinical' ? 'text-[#4C1D95]' : 'text-slate-600 hover:text-slate-950'
+                  }`}
+                >
+                  Clinical Desks
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCompareDir('next');
+                    setCompareMode('governance');
+                  }}
+                  className={`relative z-10 px-3.5 py-2 rounded-lg text-xs font-bold transition-colors ${
+                    compareMode === 'governance' ? 'text-[#4C1D95]' : 'text-slate-600 hover:text-slate-950'
+                  }`}
+                >
+                  Network Governance
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-2xl overflow-hidden bg-white border border-lavender-200/80 shadow-[0_18px_46px_-18px_rgba(76,29,149,0.16)]">
+              {/* Matrix Header */}
+              <div className="grid grid-cols-12 border-b border-lavender-100 bg-slate-50/70 text-xs font-bold">
+                <div className="col-span-12 sm:col-span-4 p-4 sm:p-5 text-slate-600 uppercase tracking-wider text-[11px] flex items-center">
+                  Hospital Workflow Area
+                </div>
+                <div className="col-span-6 sm:col-span-4 p-4 sm:p-5 text-slate-500 border-t sm:border-t-0 sm:border-l border-slate-200/80 flex items-center gap-2">
+                  <MinusCircle className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                  <span>Legacy Siloed Tools</span>
+                </div>
+                <div className="col-span-6 sm:col-span-4 p-4 sm:p-5 bg-gradient-to-r from-[#2D1B69] via-[#4C1D95] to-[#5B21B6] text-white border-t sm:border-t-0 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-emerald-300 flex-shrink-0" />
+                    <span className="font-display font-extrabold">HospitalOS Network</span>
+                  </div>
+                  <span className="hidden lg:inline-block px-2 py-0.5 rounded-full bg-white/15 text-[10px] font-bold text-lavender-100">
+                    Unified
+                  </span>
+                </div>
+              </div>
+
+              {/* Sliding Rows */}
+              <div
+                key={compareMode}
+                className={`divide-y divide-slate-100 ${
+                  compareDir === 'next' ? 'zoho-slide-next' : 'zoho-slide-prev'
+                }`}
+              >
+                {CLINICAL_COMPARE_ROWS[compareMode].map((row, idx) => (
+                  <div
+                    key={row.capability}
+                    style={{ '--stagger-i': idx } as React.CSSProperties}
+                    className="grid grid-cols-12 items-center hover:bg-lavender-50/45 transition-colors duration-200"
+                  >
+                    <div className="col-span-12 sm:col-span-4 px-4 sm:px-5 py-3.5 sm:py-4 font-display font-bold text-xs sm:text-sm text-slate-950">
+                      {row.capability}
+                    </div>
+                    <div className="col-span-6 sm:col-span-4 px-4 sm:px-5 py-3.5 sm:py-4 border-t sm:border-t-0 sm:border-l border-slate-100 text-xs text-slate-500 flex items-center gap-2">
+                      <MinusCircle className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                      <span>{row.legacy}</span>
+                    </div>
+                    <div className="col-span-6 sm:col-span-4 px-4 sm:px-5 py-3.5 sm:py-4 bg-lavender-50/40 border-t sm:border-t-0 border-l border-lavender-100 text-xs font-bold text-[#2D1B69] flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                      <span>{row.hospitalOS}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -1243,10 +1684,11 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {FACILITY_ARCHITECTURES.map((arch) => (
+              {FACILITY_ARCHITECTURES.map((arch, idx) => (
                 <div
                   key={arch.name}
-                  className={`relative rounded-2xl overflow-hidden bg-white border transition-all duration-200 flex flex-col justify-between scalable-card ${
+                  style={{ '--stagger-i': idx } as React.CSSProperties}
+                  className={`zoho-stagger relative rounded-2xl overflow-hidden bg-white border transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between scalable-card ${
                     arch.highlight
                       ? 'border-[#4C1D95]/45 shadow-[0_20px_44px_-16px_rgba(76,29,149,0.22)] ring-1 ring-[#4C1D95]/15'
                       : 'border-slate-200/95 shadow-sm hover:border-purple-300'
@@ -1289,23 +1731,90 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             {/* Live Multi-Hospital Capacity Summary Bar */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 p-5 rounded-2xl bg-gradient-to-r from-[#F8FAFF] via-[#F2F7FF] to-[#F0FDFA] border border-slate-200/90">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 p-5 rounded-2xl bg-gradient-to-r from-[#F7F5FF] via-[#F3EEFF] to-[#F0FDFA] border border-lavender-200/80">
               {[
                 { label: 'Registered Hospitals', value: tenants.length, sub: 'Live synchronized directories' },
                 { label: 'Verified Specialists', value: doctors.length, sub: 'Across OPD & trauma care' },
                 { label: 'Tracked Hospital Beds', value: beds.length, sub: `${metrics.availableBeds} ready for intake` },
                 { label: 'Active Patient Records', value: patients.length, sub: 'Isolated per medical facility' }
-              ].map((item) => (
-                <div key={item.label} className="space-y-0.5 px-2">
+              ].map((item, idx) => (
+                <div
+                  key={item.label}
+                  style={{ '--stagger-i': idx } as React.CSSProperties}
+                  className="zoho-stagger space-y-0.5 px-2"
+                >
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
                     {item.label}
                   </span>
-                  <span className="font-display text-2xl font-extrabold text-slate-950 block">
+                  <span className="font-display text-2xl font-extrabold text-[#1C103B] block">
                     {item.value}
                   </span>
                   <span className="text-[11px] font-medium text-slate-600 block">{item.sub}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        </RevealBand>
+
+        {/* 6B. Smooth CSS-Grid Clinical Operations Accordion (Bigin / Zoho FAQ Pattern) */}
+        <RevealBand
+          id="clinical-faq"
+          className="scroll-mt-20 bg-[#FAF8FF] border-t border-lavender-200/60 py-14 sm:py-16"
+        >
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div className="space-y-1.5 zoho-slide-left">
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#4C1D95] block">
+                  Operational Clarity
+                </span>
+                <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-950">
+                  Common Questions Across Hospital Networks
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                onClick={toggleAllFaqs}
+                className="px-3.5 py-2 rounded-xl bg-white border border-lavender-200 hover:border-[#4C1D95] text-xs font-bold text-[#4C1D95] shadow-2xs transition self-start sm:self-auto"
+              >
+                {openFaqIndexes.length === CLINICAL_FAQS.length ? 'Collapse All' : 'Expand All'}
+              </button>
+            </div>
+
+            <div className="rounded-2xl bg-white border border-lavender-200/80 divide-y divide-lavender-100 shadow-[0_14px_38px_-18px_rgba(76,29,149,0.12)] overflow-hidden">
+              {CLINICAL_FAQS.map((item, idx) => {
+                const isOpen = openFaqIndexes.includes(idx);
+                return (
+                  <div key={item.q} className="transition-colors hover:bg-lavender-50/35">
+                    <button
+                      type="button"
+                      onClick={() => toggleFaq(idx)}
+                      aria-expanded={isOpen}
+                      className="w-full px-6 py-5 flex items-center justify-between gap-4 text-left"
+                    >
+                      <span className={`font-display font-bold text-sm sm:text-base transition-colors ${isOpen ? 'text-[#4C1D95]' : 'text-slate-950'}`}>
+                        {item.q}
+                      </span>
+                      <span
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+                          isOpen
+                            ? 'bg-[#4C1D95] text-white rotate-180'
+                            : 'bg-lavender-50 text-[#4C1D95]'
+                        }`}
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </span>
+                    </button>
+                    <div className={`zoho-accordion-body ${isOpen ? 'is-open' : ''}`}>
+                      <div className="zoho-accordion-inner">
+                        <p className="px-6 pb-5 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                          {item.a}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </RevealBand>

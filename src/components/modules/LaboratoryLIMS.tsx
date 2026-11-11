@@ -267,7 +267,7 @@ export const LaboratoryLIMS: React.FC = () => {
       {/* Architectural Workspace Banner */}
       <div className="workspace-banner workspace-banner-lab p-6 sm:p-7 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-white/15 backdrop-blur-md border border-sky-300/30 text-[11px] font-bold uppercase tracking-wider text-lavender-200">
+          <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-white/15 backdrop-blur-md border border-lavender-300/35 text-[11px] font-bold uppercase tracking-wider text-lavender-200">
             <span>Pathology &amp; Diagnostics &bull; {labTests.length} Active Orders</span>
           </div>
           <h2 className="font-display text-2xl font-extrabold text-white flex items-center gap-2.5 tracking-tight">
@@ -515,7 +515,7 @@ export const LaboratoryLIMS: React.FC = () => {
 
                 <div className="overflow-x-auto rounded-xl border border-slate-200">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-gradient-to-r from-[#F6F9FE] to-[#EEF4FB] border-b border-slate-200 text-slate-700 font-bold text-[10px] uppercase tracking-wider">
+                    <thead className="bg-gradient-to-r from-[#F7F5FF] to-[#F1ECFE] border-b border-slate-200 text-slate-700 font-bold text-[10px] uppercase tracking-wider">
                       <tr>
                         <th className="p-3.5">Test Parameter</th>
                         <th className="p-3.5">Observed Value</th>
